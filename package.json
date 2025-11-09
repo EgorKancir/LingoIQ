@@ -1,0 +1,23 @@
+{
+  "name": "lingoiq",
+  "version": "1.0.0",
+  "main": "index.js",
+  "homepage": "https://github.com/EgorKancir/YourLuxBlog.git",
+  "type": "module",
+  "scripts": {
+    "build": "parcel build index.html --public-url //",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel index.html",
+    "clean": "rm -rf .parcel-cache dist",
+    "server": "npx json-server ./src/db.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5"
+  }
+}
