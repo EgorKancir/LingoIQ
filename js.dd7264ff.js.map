@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/js/index.js"],"names":["console","log"],"mappings":";AAAAA,QAAQC,IAAI","file":"js.dd7264ff.js","sourceRoot":"..","sourcesContent":["console.log(\"Hi, I am here!\");"]}
