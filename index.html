@@ -7,8 +7,88 @@
     <link rel="stylesheet" href="./src/css/home.css">
 </head>
 <body>
-    <h1>LingoIQ</h1>
-
+    <header class="header">
+        <div class="container header__content">
+            <a class="logo__link" href="./index.html">
+                <img src="./src/img/lingoiq_logo.svg" alt="logo" class="logo__image">
+            </a>
+            <nav class="home-navigation">
+                <ul class="home-navigation__list">
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="./index.html">Features</a>
+                    </li>
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="#">How it works</a>
+                    </li>
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="#">VWA</a>
+                    </li>
+                </ul>
+            </nav>
+            <a href="#" class="header__language-button">
+                <img src="./src/img/language-icon.svg" alt="Language-button">
+            </a>
+            <div class="header__registration-block">
+                <a href="#" class="header__registration-signin">Sign in</a>
+                <a href="#" class="header__registration-start">
+                    Start Learning
+                    <img src="./src/img/play.svg" alt="icon" class="header__registration-start-icon">
+                </a>
+            </div>
+        </div>
+    </header>
+    <main class="main">
+        <div class="container main__content">
+            <div class="hero">
+                <div class="hero__info">
+                    <h1 class="hero__title">
+                        Learn languages 
+                            & 
+                        Remember forever
+                    </h1>
+                    <h3 class="hero__untertitle">
+                        A platform that turns words into 
+                        knowledge — powered by the science of 
+                        memory
+                    </h3>
+                    <a href="#" class="hero__start-button">
+                        Start Now
+                        <img src="./src/img/play.svg" alt="icon" class="hero__start-icon">
+                    </a>
+                </div>
+                <img src="./src/img/home/hero-img.jpg" alt="Imahe" class="hero__image">
+            </div>
+            <h1 class="quote">
+                Less memorizing
+                More understanding
+            </h1>
+            <div class="features">
+                <h2 class="features__title">Features</h2>
+                <ul class="features__item-box">
+                    <li class="features__item">
+                        <img src="./src/img/home/ebbinghaus.jpg" alt="Ebbinghaus" class="features__item-img">
+                        <h4 class="features__itme-text">
+                            Based on the Ebbinghaus 
+                            method
+                        </h4>
+                    </li>
+                    <li class="features__item">
+                        <img src="./src/img/home/place.jpg" alt="One Place" class="features__item-img">
+                        <h4 class="features__itme-text">
+                            All in one place
+                        </h4>
+                    </li>
+                    <li class="features__item">
+                        <img src="./src/img/home/maskot.jpg" alt="Maskot" class="features__item-img">
+                        <h4 class="features__itme-text">
+                            Made by a learner, for 
+                            learners
+                        </h4>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
     <script type="module" src="./src/js/index.js"></script>
 </body>
 </html>
