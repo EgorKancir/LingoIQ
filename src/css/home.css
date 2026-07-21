@@ -1,0 +1,73 @@
+.header__content {
+    height: 81px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgb(255 255 255 / 5%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+}
+.logo__image {
+    width: 173px;
+    height: 43px;
+}
+.home-navigation {
+}
+.home-navigation__list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.home-navigation__item {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 0;
+    text-align: center;
+    color: white;
+}
+.home-navigation__link {
+}
+.header__language-button {
+    width: 30px;
+    height: 30px;
+}
+.header__registration-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.header__registration-signin {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: normal;
+    letter-spacing: 0;
+    text-align: center;
+    color: white;
+}
+.header__registration-start {
+    width: 145px;
+    height: 41px;
+    border-radius: 20px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: normal;
+    letter-spacing: 0;
+    text-align: center;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%,rgba(0, 18, 196, 0.9) 60%,rgba(48, 177, 236, 1) 100%);
+    gap: 5px;
+}
+.header__registration-start-icon {
+    width: 20px;
+    height: 20px;
+}
