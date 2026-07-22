@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="./src/css/home.css">
 </head>
 <body>
-    <header class="header container">
-        <div class="header__content">
+    <header class="header">
+        <div class="header__content container">
             <a class="logo__link" href="./index.html">
                 <img src="./src/img/lingoiq_logo.svg" alt="logo" class="logo__image">
             </a>
@@ -30,7 +30,8 @@
                 <button type="button" class="header__language-button">
                     <img src="./src/img/language-icon.svg" alt="Language-button">
                 </button>
-                <div class="header-language-popup">
+                <!-- POPUP -->
+                <div class="header-language-popup disable">
                     <ul class="header-language-popup__list">
                         <li class="header-language-popup__item">
                             <button class="header-language-popup__button header-language-popup__button--active" type="button" id="English">English</button>
@@ -43,6 +44,7 @@
                         </li>
                     </ul>
                 </div>
+                <!-- POPUP -->
             </div>
             <div class="header__registration-block">
                 <button type="button" class="header__registration-signin">Sign in</button>
@@ -51,10 +53,58 @@
                     <img src="./src/img/play.svg" alt="icon" class="header__registration-start-icon">
                 </button>
             </div>
-            <!-- <div class="header-registration-popup"> 
-
-            </div> -->
         </div>
+        <!-- POPUP -->
+        <div class="header-registration-singup-popup">
+            <div class="header-registration-popup__img-block">
+                <img class="header-registration-popup__img" src="./src/img/home/mascot_registration.jpg" alt="Mascot">
+            </div>
+            <div class="header-registration-popup__info-section">
+                <div class="header-registration-popup__text-group">
+                    <h1 class="header-registration-popup__title">Hello!</h1>
+                    <h3 class="header-registration-popup__subtitle">Craete your Account</h3>
+                </div>
+                <form class="header-registration-popup__form">
+                    <label class="header-registration-popup__label" for="username">
+                        <input class="header-registration-popup__input" type="text" id="username-singup" placeholder="Username">
+                    </label>
+                    <label class="header-registration-popup__label" for="email">
+                        <input class="header-registration-popup__input" type="email" id="email-singup" placeholder="Email">
+                    </label>
+                    <label class="header-registration-popup__label" for="password">
+                        <input class="header-registration-popup__input" type="password" id="password-singup" placeholder="Password">
+                    </label>
+                    <button class="header-registration-popup__submit" id="submit-singup" type="submit">Sing Up</button>
+                    <h4 class="header-registration-signup-popup__have-account">
+                        Already have an account?  <a href="#" class="header-registration-signup-popup__have-account-link">Sign in <img class="header-registration-signup-popup__have-account-arrow" src="./src/img/home/arrow.svg" alt="arrow"></a>
+                    </h4>
+                </form>
+            </div>
+        </div>
+<!-- ------ -->
+        <div class="header-registration-singin-popup">
+            <div class="header-registration-popup__img-block">
+                <img class="header-registration-popup__img" src="./src/img/home/mascot_hi.jpg" alt="Mascot">
+            </div>
+            <div class="header-registration-popup__info-section">
+                <div class="header-registration-popup__text-group">
+                    <h1 class="header-registration-popup__title">Welcome back!</h1>
+                </div>
+                <form class="header-registration-popup__form"> 
+                    <label class="header-registration-popup__label" for="email">
+                        <input class="header-registration-popup__input" type="email" id="email-singin" placeholder="Email">
+                    </label>
+                    <label class="header-registration-popup__label" for="password">
+                        <input class="header-registration-popup__input" type="password" id="password-singin" placeholder="Password">
+                    </label>
+                    <button class="header-registration-popup__submit" id="submit-singin" type="submit">Sing In</button>
+                    <h4 class="header-registration-signin-popup__donothave-account">
+                        Don't have an account? <a href="#" class="header-registration-signin-popup__donothave-account-link">Sign Up<img class="header-registration-signin-popup__donothave-account-arrow" src="./src/img/home/arrow.svg" alt="arrow"></a>
+                    </h4>
+                </form>
+            </div>
+        </div>
+        <!-- POPUP -->
     </header>
     <main class="main">
         <div class="container main__content">
