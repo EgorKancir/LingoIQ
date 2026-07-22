@@ -26,16 +26,34 @@
                     </li>
                 </ul>
             </nav>
-            <a href="#" class="header__language-button">
-                <img src="./src/img/language-icon.svg" alt="Language-button">
-            </a>
+            <div class="header__language">
+                <button type="button" class="header__language-button">
+                    <img src="./src/img/language-icon.svg" alt="Language-button">
+                </button>
+                <div class="header-language-popup">
+                    <ul class="header-language-popup__list">
+                        <li class="header-language-popup__item">
+                            <button class="header-language-popup__button header-language-popup__button--active" type="button" id="English">English</button>
+                        </li>
+                        <li class="header-language-popup__item">
+                            <button class="header-language-popup__button" type="button" id="German">German</button>
+                        </li>
+                        <li class="header-language-popup__item">
+                            <button class="header-language-popup__button" type="button" id="Ukrainian">Ukrainian</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
             <div class="header__registration-block">
-                <a href="#" class="header__registration-signin">Sign in</a>
-                <a href="#" class="header__registration-start">
+                <button type="button" class="header__registration-signin">Sign in</button>
+                <button type="button" class="header__registration-start">
                     Start Learning
                     <img src="./src/img/play.svg" alt="icon" class="header__registration-start-icon">
-                </a>
+                </button>
             </div>
+            <!-- <div class="header-registration-popup"> 
+
+            </div> -->
         </div>
     </header>
     <main class="main">
