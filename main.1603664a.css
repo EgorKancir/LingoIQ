@@ -25,5 +25,15 @@ a {
 a:hover {
     cursor: pointer;
 }
+button {
+    text-decoration: none;
+    cursor: pointer;
+    color: inherit;
+    border: none;
+    background-color: inherit;
+    background: inherit;
+    padding: 0;
+    margin: 0;
+}
 
 /*# sourceMappingURL=/main.1603664a.css.map */

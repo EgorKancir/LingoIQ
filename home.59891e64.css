@@ -6,13 +6,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: auto;
     padding: 0 40px;
+    margin-top: 40px;
+    margin-bottom: 50px;
 }
 .logo__image {
-    width: 173px;
-    height: 43px;
-}
-.home-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 190px;
+    height: 65px;
 }
 .home-navigation__list {
     display: flex;
@@ -29,12 +33,60 @@
     text-align: center;
     color: white;
 }
-.home-navigation__link {
+.home-navigation__link:hover {
+    display: block;
+    transform: scale(1.03);
+    opacity: 0.7;
+}
+.header__language {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 }
 .header__language-button {
     width: 30px;
     height: 30px;
+    background: inherit;
+    background: none;
 }
+.header__language-button:hover {
+    display: block;
+    transform: scale(1.03);
+    opacity: 0.7;
+}
+/* POPUP */
+.header-language-popup {
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgb(255 255 255 / 5%);
+    position: absolute;
+    top: 30px;
+}
+.header-language-popup__list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+}
+.header-language-popup__button {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 0;
+    text-align: center;
+    color: white;
+}
+.header-language-popup__button:hover {
+    opacity: 0.7;
+}
+.header-language-popup__button--active {
+    color: black;
+}
+/* POPUP */
 .header__registration-block {
     display: flex;
     justify-content: center;
@@ -49,6 +101,11 @@
     letter-spacing: 0;
     text-align: center;
     color: white;
+}
+.header__registration-signin:hover {
+    display: block;
+    transform: scale(1.03);
+    opacity: 0.7;
 }
 .header__registration-start {
     width: 145px;
@@ -66,6 +123,10 @@
     align-items: center;
     background: linear-gradient(rgba(0, 1, 5, 0.8) 0%,rgba(0, 18, 196, 0.9) 60%,rgba(48, 177, 236, 1) 100%);
     gap: 5px;
+}
+.header__registration-start:hover {
+    transform: scale(1.03);
+    opacity: 0.7;
 }
 .header__registration-start-icon {
     width: 20px;
