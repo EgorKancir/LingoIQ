@@ -1,8 +1,17 @@
 html {
     scroll-behavior: smooth;
 }
-body{
-    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%,rgba(0, 18, 196, 0.9) 60%,rgba(48, 177, 236, 1) 100%);
+body {
+    background-image: 
+    url("../img/decor.svg"), 
+    url("../img/brain1part.png"),
+    url("../img/brain2part.png"),
+    linear-gradient(rgba(0, 1, 5, 0.8) 0%, rgba(0, 18, 196, 0.9) 60%, rgba(48, 177, 236, 1) 100%);
+
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-size: 100% 230px, 755px 712px, 755px 712px, cover;
+    background-position: left 0 bottom 0, right -300px top 500px, left -340px bottom 430px, center;
+    padding-bottom: 280px;
 }
 .container {
     width: 1200px;
@@ -38,4 +47,75 @@ button, input, label, form {
 }
 .disable {
     display: none;
+}
+
+/* ----------------------------------------FOOTER--------------------------------------------| */
+
+.footer {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 60px;
+    border: rgba(255, 255, 255, 0.05) 1px solid;
+    border-radius: 50px;
+    margin-top: 50px;
+}
+.footer-panel__logo-img {
+    width: 209px;
+    height: 55px;
+}
+.footer__social-media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.footer__social-media-icon {
+    width: 32px;
+    height: 32px;
+}
+.footer__social-media-icon:hover {
+    display: block;
+    transform: scale(1.02);
+    opacity: 0.7;
+}
+.footer__politics-group {
+    width: 100%;
+    border-top: white 2px solid;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+}
+.footer__copyrighting {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 300; 
+    font-size: 14px;
+    line-height: normal;
+    letter-spacing: 0px;
+    text-align: center;
+}
+.footer__rules-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.footer__rules-item {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 300; 
+    font-size: 14px;
+    line-height: normal;
+    letter-spacing: 0px;
+    text-align: center;
+}
+.footer__rules-item:hover {
+    display: block;
+    transform: scale(1.02);
+    opacity: 0.7;
 }

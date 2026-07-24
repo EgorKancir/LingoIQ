@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LingoIQ</title>
+    <link rel="shortcut icon" href="./src/img/favicon.svg" type="image/x-icon">
     <link rel="stylesheet" href="./src/css/main.css">
     <link rel="stylesheet" href="./src/css/home.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="header">
-        <div class="header__content container">
+    <header class="header container">
+        <div class="header__content">
             <a class="logo__link" href="./index.html">
                 <img src="./src/img/lingoiq_logo.svg" alt="logo" class="logo__image">
             </a>
@@ -62,26 +66,26 @@
             <div class="header-registration-popup__info-section">
                 <div class="header-registration-popup__text-group">
                     <h1 class="header-registration-popup__title">Hello!</h1>
-                    <h3 class="header-registration-popup__subtitle">Craete your Account</h3>
+                    <h2 class="header-registration-popup__subtitle">Craete your Account</h2>
                 </div>
                 <form class="header-registration-popup__form">
-                    <label class="header-registration-popup__label" for="username">
+                    <label class="header-registration-popup__label" for="username-singup">
                         <input class="header-registration-popup__input" type="text" id="username-singup" placeholder="Username">
                     </label>
-                    <label class="header-registration-popup__label" for="email">
+                    <label class="header-registration-popup__label" for="email-singup">
                         <input class="header-registration-popup__input" type="email" id="email-singup" placeholder="Email">
                     </label>
-                    <label class="header-registration-popup__label" for="password">
+                    <label class="header-registration-popup__label" for="password-singup">
                         <input class="header-registration-popup__input" type="password" id="password-singup" placeholder="Password">
                     </label>
                     <button class="header-registration-popup__submit" id="submit-singup" type="submit">Sing Up</button>
-                    <h4 class="header-registration-signup-popup__have-account">
+                    <p class="header-registration-signup-popup__have-account">
                         Already have an account?  <a href="#" class="header-registration-signup-popup__have-account-link">Sign in <img class="header-registration-signup-popup__have-account-arrow" src="./src/img/home/arrow.svg" alt="arrow"></a>
-                    </h4>
+                    </p>
                 </form>
             </div>
         </div>
-<!-- ------ -->
+        <!-- LINE -->
         <div class="header-registration-singin-popup">
             <div class="header-registration-popup__img-block">
                 <img class="header-registration-popup__img" src="./src/img/home/mascot_hi.jpg" alt="Mascot">
@@ -91,16 +95,16 @@
                     <h1 class="header-registration-popup__title">Welcome back!</h1>
                 </div>
                 <form class="header-registration-popup__form"> 
-                    <label class="header-registration-popup__label" for="email">
+                    <label class="header-registration-popup__label" for="email-singin">
                         <input class="header-registration-popup__input" type="email" id="email-singin" placeholder="Email">
                     </label>
-                    <label class="header-registration-popup__label" for="password">
+                    <label class="header-registration-popup__label" for="password-singin">
                         <input class="header-registration-popup__input" type="password" id="password-singin" placeholder="Password">
                     </label>
                     <button class="header-registration-popup__submit" id="submit-singin" type="submit">Sing In</button>
-                    <h4 class="header-registration-signin-popup__donothave-account">
+                    <p class="header-registration-signin-popup__donothave-account">
                         Don't have an account? <a href="#" class="header-registration-signin-popup__donothave-account-link">Sign Up<img class="header-registration-signin-popup__donothave-account-arrow" src="./src/img/home/arrow.svg" alt="arrow"></a>
-                    </h4>
+                    </p>
                 </form>
             </div>
         </div>
@@ -111,21 +115,21 @@
             <div class="hero">
                 <div class="hero__info">
                     <h1 class="hero__title">
-                        Learn languages 
-                            & 
+                        Learn languages <br> 
+                            & <br>
                         Remember forever
                     </h1>
-                    <h3 class="hero__untertitle">
+                    <h2 class="hero__untertitle">
                         A platform that turns words into 
                         knowledge — powered by the science of 
                         memory
-                    </h3>
-                    <a href="#" class="hero__start-button">
+                    </h2>
+                    <button type="button" class="hero__start-button">
                         Start Now
                         <img src="./src/img/play.svg" alt="icon" class="hero__start-icon">
-                    </a>
+                    </button>
                 </div>
-                <img src="./src/img/home/hero-img.jpg" alt="Imahe" class="hero__image">
+                <img src="./src/img/home/mascot-hero.png" alt="Imahe" class="hero__image">
             </div>
             <h1 class="quote">
                 Less memorizing
@@ -135,24 +139,24 @@
                 <h2 class="features__title">Features</h2>
                 <ul class="features__item-box">
                     <li class="features__item">
-                        <img src="./src/img/home/ebbinghaus.jpg" alt="Ebbinghaus" class="features__item-img">
-                        <h4 class="features__itme-text">
+                        <img src="./src/img/home/Ebbinghaus.png" alt="Ebbinghaus" class="features__item-img">
+                        <h1 class="features__itme-text">
                             Based on the Ebbinghaus 
                             method
-                        </h4>
+                        </h1>
                     </li>
                     <li class="features__item">
-                        <img src="./src/img/home/place.jpg" alt="One Place" class="features__item-img">
-                        <h4 class="features__itme-text">
+                        <img src="./src/img/home/Place.png" alt="One Place" class="features__item-img">
+                        <h1 class="features__itme-text">
                             All in one place
-                        </h4>
+                        </h1>
                     </li>
                     <li class="features__item">
-                        <img src="./src/img/home/maskot.jpg" alt="Maskot" class="features__item-img">
-                        <h4 class="features__itme-text">
+                        <img src="./src/img/home/maskot.png" alt="Maskot" class="features__item-img">
+                        <h1 class="features__itme-text">
                             Made by a learner, for 
                             learners
-                        </h4>
+                        </h1>
                     </li>
                 </ul>
             </div>
@@ -168,44 +172,48 @@
                         <img src="./src/img/home/line-b.svg" alt="line" class="how-it-works__line">
                         <h3 class="how-it-works__number">4</h3>
                     </div>
+                    <div class="how-it-works__blocks-group">
+                        <div class="how-it-works__block">
+                            <h4 class="how-it-works__block-title">Add</h4>
+                            <img src="./src/img/home/add.svg" alt="Add" class="how-it-works__block-img">
+                        </div>
+                        <div class="how-it-works__block">
+                            <h4 class="how-it-works__block-title">Learn</h4>
+                            <img src="./src/img/home/learn.svg" alt="Learn" class="how-it-works__block-img">
+                        </div>
+                        <div class="how-it-works__block">
+                            <h4 class="how-it-works__block-title">Repeat</h4>
+                            <img src="./src/img/home/repeat.svg" alt="Repeat" class="how-it-works__block-img">
+                        </div>
+                        <div class="how-it-works__block">
+                            <h4 class="how-it-works__block-title">Remember</h4>
+                            <img src="./src/img/home/ready.svg" alt="Remember" class="how-it-works__block-img">
+                        </div>
+                    </div>
                 </div>
-                <div class="how-it-works__blocks-group">
-                    <div class="how-it-works__block">
-                        <h4 class="how-it-works__block-title">Add</h4>
-                        <img src="./src/img/home/add.svg" alt="Add" class="how-it-works__block-img">
-                    </div>
-                    <div class="how-it-works__block">
-                        <h4 class="how-it-works__block-title">Learn</h4>
-                        <img src="./src/img/home/learn.svg" alt="Learn" class="how-it-works__block-img">
-                    </div>
-                    <div class="how-it-works__block">
-                        <h4 class="how-it-works__block-title">Repeat</h4>
-                        <img src="./src/img/home/repeat.svg" alt="Repeat" class="how-it-works__block-img">
-                    </div>
-                    <div class="how-it-works__block">
-                        <h4 class="how-it-works__block-title">Remember</h4>
-                        <img src="./src/img/home/ready.svg" alt="Remember" class="how-it-works__block-img">
-                    </div>
-                </div>
+                <img class="how-it-works__mascot" src="./src/img/home/mascot-hmm.png" alt="Mascot-hmm">
             </div>
             <div class="vwa">
                 <h2 class="vwa__title">VWA</h2>
                 <div class="vwa__content">
                     <div class="vwa__author-group">
-                        <img src="./src/img/home/author-img.jpg" alt="Author with mascot" class="vwa__author-img">
+                        <img src="./src/img/home/author-img.png" alt="Author with mascot" class="vwa__author-img">
                         <div class="vwa__author-info">
-                            <h4 class="vwa__author-title">Yehor Kantsyr</h4>
+                            <h1 class="vwa__author-title">Yehor Kantsyr</h1>
                             <p class="vwa__author-subtitle">(Creator of LingoIQ)</p>
                         </div>
                     </div>
                     <p class="vwa__pharagrph">
                         Hi! I’m Yehor, and LingoIQ is my VWA project.
                         <br>
-                        I created this site to make language learning <b>simpler and more structured.</b>
+                        <br>
+                        I created this site to make language learning <b>simpler and more structured.</b> <br>
                         Here, you can find words, grammar rules, and learning tools <b>all in one place.</b>
+                        <br>
                         <br>
                         The site includes a program I developed using <b>Hermann Ebbinghaus’ spaced repetition method</b> to help you remember words efficiently.
                         It’s designed for students, migrants, and anyone eager to learn languages, offering <b>clear structures and easy navigation.</b>
+                        <br>
                         <br>
                         With LingoIQ, I want to give everyone the same opportunity I had: a clear path to mastering a new language.
                     </p>
@@ -228,9 +236,8 @@
                 <img src="./src/img/insta.svg" alt="Instagram" class="footer__social-media-icon">
             </a>
         </div>
-        <hr class="footer__line">
         <div class="footer__politics-group">
-            <h4 class="footer__copyrighting">© 2026 LingoIQ</h4>
+            <p class="footer__copyrighting">© 2026 LingoIQ</p>
             <ul class="footer__rules-list">
                 <li class="footer__rules-item">
                     <a href="#" class="footer__rules-link">Privacy</a>
