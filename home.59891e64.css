@@ -301,15 +301,6 @@
     display: none;
 }
 
-/* ----------------------------------------MAIN--------------------------------------------| */
-
-.main__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 70px;
-}
 /* ----------------------------------------HERO--------------------------------------------| */
 .hero {
     width: 100%;
@@ -379,19 +370,6 @@
     border-radius: 30px;
     rotate: 395grad;
     margin-right: 50px;
-}
-
-/* ----------------------------------------QUOTE--------------------------------------------| */
-
-.quote {
-    width: 75%;
-    font-family: "Audiowide", sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 75px;
-    line-height: normal; 
-    letter-spacing: 0px;
-    text-align: center;
 }
 
 /* ----------------------------------------FEATURES--------------------------------------------| */

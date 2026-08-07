@@ -172,7 +172,7 @@ module.exports = reloadCSS;
 var reloadCSS = require('_css_loader');
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"./../img/decor.svg":[["decor.105cd0b9.svg","src/img/decor.svg"],"src/img/decor.svg"],"./../img/brain1part.png":[["brain1part.afd41ca9.png","src/img/brain1part.png"],"src/img/brain1part.png"],"./../img/brain2part.png":[["brain2part.058715f8.png","src/img/brain2part.png"],"src/img/brain2part.png"],"_css_loader":"node_modules/parcel-bundler/src/builtins/css-loader.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./../img/textdecor.svg":[["textdecor.90eccfb7.svg","src/img/textdecor.svg"],"src/img/textdecor.svg"],"./../img/brain1part.png":[["brain1part.afd41ca9.png","src/img/brain1part.png"],"src/img/brain1part.png"],"./../img/brain2part.png":[["brain2part.058715f8.png","src/img/brain2part.png"],"src/img/brain2part.png"],"_css_loader":"node_modules/parcel-bundler/src/builtins/css-loader.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -197,7 +197,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63009" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56541" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
