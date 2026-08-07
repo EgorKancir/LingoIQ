@@ -45,10 +45,6 @@ button, input, label, form {
     margin: 0;
     outline: none;
 }
-img {
-    /* object-fit: cover;
-    object-position: center; */
-}
 .disable {
     display: none !important;
 }

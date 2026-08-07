@@ -1,103 +1,7 @@
-.header__user-block {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    position: relative;
-}
-.header__username {
-    font-family: 'Inter', sans-serif;
-    font-weight: 800;          
-    font-size: 14px;
-    letter-spacing: 0px;      
-    line-height: normal;    
-    text-align: center;       
-    vertical-align: middle;   
-}
-.header__username-settings {
-    width: 80px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(rgba(0, 1, 5, 1) 0%,rgba(0, 18, 196, 1) 60%,rgba(48, 177, 236, 1) 100%);
-    border-radius: 20px;
-}
-.header__username-settings:hover {
-    transform: scale(1.03);
-    opacity: 0.7;
-}
-.header__username-avatar {
-    width: 20px;
-    height: 20px;
-}
-/* POPUP */
-.header__user-info {
-    width: 350px;
-    background: linear-gradient(rgba(0, 1, 5, 1) 0%,rgba(0, 18, 196, 1) 60%,rgba(48, 177, 236, 1) 100%);
-    position: absolute;
-    top: 60px;
-    right: -40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: column;
-    gap: 30px;
-    padding-top: 30px;
-    border-radius: 50px;
-}
-.header__user-info-img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-}
-.user-info-group {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 20px;
-    padding: 15px 0;
-    border-radius: 50px;
-    background: rgba(255, 255, 255, 0.6);
-}
-.header__user-info-name {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;      
-    font-size: 30px;
-    letter-spacing: 0px;      
-    line-height: normal;     
-    color: black;
-}
-.eader__user-info-days {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;      
-    font-size: 25px;
-    letter-spacing: 0px;      
-    line-height: normal;  
-    color: black;  
-}
-.header__user-info-button-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: none;
-    background: none;
-}
-.header__user-info-button-close-icon {
-    width: 20px;
-    height: 20px;
-}
-.header__user-info-button-close:hover {
-    transform: scale(1.03);
-    opacity: 0.7;
-}
-
 /* |----------------------------------------CALENDAR--------------------------------------------| */
 
 .calendar {
-    padding: 30px;
+    padding: 30px 0;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -199,7 +103,7 @@
 /* |----------------------------------------YOUR-LANGUAGES--------------------------------------------| */
 
 .your-languages {
-    padding: 30px;
+    padding: 30px 0;
     width: 100%;
     display: flex;
     justify-content: center;
