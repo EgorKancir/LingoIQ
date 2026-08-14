@@ -73,6 +73,7 @@ button, input, label, form {
 /* ----------------------------------------FOOTER--------------------------------------------| */
 
 .footer {
+    width: 1158px;
     background: rgba(0, 0, 0, 0.2);
     padding: 20px;
     display: flex;
@@ -82,7 +83,7 @@ button, input, label, form {
     gap: 60px;
     border: rgba(255, 255, 255, 0.05) 1px solid;
     border-radius: 50px;
-    margin-top: 50px;
+    margin: 50px auto 0;
 }
 .footer-panel__logo-img {
     width: 209px;

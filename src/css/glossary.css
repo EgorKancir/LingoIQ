@@ -1,0 +1,232 @@
+.glossary__icon {
+    width: 150px;
+    height: 150px;
+}
+.glossary__title {
+    font-family: 'Squada One', sans-serif;
+    font-weight: 400; 
+    font-size: 100px;
+    letter-spacing: 0px;
+    line-height: normal; 
+    text-align: center;
+}
+.glossary-table {
+    width: 100%;
+    background: linear-gradient(0deg, rgba(0, 1, 5, 0.65) 0%, rgba(0, 18, 196, 1) 33%, rgba(48, 177, 236, 1) 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    color: #ffffff;
+    border-collapse: collapse;
+}
+.glossary-table__header-tr {
+    height: 60px;
+    background: rgb(82 142 227);
+}
+.glossary-table__header-th {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0px;
+    line-height: normal; 
+    text-align: left;
+    padding-left: 20px;
+    /* width: 240px; */
+}
+.glossary-table__header-th--number {
+    width: 60px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.glossary-table__icon-setting {
+    width: 20px;
+    height: 20px;
+}
+.glossary-table__header-th-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+}
+.glossary-table__body {
+    background: rgba(255, 255, 255, 0.05);
+}
+.glossary-table__footer-tr {
+    height: 64px;
+}
+.glossary-table__footer-td {
+    text-align: center;
+    vertical-align: middle;
+}
+.glossary-table__add-btn:hover {
+    transform: scale(1.03);
+    opacity: 0.7;
+}
+.glossary-table__icon-plus {
+    width: 40px;
+    height: 40px;
+}
+.glossary-table__body-tr {
+    transition: background-color 0.2s ease;
+    text-align: center;
+}
+.glossary-table__body-tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+.glossary-table__body-td {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400; 
+    font-size: 14px;
+    letter-spacing: 0px;
+    line-height: normal; 
+    text-align: left;
+    width: 240px;
+    height: 52px;
+    padding-left: 20px;
+}
+.glossary-table__body-td--number {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0px;
+    line-height: normal; 
+    text-align: center;
+    background: rgb(82 142 227);
+    width: 60px;
+    padding: 0;
+}
+.glossary-table__status--studied {
+    color: rgba(106, 255, 220, 1); 
+}
+.glossary-table__status--study {
+    color: rgba(255, 237, 0, 1); 
+}
+.glossary-table__status--not-studied {
+    color: rgba(255, 132, 132, 1); 
+}
+.glossary-table__body-td-center {
+    text-align: center;
+    padding: 0;
+}
+.glossary-table__body-btn-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.icon-pen {
+    width: 20px;
+    height: 20px;
+}
+.glossary-table__icon-basket {
+    width: 25px;
+    height: 25px;
+}
+.glossary-table__body-btn--edit,
+.glossary-table__body-btn--delete {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.glossary-table__body-btn--edit:hover,
+.glossary-table__body-btn--delete:hover {
+    opacity: 0.5;
+    transform: scale(1.15);
+}
+
+/* |----------------------------------------FORM--------------------------------------------| */
+
+.glossary-form__tr {
+    height: 52px;
+}
+.glossary-form__number{
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0px;
+    line-height: normal; 
+    text-align: center;
+    background: rgb(82 142 227);
+    width: 60px;
+    padding: 0;
+}
+.glossary-form__input {
+    width: 160px;
+    height: 27px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 0 15px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 100; 
+    font-size: 14px;
+    letter-spacing: 0px;
+    line-height: normal; 
+    text-align: left;
+    color: white;
+}
+.glossary-form__input::placeholder {
+    color: white;
+}
+.glossary-form__select {
+    width: 158px;
+    height: 25px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 0 15px;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-weight: 100; 
+    font-size: 14px;
+    letter-spacing: 0px;
+    line-height: normal; 
+    text-align: left;
+    color: white;
+    appearance: none; 
+    background-image: url("../img/glossary/select-arrow.svg");
+    background-repeat: no-repeat;
+    background-size: 18px 18px;
+    background-position: top 50% right 15px;
+    cursor: pointer;
+    border: 1px rgba(255, 255, 255, 0.3) solid;
+}
+.glossary-form__select:hover {
+    border: 1px white solid;
+}
+.glossary-form__option {
+}
+.glossary-select__option--studied {
+}
+.glossary-select__option--study {
+}
+.glossary-select__option--not-studied {
+}
+.glossary-table__body-td-center {
+}
+.glossary-form__form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.glossary-form__btn-submit:hover {
+    opacity: 0.7;
+    transform: scale(1.1);
+}
+.glossary-form__btn-icon {
+    width: 25px;
+    height: 25px;
+}
+.glossary-form__btn-cencel {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400; 
+    font-size: 14px;
+    letter-spacing: 0px;
+    line-height: normal;
+    text-align: left;
+}
+.glossary-form__btn-cencel:hover {
+    opacity: 0.7;
+    transform: scale(1.1);
+}

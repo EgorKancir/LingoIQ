@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LingoIQ</title>
+    <link rel="shortcut icon" href="./src/img/favicon.svg" type="image/x-icon">
+    <link rel="stylesheet" href="./src/css/main.css">
+    <link rel="stylesheet" href="./src/css/home.css">
+    <link rel="stylesheet" href="./src/css/rules.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Karantina:wght@300;400;700&family=Squada+One&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header container">
+        <div class="header__content">
+            <a class="logo__link" href="./index.html">
+                <img src="./src/img/lingoiq_logo.svg" alt="logo" class="logo__image">
+            </a>
+            <nav class="home-navigation">
+                <ul class="home-navigation__list">
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="#features-id">Home</a>
+                    </li>
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="#how-it-works-id">Calendar</a>
+                    </li>
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="#vwa-id">Languages</a>
+                    </li>
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="#vwa-id">Websites</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="header__language">
+                <button type="button" class="header__language-button">
+                    <img src="./src/img/language-icon.svg" alt="Language-button">
+                </button>
+                <!-- POPUP -->
+                <div class="header-language-popup disable">
+                    <ul class="header-language-popup__list">
+                        <li class="header-language-popup__item">
+                            <button class="header-language-popup__button header-language-popup__button--active" type="button" id="English">English</button>
+                        </li>
+                        <li class="header-language-popup__item">
+                            <button class="header-language-popup__button" type="button" id="German">German</button>
+                        </li>
+                        <li class="header-language-popup__item">
+                            <button class="header-language-popup__button" type="button" id="Ukrainian">Ukrainian</button>
+                        </li>
+                    </ul>
+                </div>
+                <!-- POPUP -->
+            </div>
+            <div class="header__user-block">
+                <p class="header__username">Username</p>
+                <button type="button" class="header__username-settings">
+                    <img src="./src/img/userpage/avatar.svg" alt="icon" class="header__username-avatar">
+                </button>
+                <!-- POPUP -->
+                <div class="header__user-info disable">
+                    <button class="header__user-info-button-close">
+                        <img class="header__user-info-button-close-icon" src="./src/img/close-icon.svg" alt="close">
+                    </button>
+                    <img class="header__user-info-img" src="./src/img/home/author-img.jpg" alt="User">
+                    <div class="user-info-group">
+                        <h2 class="header__user-info-name">........</h2>
+                        <p class="eader__user-info-days">--------</p>
+                    </div>
+                </div>
+                <!-- POPUP -->
+            </div>
+        </div>
+    </header>
+    <main class="main">
+        <div class="container main__content">
+            <img src="./src/img/languagepage/rules-icon.svg" alt="icon" class="rules__icon">
+            <h1 class="rules__title">Rules</h1>
+            <div class="rules-group">
+                <div class="rules-group__rules-box">
+                    <a href="#" class="rules-group__rules-element">
+                        <img src="./src/img/rules/grammar-icon.png" alt="Grammar" class="rules-group__rules-icon">
+                        <h2 class="rules-group__rules-title">Grammar</h2>
+                    </a>
+                    <a href="#" class="rules-group__rules-element">
+                        <img src="./src/img/rules/tenses-icon.png" alt="Tenses" class="rules-group__rules-icon">
+                        <h2 class="rules-group__rules-title">Tenses</h2>
+                    </a>
+                    <a href="#" class="rules-group__rules-element">
+                        <img src="./src/img/rules/articles-icon.png" alt="Articles" class="rules-group__rules-icon">
+                        <h2 class="rules-group__rules-title">Articles</h2>
+                    </a>
+                    <a href="#" class="rules-group__rules-element">
+                        <img src="./src/img/rules/prepositions-icon.png" alt="Prepositions" class="rules-group__rules-icon">
+                        <h2 class="rules-group__rules-title">Prepositions</h2>
+                    </a>
+                    <a href="#" class="rules-group__rules-element">
+                        <img src="./src/img/rules/verbs-icon.png" alt="Verbs" class="rules-group__rules-icon">
+                        <h2 class="rules-group__rules-title">Verbs</h2>
+                    </a>
+                    <a href="#" class="rules-group__rules-element">
+                        <img src="./src/img/rules/nouns-icon.png" alt="Nouns" class="rules-group__rules-icon">
+                        <h2 class="rules-group__rules-title">Nouns</h2>
+                    </a>
+                    <a href="#" class="rules-group__rules-element">
+                        <img src="./src/img/rules/adjectives-icon.png" alt="Adjectives" class="rules-group__rules-icon">
+                        <h2 class="rules-group__rules-title">Adjectives</h2>
+                    </a>
+                    <a href="#" class="rules-group__rules-element">
+                        <img src="./src/img/rules/pronunciation-icon.png" alt="Pronunciation" class="rules-group__rules-icon">
+                        <h2 class="rules-group__rules-title">Pronunciation</h2>
+                    </a>
+                    <a href="#" class="rules-group__rules-element">
+                        <img src="./src/img/rules/useful-phrases-icon.png" alt="Useful Phrases" class="rules-group__rules-icon">
+                        <h2 class="rules-group__rules-title">Useful Phrases</h2>
+                    </a>
+                    <a href="#" class="rules-group__rules-element">
+                        <img src="./src/img/rules/favorites-icon.png" alt="Favorites" class="rules-group__rules-icon">
+                        <h2 class="rules-group__rules-title">Favorites</h2>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        <a href="#" class="footer-panel__loo-link">
+            <img src="./src/img/lingoiq_logo-footer.svg" alt="logo" class="footer-panel__logo-img">
+        </a>
+        <div class="footer__social-media">
+            <a href="#" class="footer__social-media-link">
+                <img src="./src/img/youtube.svg" alt="Youtube" class="footer__social-media-icon">
+            </a>
+            <a href="#" class="footer__social-media-link">
+                <img src="./src/img/github.svg" alt="GitHub" class="footer__social-media-icon">
+            </a>
+            <a href="#" class="footer__social-media-link">
+                <img src="./src/img/insta.svg" alt="Instagram" class="footer__social-media-icon">
+            </a>
+        </div>
+        <div class="footer__politics-group">
+            <p class="footer__copyrighting">© 2026 LingoIQ</p>
+            <ul class="footer__rules-list">
+                <li class="footer__rules-item">
+                    <a href="#" class="footer__rules-link">Privacy</a>
+                </li>
+                <li class="footer__rules-item">
+                    <a href="#" class="footer__rules-link">Terms</a>
+                </li>
+                <li class="footer__rules-item">
+                    <a href="#" class="footer__rules-link">Cookies</a>
+                </li>
+            </ul>
+        </div>
+    </footer>
+    <script type="module" src="./src/js/index.js"></script>
+</body>
+</html>
