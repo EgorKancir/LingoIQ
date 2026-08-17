@@ -10,6 +10,7 @@
     margin-top: 40px;
     margin-bottom: 50px;
 }
+
 .logo__image {
     display: flex;
     justify-content: center;
@@ -17,12 +18,14 @@
     width: 190px;
     height: 65px;
 }
+
 .home-navigation__list {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 20px;
 }
+
 .home-navigation__item {
     font-family: "Inter", sans-serif;
     font-size: 14px;
@@ -32,28 +35,33 @@
     text-align: center;
     color: white;
 }
+
 .home-navigation__link:hover {
     display: block;
     transform: scale(1.03);
     opacity: 0.7;
 }
+
 .header__language {
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
 }
+
 .header__language-button {
     width: 30px;
     height: 30px;
     background: inherit;
     background: none;
 }
+
 .header__language-button:hover {
     display: block;
     transform: scale(1.03);
     opacity: 0.7;
 }
+
 /* POPUP language */
 .header-language-popup {
     border-radius: 20px;
@@ -62,6 +70,7 @@
     position: absolute;
     top: 30px;
 }
+
 .header-language-popup__list {
     display: flex;
     flex-direction: column;
@@ -70,6 +79,7 @@
     gap: 20px;
     padding: 10px;
 }
+
 .header-language-popup__button {
     font-family: "Inter", sans-serif;
     font-size: 14px;
@@ -79,12 +89,15 @@
     text-align: center;
     color: white;
 }
+
 .header-language-popup__button:hover {
     opacity: 0.7;
 }
+
 .header-language-popup__button--active {
     color: black;
 }
+
 /* POPUP */
 .header__registration-block {
     display: flex;
@@ -92,6 +105,7 @@
     align-items: center;
     gap: 20px;
 }
+
 .header__registration-signin {
     font-family: "Inter", sans-serif;
     font-size: 14px;
@@ -101,11 +115,13 @@
     text-align: center;
     color: white;
 }
+
 .header__registration-signin:hover {
     display: block;
     transform: scale(1.03);
     opacity: 0.7;
 }
+
 .header__registration-start {
     border-radius: 20px;
     font-family: "Inter", sans-serif;
@@ -118,35 +134,37 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%,rgba(0, 18, 196, 0.9) 60%,rgba(48, 177, 236, 1) 100%);
+    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%, rgba(0, 18, 196, 0.9) 60%, rgba(48, 177, 236, 1) 100%);
     gap: 5px;
     padding: 10px;
 }
+
 .header__registration-start:hover {
     transform: scale(1.03);
     opacity: 0.7;
 }
+
 .header__registration-start-icon {
     width: 20px;
     height: 20px;
 }
+
 /* POPUP SignUP */
-.header-registration-singup-popup {
+.header-registration-signup-popup {
     width: 100%;
     height: 100%;
     padding: 0;
     margin: 0;
     background-color: white;
-    background: linear-gradient(rgba(0, 1, 5, 1) 0%,rgba(0, 18, 196, 1) 60%,rgba(48, 177, 236, 1) 100%);
+    background: linear-gradient(rgba(0, 1, 5, 1) 0%, rgba(0, 18, 196, 1) 60%, rgba(48, 177, 236, 1) 100%);
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: fixed;
     inset: 0;
     z-index: 100;
-    display: none;
-
 }
+
 .header-registration-popup__img-block {
     width: 50%;
     height: 100%;
@@ -154,11 +172,13 @@
     justify-content: center;
     align-items: center;
 }
+
 .header-registration-popup__img {
     width: 600px;
     height: 600px;
     border-radius: 50px;
 }
+
 .header-registration-popup__info-section {
     width: 50%;
     height: 100%;
@@ -171,6 +191,7 @@
     border-radius: 50px 0 0 50px;
     background: rgba(255, 255, 255, 0.6);
 }
+
 .header-registration-popup__text-group {
     display: flex;
     justify-content: center;
@@ -178,6 +199,7 @@
     flex-direction: column;
     gap: 9px;
 }
+
 .header-registration-popup__title {
     width: 300px;
     font-family: "Inter", sans-serif;
@@ -187,6 +209,7 @@
     letter-spacing: 0;
     text-align: center;
 }
+
 .header-registration-popup__subtitle {
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -196,6 +219,7 @@
     letter-spacing: 0px;
     text-align: center;
 }
+
 .header-registration-popup__form {
     background: white;
     border-radius: 50px;
@@ -206,6 +230,7 @@
     flex-direction: column;
     gap: 25px;
 }
+
 .header-registration-popup__label {
     width: 280px;
     height: 40px;
@@ -215,6 +240,7 @@
     align-items: center;
     border-radius: 50px;
 }
+
 .header-registration-popup__input {
     width: 100%;
     margin: 0 10px;
@@ -222,18 +248,20 @@
     border: none;
     font-family: 'Inter', sans-serif;
     font-style: normal;
-    font-weight: 600; 
+    font-weight: 600;
     font-size: 12px;
     line-height: normal;
     letter-spacing: 0px;
-    text-align: left; 
+    text-align: left;
     color: black;
 }
+
 .header-registration-popup__input::placeholder {
     color: rgba(0, 60, 255, 1);
 }
+
 .header-registration-popup__submit {
-    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%,rgba(0, 18, 196, 0.9) 60%,rgba(48, 177, 236, 1) 100%);
+    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%, rgba(0, 18, 196, 0.9) 60%, rgba(48, 177, 236, 1) 100%);
     padding: 10px;
     border-radius: 50px;
     color: white;
@@ -241,33 +269,38 @@
     font-style: normal;
     font-weight: 800;
     font-size: 14px;
-    line-height: normal; 
+    line-height: normal;
     letter-spacing: 0px;
     text-align: center;
 }
+
 .header-registration-popup__submit:hover {
     transform: scale(1.03);
     opacity: 0.7;
 }
-.header-registration-signup-popup__have-account, .header-registration-signin-popup__donothave-account {
+
+.header-registration-signup-popup__have-account,
+.header-registration-signin-popup__donothave-account {
     font-family: 'Inter', sans-serif;
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
-    line-height: normal; 
+    line-height: normal;
     letter-spacing: 0px;
-    text-align: center; 
+    text-align: center;
     display: flex;
     align-items: center;
     color: black;
     gap: 5px;
 }
-.header-registration-signup-popup__have-account-link, .header-registration-signin-popup__donothave-account-link {
+
+.header-registration-signup-popup__have-account-link,
+.header-registration-signin-popup__donothave-account-link {
     font-family: 'Inter', sans-serif;
     font-style: normal;
-    font-weight: 600; 
+    font-weight: 600;
     font-size: 12px;
-    line-height: normal; 
+    line-height: normal;
     letter-spacing: 0px;
     text-align: center;
     display: flex;
@@ -275,14 +308,19 @@
     justify-content: center;
     color: rgba(0, 60, 255, 1);
 }
-.header-registration-signup-popup__have-account-link:hover, .header-registration-signin-popup__donothave-account-link:hover {
+
+.header-registration-signup-popup__have-account-link:hover,
+.header-registration-signin-popup__donothave-account-link:hover {
     transform: scale(1.03);
     opacity: 0.7;
 }
-.header-registration-signup-popup__have-account-arrow, .header-registration-signin-popup__donothave-account-arrow {
+
+.header-registration-signup-popup__have-account-arrow,
+.header-registration-signin-popup__donothave-account-arrow {
     width: 20px;
     height: 20px;
 }
+
 /* POPUP SignUP */
 /* POPUP SignIN */
 .header-registration-singin-popup {
@@ -291,15 +329,64 @@
     padding: 0;
     margin: 0;
     background-color: white;
-    background: linear-gradient(rgba(0, 1, 5, 1) 0%,rgba(0, 18, 196, 1) 60%,rgba(48, 177, 236, 1) 100%);
+    background: linear-gradient(rgba(0, 1, 5, 1) 0%, rgba(0, 18, 196, 1) 60%, rgba(48, 177, 236, 1) 100%);
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: fixed;
     inset: 0;
     z-index: 1000;
-    display: none;
 }
+
+/* ------- */
+
+/* Кнопка Google Входу */
+.header-registration-popup__google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    background-color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.header-registration-popup__google-btn:hover {
+    background-color: #f7f9fa;
+}
+
+.google-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Розділювач "or" */
+.header-registration-popup__divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 15px 0;
+    color: #888888;
+    font-size: 14px;
+}
+
+.header-registration-popup__divider::before,
+.header-registration-popup__divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.header-registration-popup__divider span {
+    padding: 0 10px;
+}
+
+/* ------- */
 
 /* ----------------------------------------HEADERPAGE--------------------------------------------| */
 
@@ -310,36 +397,41 @@
     gap: 20px;
     position: relative;
 }
+
 .header__username {
     font-family: 'Inter', sans-serif;
-    font-weight: 800;          
+    font-weight: 800;
     font-size: 14px;
-    letter-spacing: 0px;      
-    line-height: normal;    
-    text-align: center;       
-    vertical-align: middle;   
+    letter-spacing: 0px;
+    line-height: normal;
+    text-align: center;
+    vertical-align: middle;
 }
+
 .header__username-settings {
     width: 80px;
     height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(rgba(0, 1, 5, 1) 0%,rgba(0, 18, 196, 1) 60%,rgba(48, 177, 236, 1) 100%);
+    background: linear-gradient(rgba(0, 1, 5, 1) 0%, rgba(0, 18, 196, 1) 60%, rgba(48, 177, 236, 1) 100%);
     border-radius: 20px;
 }
+
 .header__username-settings:hover {
     transform: scale(1.03);
     opacity: 0.7;
 }
+
 .header__username-avatar {
     width: 20px;
     height: 20px;
 }
+
 /* POPUP */
 .header__user-info {
     width: 350px;
-    background: linear-gradient(rgba(0, 1, 5, 1) 0%,rgba(0, 18, 196, 1) 60%,rgba(48, 177, 236, 1) 100%);
+    background: linear-gradient(rgba(0, 1, 5, 1) 0%, rgba(0, 18, 196, 1) 60%, rgba(48, 177, 236, 1) 100%);
     position: absolute;
     top: 60px;
     right: -40px;
@@ -351,11 +443,13 @@
     padding-top: 30px;
     border-radius: 50px;
 }
+
 .header__user-info-img {
     width: 120px;
     height: 120px;
     border-radius: 50%;
 }
+
 .user-info-group {
     width: 100%;
     display: flex;
@@ -367,22 +461,25 @@
     border-radius: 50px;
     background: rgba(255, 255, 255, 0.6);
 }
+
 .header__user-info-name {
     font-family: 'Inter', sans-serif;
-    font-weight: 700;      
+    font-weight: 700;
     font-size: 30px;
-    letter-spacing: 0px;      
-    line-height: normal;     
+    letter-spacing: 0px;
+    line-height: normal;
     color: black;
 }
+
 .eader__user-info-days {
     font-family: 'Inter', sans-serif;
-    font-weight: 700;      
+    font-weight: 700;
     font-size: 25px;
-    letter-spacing: 0px;      
-    line-height: normal;  
-    color: black;  
+    letter-spacing: 0px;
+    line-height: normal;
+    color: black;
 }
+
 .header__user-info-button-close {
     position: absolute;
     top: 20px;
@@ -390,10 +487,12 @@
     background-color: none;
     background: none;
 }
+
 .header__user-info-button-close-icon {
     width: 20px;
     height: 20px;
 }
+
 .header__user-info-button-close:hover {
     transform: scale(1.03);
     opacity: 0.7;
@@ -404,13 +503,14 @@
 .hero {
     width: 100%;
     height: 468px;
-    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%,rgba(0, 18, 196, 0.9) 60%,rgba(48, 177, 236, 1) 100%);
+    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%, rgba(0, 18, 196, 0.9) 60%, rgba(48, 177, 236, 1) 100%);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 0;
     border-radius: 50px;
 }
+
 .hero__info {
     display: flex;
     justify-content: center;
@@ -419,26 +519,29 @@
     gap: 30px;
     margin-left: 40px;
 }
+
 .hero__title {
     width: 390px;
     font-family: 'Inter', sans-serif;
     font-style: normal;
     font-weight: 900;
     font-size: 40px;
-    line-height: normal; 
+    line-height: normal;
     letter-spacing: 0px;
     text-align: center;
 }
+
 .hero__untertitle {
     width: 315px;
     font-family: 'Inter', sans-serif;
     font-style: normal;
     font-weight: 400;
     font-size: 17px;
-    line-height: normal; 
+    line-height: normal;
     letter-spacing: 0px;
-    text-align: center; 
+    text-align: center;
 }
+
 .hero__start-button {
     border-radius: 20px;
     font-family: "Inter", sans-serif;
@@ -451,18 +554,21 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%,rgba(0, 18, 196, 0.9) 60%,rgba(48, 177, 236, 1) 100%);
+    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%, rgba(0, 18, 196, 0.9) 60%, rgba(48, 177, 236, 1) 100%);
     gap: 5px;
     padding: 10px;
 }
+
 .hero__start-button:hover {
     transform: scale(1.03);
     opacity: 0.7;
 }
+
 .hero__start-icon {
     width: 20px;
     height: 20px;
 }
+
 .hero__image {
     width: 590px;
     height: 375px;
@@ -481,21 +587,24 @@
     flex-direction: column;
     gap: 20px;
 }
+
 .features__title {
     font-family: 'Inter', sans-serif;
-    font-style: italic; 
-    font-weight: 900; 
+    font-style: italic;
+    font-weight: 900;
     font-size: 45px;
-    line-height: normal; 
+    line-height: normal;
     letter-spacing: 0px;
     text-align: center;
 }
+
 .features__item-box {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+
 .features__item {
     width: 350px;
     height: 150px;
@@ -503,21 +612,23 @@
     justify-content: center;
     align-items: center;
     gap: 20px;
-    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%,rgba(0, 18, 196, 0.9) 60%,rgba(48, 177, 236, 1) 100%);
+    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%, rgba(0, 18, 196, 0.9) 60%, rgba(48, 177, 236, 1) 100%);
     border-radius: 50px;
 }
+
 .features__item-img {
     width: 80px;
 }
+
 .features__itme-text {
     width: 192px;
     font-family: 'Inter', sans-serif;
     font-style: normal;
-    font-weight: 900; 
+    font-weight: 900;
     font-size: 18px;
-    line-height: normal; 
+    line-height: normal;
     letter-spacing: 0px;
-    text-align: center; 
+    text-align: center;
 }
 
 /* ----------------------------------------HOW-IT-WORKS--------------------------------------------| */
@@ -531,30 +642,34 @@
     gap: 20px;
     position: relative;
 }
+
 .how-it-works__title {
     font-family: 'Inter', sans-serif;
-    font-style: italic; 
-    font-weight: 900; 
+    font-style: italic;
+    font-weight: 900;
     font-size: 45px;
-    line-height: normal; 
+    line-height: normal;
     letter-spacing: 0px;
     text-align: center;
 }
+
 .how-it-works__content {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     gap: 40px;
-    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%,rgba(0, 18, 196, 0.9) 60%,rgba(48, 177, 236, 1) 100%);
+    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%, rgba(0, 18, 196, 0.9) 60%, rgba(48, 177, 236, 1) 100%);
     border-radius: 50px;
     padding: 20px;
 }
+
 .how-it-works__number-group {
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 .how-it-works__number {
     width: 80px;
     height: 80px;
@@ -562,24 +677,27 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%,rgba(0, 18, 196, 0.9) 60%,rgba(48, 177, 236, 1) 100%);
+    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%, rgba(0, 18, 196, 0.9) 60%, rgba(48, 177, 236, 1) 100%);
     font-family: 'Karantina', cursive, sans-serif;
     font-style: normal;
-    font-weight: 400; 
+    font-weight: 400;
     font-size: 45px;
-    line-height: normal; 
+    line-height: normal;
     letter-spacing: 0px;
-    opacity: 1; 
+    opacity: 1;
 }
+
 .how-it-works__line {
     width: 122px;
 }
+
 .how-it-works__blocks-group {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 14px;
 }
+
 .how-it-works__block {
     width: 190px;
     height: 146px;
@@ -589,20 +707,23 @@
     flex-direction: column;
     gap: 40px;
 }
+
 .how-it-works__block-title {
     width: 100%;
     font-family: 'Inter', sans-serif;
     font-style: normal;
     font-weight: 700;
     font-size: 35px;
-    line-height: normal; 
+    line-height: normal;
     letter-spacing: 0px;
     text-align: center;
 }
+
 .how-it-works__block-img {
     width: 50px;
     height: 50px;
 }
+
 .how-it-works__mascot {
     position: absolute;
     top: 100px;
@@ -620,24 +741,27 @@
     flex-direction: column;
     gap: 20px;
 }
+
 .vwa__title {
     font-family: 'Inter', sans-serif;
-    font-style: italic; 
-    font-weight: 900; 
+    font-style: italic;
+    font-weight: 900;
     font-size: 45px;
-    line-height: normal; 
+    line-height: normal;
     letter-spacing: 0px;
     text-align: center;
 }
+
 .vwa__content {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 40px;
-    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%,rgba(0, 18, 196, 0.9) 60%,rgba(48, 177, 236, 1) 100%);
+    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%, rgba(0, 18, 196, 0.9) 60%, rgba(48, 177, 236, 1) 100%);
     border-radius: 50px;
     padding: 20px;
 }
+
 .vwa__author-group {
     display: flex;
     justify-content: center;
@@ -645,11 +769,13 @@
     flex-direction: column;
     gap: 20px;
 }
+
 .vwa__author-img {
     width: 321px;
     height: 355px;
     border-radius: 50px;
 }
+
 .vwa__author-info {
     display: flex;
     justify-content: center;
@@ -657,6 +783,7 @@
     flex-direction: column;
     gap: 12px;
 }
+
 .vwa__author-title {
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -666,23 +793,24 @@
     letter-spacing: 0px;
     text-align: center;
 }
+
 .vwa__author-subtitle {
     font-family: 'Inter', sans-serif;
-    font-style: italic; 
-    font-weight: 300; 
+    font-style: italic;
+    font-weight: 300;
     font-size: 20px;
-    line-height: normal; 
+    line-height: normal;
     letter-spacing: 0px;
     text-align: center;
 }
+
 .vwa__pharagrph {
     width: 470px;
     font-family: 'Inter', sans-serif;
-    font-style: italic; 
-    font-weight: 200; 
+    font-style: italic;
+    font-weight: 200;
     font-size: 18px;
     line-height: normal;
     letter-spacing: 0px;
     text-align: left;
-}   
-
+}
