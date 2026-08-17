@@ -25,6 +25,7 @@
     "axios": "^1.13.2",
     "basiclightbox": "^5.0.4",
     "debounce": "^3.0.0",
+    "firebase": "^12.17.1",
     "handlebars": "^4.7.8"
   }
 }

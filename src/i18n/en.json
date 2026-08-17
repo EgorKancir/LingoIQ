@@ -1,0 +1,47 @@
+{
+    "header": {
+        "features": "Features",
+        "howItWorks": "How it works",
+        "signIn": "Sign In",
+        "startLearning": "Start Learning",
+        "hello": "Hello!",
+        "craeteYourAccount": "Create your Account",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "signUp": "Sign Up",
+        "alreadyHaveAnAccount": "Already have an account?",
+        "dontHaveAnAccount": "Don't have an account?"
+    },
+    "hero": {
+        "learnLanguages": "Learn languages",
+        "rememberForever": "Remember forever",
+        "untertitle": "A platform that turns words into knowledge — powered by the science of memory",
+        "startNow": "Start Now"
+    },
+    "main": {
+        "quote": "Less memorizing More understanding"
+    },
+    "features": {
+        "features": "Features",
+        "basedOn": "Based on the Ebbinghaus method",
+        "onePlace": "All in one place",
+        "madeBy": "Made by a learner, for learners"
+    },
+    "how-it-works": {
+        "howItWorks": "How it works",
+        "add": "Add",
+        "learn": "Learn",
+        "repeat": "Repeat",
+        "remember": "Remember"
+    },
+    "vwa": {
+        "creator": "(Creator of LingoIQ)",
+        "pharagrph": "Hi! I’m Yehor, and LingoIQ is my VWA project.<br><br>I created this site to make language learning <b>simpler and more structured.</b><br>Here, you can find words, grammar rules, and learning tools <b>all in one place.</b><br><br>The site includes a program I developed using <b>Hermann Ebbinghaus’ spaced repetition method</b> to help you remember words efficiently. It’s designed for students, migrants, and anyone eager to learn languages, offering <b>clear structures and easy navigation.</b><br><br>With LingoIQ, I want to give everyone the same opportunity I had: a clear path to mastering a new language."
+    },
+    "footer": {
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "cookies": "Cookies"
+    }
+}
