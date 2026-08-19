@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LingoIQ</title>
+    <link rel="shortcut icon" href="/favicon.a60c391f.svg" type="image/x-icon">
+    <link rel="stylesheet" href="/main.1603664a.css">
+    <link rel="stylesheet" href="/home.59891e64.css">
+    <link rel="stylesheet" href="/userpage.865aedaf.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Karantina:wght@300;400;700&family=Squada+One&display=swap" rel="stylesheet">
+<script src="/userpage.865aedaf.js"></script><script src="/languagepage.js"></script></head>
+
+<body>
+    <header class="header container">
+        <div class="header__content">
+            <a class="logo__link" href="/index.html">
+                <img src="/lingoiq_logo.6f254eab.svg" alt="logo" class="logo__image">
+            </a>
+            <nav class="home-navigation">
+                <ul class="home-navigation__list">
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="#features-id">Home</a>
+                    </li>
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="#how-it-works-id">Calendar</a>
+                    </li>
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="#vwa-id">Languages</a>
+                    </li>
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="#vwa-id">Websites</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="header__language">
+                <button type="button" class="header__language-button">
+                    <img src="/language-icon.6ce7e1b2.svg" alt="Language-button">
+                </button>
+                <!-- POPUP -->
+                <div class="header-language-popup disable">
+                    <ul class="header-language-popup__list">
+                        <li class="header-language-popup__item">
+                            <button class="header-language-popup__button header-language-popup__button--active" type="button" id="English">English</button>
+                        </li>
+                        <li class="header-language-popup__item">
+                            <button class="header-language-popup__button" type="button" id="German">German</button>
+                        </li>
+                        <li class="header-language-popup__item">
+                            <button class="header-language-popup__button" type="button" id="Ukrainian">Ukrainian</button>
+                        </li>
+                    </ul>
+                </div>
+                <!-- POPUP -->
+            </div>
+            <div class="header__user-block">
+                <p class="header__username">Username</p>
+                <button type="button" class="header__username-settings">
+                    <img src="/avatar.85cadf2b.svg" alt="icon" class="header__username-avatar">
+                </button>
+                <!-- POPUP -->
+                <div class="header__user-info disable">
+                    <button class="header__user-info-button-close">
+                        <img class="header__user-info-button-close-icon" src="/close-icon.5d4f9c55.svg" alt="close">
+                    </button>
+                    <img class="header__user-info-img" src="/author-img.a594e323.jpg" alt="User">
+                    <div class="user-info-group">
+                        <h2 class="header__user-info-name">Loading...</h2>
+                        <button type="button" id="logout-btn" class="logout-button">Log Out</button>
+                    </div>
+                </div>
+                <!-- POPUP -->
+            </div>
+        </div>
+    </header>
+    <main class="main">
+        <div class="container main__content">
+            <div class="calendar">
+                <h2 class="clendar__title">Calendar</h2>
+                <div class="calendar__date-group">
+                    <div class="calendar__element" id="calendar-element">
+                        <p class="calendar__element-date">Date: <span class="calendar__element-date-number">10.01.2027</span></p>
+                        <div class="calendar__element-language-block">
+                            <img src="/de.21987b0e.svg" alt="Language-flag" class="calendar__element-language-icon">
+                            <p class="calendar__element-language-name">Deutsch</p>
+                        </div>
+                        <p class="calendar__element-words">Number of words: <span class="calendar__element-number">20</span></p>
+                        <a href="#" class="calendar__element-repeat">Repeat</a>
+                    </div>
+                    <div class="calendar__element" id="calendar-element">
+                        <p class="calendar__element-date">Date: <span class="calendar__element-date-number">10.01.2027</span></p>
+                        <div class="calendar__element-language-block">
+                            <img src="/de.21987b0e.svg" alt="Language-flag" class="calendar__element-language-icon">
+                            <p class="calendar__element-language-name">Deutsch</p>
+                        </div>
+                        <p class="calendar__element-words">Number of words: <span class="calendar__element-number">20</span></p>
+                        <a href="#" class="calendar__element-repeat">Repeat</a>
+                    </div>
+                    <div class="calendar__element" id="calendar-element">
+                        <p class="calendar__element-date">Date: <span class="calendar__element-date-number">10.01.2027</span></p>
+                        <div class="calendar__element-language-block">
+                            <img src="/de.21987b0e.svg" alt="Language-flag" class="calendar__element-language-icon">
+                            <p class="calendar__element-language-name">Deutsch</p>
+                        </div>
+                        <p class="calendar__element-words">Number of words: <span class="calendar__element-number">20</span></p>
+                        <a href="#" class="calendar__element-repeat">Repeat</a>
+                    </div>
+                    <div class="calendar__element" id="calendar-element">
+                        <p class="calendar__element-date">Date: <span class="calendar__element-date-number">10.01.2027</span></p>
+                        <div class="calendar__element-language-block">
+                            <img src="/de.21987b0e.svg" alt="Language-flag" class="calendar__element-language-icon">
+                            <p class="calendar__element-language-name">Deutsch</p>
+                        </div>
+                        <p class="calendar__element-words">Number of words: <span class="calendar__element-number">20</span></p>
+                        <a href="#" class="calendar__element-repeat">Repeat</a>
+                    </div>
+                </div>
+            </div>
+            <div class="your-languages">
+                <h2 class="your-languages__title">Your languages</h2>
+                <div class="your-languages__language-group">
+                    <ul class="your-languages__language-list">
+                        <li class="your-languages__item">
+                            <a href="/languagepage.html" class="your-languages__item-link">
+                                <img src="/de.21987b0e.svg" alt="Flag" class="your-languages__item-flag">
+                                <span class="your-languages__item-title">DE</span>
+                            </a>
+                        </li>
+                        <li class="your-languages__item">
+                            <a href="#" class="your-languages__item-link">
+                                <img src="/fr.e14fc102.svg" alt="Flag" class="your-languages__item-flag">
+                                <span class="your-languages__item-title">FR</span>
+                            </a>
+                        </li>
+                        <li class="your-languages__item">
+                            <a href="#" class="your-languages__item-link">
+                                <img src="/sh.d4e6ec30.svg" alt="Flag" class="your-languages__item-flag">
+                                <span class="your-languages__item-title">EN</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <button class="your-languages__language-addbutton">
+                        <img class="your-languages__language-button-icon" src="/plus.117d99ad.svg" alt="plus">
+                    </button>
+                </div>
+            </div>
+            <h1 class="quote">
+                Make it make sense,
+                don't just make it
+                stick.
+            </h1>
+            <div class="websites">
+                <h2 class="websites__title">Websites</h2>
+                <ul class="websites__list">
+                    <li class="websites__item">
+                        <img src="/randomlogo.8d6d8380.png" alt="Logo" class="websites__logo-img">
+                        <h3 class="websites__name">Websites-name</h3>
+                        <a href="#" class="websites__link">https:///randomlinks.com/homepage</a>
+                    </li>
+                    <li class="websites__item">
+                        <img src="/randomlogo.8d6d8380.png" alt="Logo" class="websites__logo-img">
+                        <h3 class="websites__name">Websites-name</h3>
+                        <a href="#" class="websites__link">https:///randomlinks.com/homepage</a>
+                    </li>
+                    <li class="websites__item">
+                        <img src="/randomlogo.8d6d8380.png" alt="Logo" class="websites__logo-img">
+                        <h3 class="websites__name">Websites-name</h3>
+                        <a href="#" class="websites__link">https:///randomlinks.com/homepage</a>
+                    </li>
+                </ul>
+                <img class="websites__mascot" src="/mascot-hmm.b037b82d.png" alt="Mascot-hmm">
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        <a href="#" class="footer-panel__logo-link">
+            <img src="/lingoiq_logo-footer.b7cc8964.svg" alt="logo" class="footer-panel__logo-img">
+        </a>
+        <div class="footer__social-media">
+            <a href="#" class="footer__social-media-link">
+                <img src="/youtube.d47b8ee1.svg" alt="Youtube" class="footer__social-media-icon">
+            </a>
+            <a href="#" class="footer__social-media-link">
+                <img src="/github.1807d453.svg" alt="GitHub" class="footer__social-media-icon">
+            </a>
+            <a href="#" class="footer__social-media-link">
+                <img src="/insta.c5089585.svg" alt="Instagram" class="footer__social-media-icon">
+            </a>
+        </div>
+        <div class="footer__politics-group">
+            <p class="footer__copyrighting">© 2026 LingoIQ</p>
+            <ul class="footer__rules-list">
+                <li class="footer__rules-item">
+                    <a href="#" class="footer__rules-link">Privacy</a>
+                </li>
+                <li class="footer__rules-item">
+                    <a href="#" class="footer__rules-link">Terms</a>
+                </li>
+                <li class="footer__rules-item">
+                    <a href="#" class="footer__rules-link">Cookies</a>
+                </li>
+            </ul>
+        </div>
+    </footer>
+    <script type="module" src="/userpage.be53b8d2.js"></script>
+</body>
+
+</html>

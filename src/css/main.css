@@ -13,6 +13,9 @@ body {
     background-position: left 0 bottom 0, left 50% bottom 0, right -300px top 500px, left -340px bottom 430px, center;
     padding-bottom: 280px;
 }
+body.no-scroll {
+    overflow: hidden;
+}
 .container {
     width: 1200px;
     padding: 0 15px;

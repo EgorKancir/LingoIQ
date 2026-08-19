@@ -1,0 +1,264 @@
+/* |----------------------------------------CALENDAR--------------------------------------------| */
+
+.calendar {
+    padding: 30px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    background: linear-gradient(rgba(0, 1, 5, 1) 0%,rgba(0, 18, 196, 1) 60%,rgba(48, 177, 236, 1) 100%);
+    border-radius: 50px;
+}
+.clendar__title {
+    font-family: 'Inter', sans-serif;
+    font-style: italic; 
+    font-weight: 900; 
+    font-size: 45px;
+    line-height: normal; 
+    letter-spacing: 0px;
+    text-align: center;
+}
+.calendar__date-group {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    gap: 20px;
+}
+.calendar__element {
+    width: 858px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgb(255 255 255 / 5%);
+    border-radius: 20px;
+}
+.calendar__element-date {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;         
+    font-size: 14px;
+    letter-spacing: 0px;      
+    line-height: normal;       
+    text-align: center;  
+    vertical-align: middle;
+}
+.calendar__element-language-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.calendar__element-language-icon {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+}
+.calendar__element-language-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;         
+    font-size: 14px;
+    letter-spacing: 0px;      
+    line-height: normal;       
+    text-align: center;  
+    vertical-align: middle;
+}
+.calendar__element-words {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;         
+    font-size: 14px;
+    letter-spacing: 0px;      
+    line-height: normal;       
+    text-align: center;  
+    vertical-align: middle;
+}
+.calendar__element-repeat {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;         
+    font-size: 14px;
+    letter-spacing: 0px;      
+    line-height: normal;       
+    text-align: center;  
+    vertical-align: middle;
+    color: white;
+    width: 70px;
+    height: 30px;
+    box-sizing: border-box;
+    border: rgba(0, 18, 196, 1) 4px solid;
+    border-radius: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.calendar__element-repeat:hover {
+    transform: scale(1.03);
+    opacity: 0.7;
+}
+
+/* |----------------------------------------YOUR-LANGUAGES--------------------------------------------| */
+
+.your-languages {
+    padding: 30px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    background: linear-gradient(rgba(0, 1, 5, 1) 0%,rgba(0, 18, 196, 1) 60%,rgba(48, 177, 236, 1) 100%);
+    border-radius: 50px;
+}
+.your-languages__title {
+    font-family: 'Inter', sans-serif;
+    font-style: italic; 
+    font-weight: 900; 
+    font-size: 45px;
+    line-height: normal; 
+    letter-spacing: 0px;
+    text-align: center;
+}
+.your-languages__language-group {
+    width: 858px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 30px 20px;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgb(255 255 255 / 5%);
+    border-radius: 20px;
+}
+.your-languages__language-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+.your-languages__item-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+}
+.your-languages__item-link:hover {
+    transform: scale(1.04);
+}
+.your-languages__item-flag {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+}
+.your-languages__item-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;         
+    font-size: 20px;
+    letter-spacing: 0px;      
+    line-height: normal;       
+    text-align: center;  
+    vertical-align: middle;
+    color: black;
+}
+.your-languages__language-addbutton {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(rgba(0, 1, 5, 1) 0%,rgba(0, 18, 196, 1) 60%,rgba(48, 177, 236, 1) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.your-languages__language-button-icon {
+    width: 50px;
+    height: 50px;
+}
+.your-languages__language-addbutton:hover {
+    transform: scale(1.03);
+    opacity: 0.7;
+}
+
+/* |----------------------------------------WEBSITES--------------------------------------------| */
+
+.websites {
+    padding: 30px;
+    width: 65%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    background: linear-gradient(rgba(0, 1, 5, 1) 0%,rgba(0, 18, 196, 1) 60%,rgba(48, 177, 236, 1) 100%);
+    border-radius: 50px;
+    position: relative;
+}
+.websites__title {
+    font-family: 'Inter', sans-serif;
+    font-style: italic; 
+    font-weight: 900; 
+    font-size: 45px;
+    line-height: normal; 
+    letter-spacing: 0px;
+    text-align: center;
+}
+.websites__list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+}
+.websites__item {
+    border: white 1px solid;
+    border-radius: 20px;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+.websites__logo-img {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+}
+.websites__name {
+    font-family: "Audiowide", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: normal; 
+    letter-spacing: 0px;
+    text-align: center;
+    color: white;
+}
+.websites__link {
+    font-family: "Audiowide", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: normal; 
+    letter-spacing: 0px;
+    text-align: center;
+    color: rgba(0, 133, 234, 1);
+}
+.websites__link:hover {
+    transform: scale(1.03);
+    color: rgb(126, 126, 255);
+}
+.websites__mascot {
+    position: absolute;
+    top: 100px;
+    left: -185px;
+    z-index: 100;
+}
+
+/*# sourceMappingURL=/userpage.865aedaf.css.map */

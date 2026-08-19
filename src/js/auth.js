@@ -3,21 +3,21 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signInWithPopup,
-    signOut
+    setPersistence,
+    browserLocalPersistence,
+    signOut,
+    onAuthStateChanged
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 /**
- * Створює або перевіряє документ користувача у Firestore
- * @param {Object} user - об'єкт користувача з Firebase Auth
- * @param {Object} customData - додаткові дані (наприклад, username)
+ * Створення профілю користувача у Firestore
  */
 async function createUserProfile(user, customData = {}) {
     try {
         const userRef = doc(db, 'users', user.uid);
         const snapshot = await getDoc(userRef);
 
-        // Якщо користувач новий (немає запису в БД), створюємо його профіль
         if (!snapshot.exists()) {
             await setDoc(userRef, {
                 uid: user.uid,
@@ -26,41 +26,10 @@ async function createUserProfile(user, customData = {}) {
                 createdAt: new Date().toISOString(),
                 nativeLang: customData.nativeLang || 'uk'
             });
-            console.log('Профіль користувача успішно створено в Firestore');
+            console.log('Профіль успішно створено у Firestore');
         }
     } catch (error) {
-        console.error('Помилка створення профілю в Firestore:', error);
-    }
-}
-
-/**
- * Реєстрація через Email та пароль
- */
-export async function registerWithEmail(email, password, displayName) {
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await createUserProfile(userCredential.user, { displayName });
-
-        // Перенаправлення на сторінку користувача
-        window.location.href = 'userpage.html';
-    } catch (error) {
-        console.error('Помилка реєстрації:', error.message);
-        alert(`Помилка реєстрації: ${error.message}`);
-    }
-}
-
-/**
- * Вхід через Email та пароль
- */
-export async function loginWithEmail(email, password) {
-    try {
-        await signInWithEmailAndPassword(auth, email, password);
-
-        // Перенаправлення на сторінку користувача
-        window.location.href = 'userpage.html';
-    } catch (error) {
-        console.error('Помилка входу:', error.message);
-        alert(`Помилка входу: ${error.message}`);
+        console.error('Помилка запису профілю Firestore:', error);
     }
 }
 
@@ -69,25 +38,66 @@ export async function loginWithEmail(email, password) {
  */
 export async function loginWithGoogle() {
     try {
+        // Фіксуємо збереження сесії в LocalStorage перед відкриттям Popup
+        await setPersistence(auth, browserLocalPersistence);
+
+        console.log('Відкриваємо вікно авторизації Google...');
         const result = await signInWithPopup(auth, googleProvider);
+        console.log('Успішний вхід:', result.user);
+
+        // Створюємо профіль
         await createUserProfile(result.user);
 
         // Перенаправлення на сторінку користувача
         window.location.href = 'userpage.html';
     } catch (error) {
-        console.error('Помилка входу через Google:', error.message);
-        alert(`Помилка Google Sign-In: ${error.message}`);
+        console.error('Помилка Google Auth:', error);
+        // Якщо це просто закриття вікна користувачем, не виводимо помилку
+        if (error.code !== 'auth/popup-closed-by-user') {
+            alert(`Помилка авторизації Google: ${error.message}`);
+        }
     }
 }
 
 /**
- * Вихід з акаунта
+ * Вхід та реєстрація через Email
  */
+export async function registerWithEmail(email, password, displayName) {
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await createUserProfile(userCredential.user, { displayName });
+        window.location.href = 'userpage.html';
+    } catch (error) {
+        alert(`Помилка реєстрації: ${error.message}`);
+    }
+}
+
+export async function loginWithEmail(email, password) {
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = 'userpage.html';
+    } catch (error) {
+        alert(`Помилка входу: ${error.message}`);
+    }
+}
+
+/**
+ * Глобальний слухач авторизації
+ */
+onAuthStateChanged(auth, (user) => {
+    const currentPath = window.location.pathname;
+    const isIndex = currentPath.endsWith('index.html') || currentPath === '/' || currentPath === '';
+
+    if (user && isIndex) {
+        window.location.href = 'userpage.html';
+    }
+});
+
 export async function logout() {
     try {
         await signOut(auth);
         window.location.href = 'index.html';
     } catch (error) {
-        console.error('Помилка виходу з акаунта:', error.message);
+        console.error('Помилка виходу:', error);
     }
 }
