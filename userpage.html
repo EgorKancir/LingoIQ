@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang=en><script type=module src=/LingoIQ/LingoIQ.f02af4be.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.9624c703.css><link rel=stylesheet href=/LingoIQ/LingoIQ.7ebc8d7c.css><link rel=stylesheet href=/LingoIQ/userpage.f421c3a3.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
+<!DOCTYPE html><html lang=en><script type=module src=/LingoIQ/LingoIQ.c692618f.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.9624c703.css><link rel=stylesheet href=/LingoIQ/LingoIQ.2c7bf6a3.css><link rel=stylesheet href=/LingoIQ/userpage.e1e2d956.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
     <header class="container header">
         <div class=header__content>
             <a class=logo__link href=/LingoIQ/index.html>
@@ -47,14 +47,29 @@
                 </button>
                 
                 <div class="disable header__user-info">
-                    <button class=header__user-info-button-close>
+                    <button type=button class=header__user-info-button-close>
                         <img class=header__user-info-button-close-icon src=/LingoIQ/close-icon.a10ddf58.svg alt=close>
                     </button>
                     <img class=header__user-info-img src=/LingoIQ/author-img.f4236d63.jpg alt=User>
                     <div class=user-info-group>
+                        <button type=button class=header__user-info-button-edit id=edit-profile-toggle-btn>
+                            <img class=header__user-info-button-edit-icon src=/LingoIQ/edit-icon.fdc68859.svg alt=edit>
+                        </button>
                         <h2 class=header__user-info-name>Loading...</h2>
-                        <button type=button id=logout-btn class=logout-button>Log Out</button>
+                        <h2 class=header__user-info-language>Native language: <span id=nativlang></span></h2>
+                        <button type=button id=logout-btn class=header__user-info-button-logout>Log Out</button>
                     </div>
+
+                    
+                    <form class="disable edit-user-info__form" id=edit-user-info-form>
+                        <label class=edit-user-info__label for=username-edit>
+                            <input class=edit-user-info__input id=username-edit placeholder=Username data-i18n-placeholder=header.username>
+                        </label>
+                        <label class=edit-user-info__label for=avatar-file-edit>
+                            <input class=edit-user-info__input type=file id=avatar-file-edit accept=image/*>
+                        </label>
+                        <button class=edit-user-info__submit id=edit-user-info-btn>Save</button>
+                    </form>
                 </div>
                 
             </div>
@@ -189,6 +204,6 @@
             </ul>
         </div>
     </footer>
-    <script type=module src=/LingoIQ/userpage.00666a6e.js></script>
+    <script type=module src=/LingoIQ/userpage.c7bf571a.js></script>
 
 
