@@ -1,236 +1,248 @@
-<!DOCTYPE html><html lang=en><script type=module src=/LingoIQ/LingoIQ.f02af4be.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.9624c703.css><link rel=stylesheet href=/LingoIQ/LingoIQ.7ebc8d7c.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
-    <header class="container header">
-        <div class=header__content>
-            <a class=logo__link href=/LingoIQ/index.html>
-                <img src=/LingoIQ/lingoiq_logo.c972175d.svg alt=logo class=logo__image>
+<!DOCTYPE html><html lang="en"><head><script type="module" src="/LingoIQ.b2dda906.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LingoIQ</title>
+    <link rel="shortcut icon" href="/favicon.5c0db043.svg" type="image/x-icon">
+    <link rel="stylesheet" href="/LingoIQ.34df27b5.css">
+    <link rel="stylesheet" href="/LingoIQ.c5ecc01e.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header class="header container">
+        <div class="header__content">
+            <a class="logo__link" href="/index.html">
+                <img src="/lingoiq_logo.8952cbad.svg" alt="logo" class="logo__image">
             </a>
-            <nav class=home-navigation>
-                <ul class=home-navigation__list>
-                    <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/userpage.html data-i18n=header.features>Features</a>
+            <nav class="home-navigation">
+                <ul class="home-navigation__list">
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="/userpage.html" data-i18n="header.features">Features</a>
                     </li>
-                    <li class=home-navigation__item>
-                        <a class=home-navigation__link href=#how-it-works-id data-i18n=header.howItWorks>How it
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="#how-it-works-id" data-i18n="header.howItWorks">How it
                             works</a>
                     </li>
-                    <li class=home-navigation__item>
-                        <a class=home-navigation__link href=#vwa-id>VWA</a>
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="#vwa-id">VWA</a>
                     </li>
                 </ul>
             </nav>
-            <div class=header__language>
-                <button type=button class=header__language-button id=language-toggle-btn>
-                    <img src=/LingoIQ/language-icon.3ed870db.svg alt="Language button">
+            <div class="header__language">
+                <button type="button" class="header__language-button" id="language-toggle-btn">
+                    <img src="/language-icon.350503ad.svg" alt="Language button">
                 </button>
-                
-                <div class="disable header-language-popup" id=language-popup>
-                    <ul class=header-language-popup__list>
-                        <li class=header-language-popup__item>
-                            <button class="header-language-popup__button header-language-popup__button--active" type=button data-lang=en>
+                <!-- POPUP -->
+                <div class="header-language-popup disable" id="language-popup">
+                    <ul class="header-language-popup__list">
+                        <li class="header-language-popup__item">
+                            <button class="header-language-popup__button header-language-popup__button--active" type="button" data-lang="en">
                                 English
                             </button>
                         </li>
-                        <li class=header-language-popup__item>
-                            <button class=header-language-popup__button type=button data-lang=de>
+                        <li class="header-language-popup__item">
+                            <button class="header-language-popup__button" type="button" data-lang="de">
                                 Deutsch
                             </button>
                         </li>
-                        <li class=header-language-popup__item>
-                            <button class=header-language-popup__button type=button data-lang=uk>
+                        <li class="header-language-popup__item">
+                            <button class="header-language-popup__button" type="button" data-lang="uk">
                                 Українська
                             </button>
                         </li>
                     </ul>
                 </div>
-                
+                <!-- POPUP -->
             </div>
-            <div class=header__registration-block>
-                <button type=button class=header__registration-signin id=open-signin-btn data-i18n=header.signIn>Sign in</button>
-                <button type=button class=header__registration-start id=open-signup-btn>
-                    <span data-i18n=header.startLearning>Start Learning</span>
-                    <img src=/LingoIQ/play.a9d62ba1.svg alt=icon class=header__registration-start-icon>
+            <div class="header__registration-block">
+                <button type="button" class="header__registration-signin" id="open-signin-btn" data-i18n="header.signIn">Sign in</button>
+                <button type="button" class="header__registration-start" id="open-signup-btn">
+                    <span data-i18n="header.startLearning">Start Learning</span>
+                    <img src="/play.95ee35d3.svg" alt="icon" class="header__registration-start-icon">
                 </button>
             </div>
         </div>
-        
-        <div class="disable header-registration-signup-popup">
-            <div class=header-registration-popup__img-block>
-                <img class=header-registration-popup__img src=/LingoIQ/mascot_registration.46557df7.jpg alt=Mascot>
+        <!-- POPUP REGISTRATION / SIGNUP -->
+        <div class="header-registration-signup-popup disable">
+            <div class="header-registration-popup__img-block">
+                <img class="header-registration-popup__img" src="/mascot_registration.44b74b07.jpg" alt="Mascot">
             </div>
-            <div class=header-registration-popup__info-section>
-                <div class=header-registration-popup__text-group>
-                    <h1 class=header-registration-popup__title data-i18n=header.hello>Hello!</h1>
-                    <h2 class=header-registration-popup__subtitle data-i18n=header.createYourAccount>Create your
+            <div class="header-registration-popup__info-section">
+                <div class="header-registration-popup__text-group">
+                    <h1 class="header-registration-popup__title" data-i18n="header.hello">Hello!</h1>
+                    <h2 class="header-registration-popup__subtitle" data-i18n="header.createYourAccount">Create your
                         Account</h2>
                 </div>
 
-                
-                <button type=button class=header-registration-popup__google-btn id=google-signup-btn>
-                    <img src=/LingoIQ/google-logo.2987fa1d.svg alt=Google class=google-icon>
-                    <span data-i18n=header.continueWithGoogle>Continue with Google</span>
+                <!-- Кнопка Google Входу -->
+                <button type="button" class="header-registration-popup__google-btn" id="google-signup-btn">
+                    <img src="/google-logo.a4b6f826.svg" alt="Google" class="google-icon">
+                    <span data-i18n="header.continueWithGoogle">Continue with Google</span>
                 </button>
 
-                <div class=header-registration-popup__divider>
+                <div class="header-registration-popup__divider">
                     <span>or</span>
                 </div>
 
-                <form class=header-registration-popup__form id=signup-form>
-                    <label class=header-registration-popup__label for=username-signup>
-                        <input class=header-registration-popup__input id=username-signup placeholder=Username data-i18n-placeholder=header.username required>
+                <form class="header-registration-popup__form" id="signup-form">
+                    <label class="header-registration-popup__label" for="username-signup">
+                        <input class="header-registration-popup__input" type="text" id="username-signup" placeholder="Username" data-i18n-placeholder="header.username" required="">
                     </label>
-                    <label class=header-registration-popup__label for=email-signup>
-                        <input class=header-registration-popup__input type=email id=email-signup placeholder=Email data-i18n-placeholder=header.email required>
+                    <label class="header-registration-popup__label" for="email-signup">
+                        <input class="header-registration-popup__input" type="email" id="email-signup" placeholder="Email" data-i18n-placeholder="header.email" required="">
                     </label>
-                    <label class=header-registration-popup__label for=password-signup>
-                        <input class=header-registration-popup__input type=password id=password-signup placeholder=Password data-i18n-placeholder=header.password required>
+                    <label class="header-registration-popup__label" for="password-signup">
+                        <input class="header-registration-popup__input" type="password" id="password-signup" placeholder="Password" data-i18n-placeholder="header.password" required="">
                     </label>
-                    <button class=header-registration-popup__submit id=submit-signup data-i18n=header.signUp>Sign up</button>
+                    <button class="header-registration-popup__submit" id="submit-signup" type="submit" data-i18n="header.signUp">Sign up</button>
 
-                    <p class=header-registration-signup-popup__have-account>
-                        <span data-i18n=header.alreadyHaveAnAccount>Already have an account?</span>
-                        <a href=# class=header-registration-signup-popup__have-account-link id=switch-to-signin>
-                            <span data-i18n=header.signIn>Sign in</span>
-                            <img class=header-registration-signup-popup__have-account-arrow src=/LingoIQ/arrow.9bb83fc6.svg alt=arrow>
+                    <p class="header-registration-signup-popup__have-account">
+                        <span data-i18n="header.alreadyHaveAnAccount">Already have an account?</span>
+                        <a href="#" class="header-registration-signup-popup__have-account-link" id="switch-to-signin">
+                            <span data-i18n="header.signIn">Sign in</span>
+                            <img class="header-registration-signup-popup__have-account-arrow" src="/arrow.2a6c8fe5.svg" alt="arrow">
                         </a>
                     </p>
                 </form>
             </div>
         </div>
 
-        
-        <div class="disable header-registration-signin-popup">
-            <div class=header-registration-popup__img-block>
-                <img class=header-registration-popup__img src=/LingoIQ/mascot_hi.b35b4511.jpg alt=Mascot>
+        <!-- POPUP SIGNIN -->
+        <div class="header-registration-signin-popup disable">
+            <div class="header-registration-popup__img-block">
+                <img class="header-registration-popup__img" src="/mascot_hi.80b11d8f.jpg" alt="Mascot">
             </div>
-            <div class=header-registration-popup__info-section>
-                <div class=header-registration-popup__text-group>
-                    <h1 class=header-registration-popup__title data-i18n=header.welcomeBack>Welcome back!</h1>
+            <div class="header-registration-popup__info-section">
+                <div class="header-registration-popup__text-group">
+                    <h1 class="header-registration-popup__title" data-i18n="header.welcomeBack">Welcome back!</h1>
                 </div>
 
-                
-                <button type=button class=header-registration-popup__google-btn id=google-signin-btn>
-                    <img src=/LingoIQ/google-logo.2987fa1d.svg alt=Google class=google-icon>
-                    <span data-i18n=header.continueWithGoogle>Continue with Google</span>
+                <!-- Кнопка Google Входу -->
+                <button type="button" class="header-registration-popup__google-btn" id="google-signin-btn">
+                    <img src="/google-logo.a4b6f826.svg" alt="Google" class="google-icon">
+                    <span data-i18n="header.continueWithGoogle">Continue with Google</span>
                 </button>
 
-                <div class=header-registration-popup__divider>
+                <div class="header-registration-popup__divider">
                     <span>or</span>
                 </div>
 
-                <form class=header-registration-popup__form id=signin-form>
-                    <label class=header-registration-popup__label for=email-signin>
-                        <input class=header-registration-popup__input type=email id=email-signin placeholder=Email data-i18n-placeholder=header.email required>
+                <form class="header-registration-popup__form" id="signin-form">
+                    <label class="header-registration-popup__label" for="email-signin">
+                        <input class="header-registration-popup__input" type="email" id="email-signin" placeholder="Email" data-i18n-placeholder="header.email" required="">
                     </label>
-                    <label class=header-registration-popup__label for=password-signin>
-                        <input class=header-registration-popup__input type=password id=password-signin placeholder=Password data-i18n-placeholder=header.password required>
+                    <label class="header-registration-popup__label" for="password-signin">
+                        <input class="header-registration-popup__input" type="password" id="password-signin" placeholder="Password" data-i18n-placeholder="header.password" required="">
                     </label>
-                    <button class=header-registration-popup__submit id=submit-signin data-i18n=header.signIn>Sign In</button>
+                    <button class="header-registration-popup__submit" id="submit-signin" type="submit" data-i18n="header.signIn">Sign In</button>
 
-                    <p class=header-registration-signin-popup__donothave-account>
-                        <span data-i18n=header.dontHaveAnAccount>Don't have an account?</span>
-                        <a href=# class=header-registration-signin-popup__donothave-account-link id=switch-to-signup>
-                            <span data-i18n=header.signUp>Sign Up</span>
-                            <img class=header-registration-signin-popup__donothave-account-arrow src=/LingoIQ/arrow.9bb83fc6.svg alt=arrow>
+                    <p class="header-registration-signin-popup__donothave-account">
+                        <span data-i18n="header.dontHaveAnAccount">Don't have an account?</span>
+                        <a href="#" class="header-registration-signin-popup__donothave-account-link" id="switch-to-signup">
+                            <span data-i18n="header.signUp">Sign Up</span>
+                            <img class="header-registration-signin-popup__donothave-account-arrow" src="/arrow.2a6c8fe5.svg" alt="arrow">
                         </a>
                     </p>
                 </form>
             </div>
         </div>
     </header>
-    <main class=main>
+    <main class="main">
         <div class="container main__content">
-            <div class=hero>
-                <div class=hero__info>
-                    <h1 class=hero__title>
-                        <span data-i18n=hero.learnLanguages>Learn languages</span> <br>
+            <div class="hero">
+                <div class="hero__info">
+                    <h1 class="hero__title">
+                        <span data-i18n="hero.learnLanguages">Learn languages</span> <br>
                         &amp; <br>
-                        <span data-i18n=hero.rememberForever>Remember forever</span>
+                        <span data-i18n="hero.rememberForever">Remember forever</span>
                     </h1>
-                    <h2 class=hero__untertitle data-i18n=hero.untertitle>
+                    <h2 class="hero__untertitle" data-i18n="hero.untertitle">
                         A platform that turns words into
                         knowledge — powered by the science of
                         memory
                     </h2>
-                    <button type=button class=hero__start-button>
-                        <span data-i18n=hero.startNow>Start Now</span>
-                        <img src=/LingoIQ/play.a9d62ba1.svg alt=icon class=hero__start-icon>
+                    <button type="button" class="hero__start-button">
+                        <span data-i18n="hero.startNow">Start Now</span>
+                        <img src="/play.95ee35d3.svg" alt="icon" class="hero__start-icon">
                     </button>
                 </div>
-                <img src=/LingoIQ/mascot-hero.9cb5db35.png alt=Imahe class=hero__image>
+                <img src="/mascot-hero.a4337cb7.png" alt="Imahe" class="hero__image">
             </div>
-            <h1 class=quote data-i18n=main.quote>
+            <h1 class="quote" data-i18n="main.quote">
                 Less memorizing
                 More understanding
             </h1>
-            <div class=features id=features-id>
-                <h2 class=features__title data-i18n=features.features>Features</h2>
-                <ul class=features__item-box>
-                    <li class=features__item>
-                        <img src=/LingoIQ/Ebbinghaus.77b5cc97.png alt=Ebbinghaus class=features__item-img>
-                        <h1 class=features__itme-text data-i18n=features.basedOn>
+            <div class="features" id="features-id">
+                <h2 class="features__title" data-i18n="features.features">Features</h2>
+                <ul class="features__item-box">
+                    <li class="features__item">
+                        <img src="/Ebbinghaus.6b1c1080.png" alt="Ebbinghaus" class="features__item-img">
+                        <h1 class="features__itme-text" data-i18n="features.basedOn">
                             Based on the Ebbinghaus
                             method
                         </h1>
                     </li>
-                    <li class=features__item>
-                        <img src=/LingoIQ/Place.1abc61a2.png alt="One Place" class=features__item-img>
-                        <h1 class=features__itme-text data-i18n=features.onePlace>
+                    <li class="features__item">
+                        <img src="/Place.56b76688.png" alt="One Place" class="features__item-img">
+                        <h1 class="features__itme-text" data-i18n="features.onePlace">
                             All in one place
                         </h1>
                     </li>
-                    <li class=features__item>
-                        <img src=/LingoIQ/maskot.c3631aaf.png alt=Maskot class=features__item-img>
-                        <h1 class=features__itme-text data-i18n=features.madeBy>
+                    <li class="features__item">
+                        <img src="/maskot.b58f1c78.png" alt="Maskot" class="features__item-img">
+                        <h1 class="features__itme-text" data-i18n="features.madeBy">
                             Made by a learner, for
                             learners
                         </h1>
                     </li>
                 </ul>
             </div>
-            <div class=how-it-works id=how-it-works-id>
-                <h2 class=how-it-works__title data-i18n=how-it-works.howItWorks>How it works</h2>
-                <div class=how-it-works__content>
-                    <div class=how-it-works__number-group>
-                        <h3 class=how-it-works__number>1</h3>
-                        <img src=/LingoIQ/line-b.96b32f5d.svg alt=line class=how-it-works__line>
-                        <h3 class=how-it-works__number>2</h3>
-                        <img src=/LingoIQ/line-b.96b32f5d.svg alt=line class=how-it-works__line>
-                        <h3 class=how-it-works__number>3</h3>
-                        <img src=/LingoIQ/line-b.96b32f5d.svg alt=line class=how-it-works__line>
-                        <h3 class=how-it-works__number>4</h3>
+            <div class="how-it-works" id="how-it-works-id">
+                <h2 class="how-it-works__title" data-i18n="how-it-works.howItWorks">How it works</h2>
+                <div class="how-it-works__content">
+                    <div class="how-it-works__number-group">
+                        <h3 class="how-it-works__number">1</h3>
+                        <img src="/line-b.ce13dd16.svg" alt="line" class="how-it-works__line">
+                        <h3 class="how-it-works__number">2</h3>
+                        <img src="/line-b.ce13dd16.svg" alt="line" class="how-it-works__line">
+                        <h3 class="how-it-works__number">3</h3>
+                        <img src="/line-b.ce13dd16.svg" alt="line" class="how-it-works__line">
+                        <h3 class="how-it-works__number">4</h3>
                     </div>
-                    <div class=how-it-works__blocks-group>
-                        <div class=how-it-works__block>
-                            <h4 class=how-it-works__block-title data-i18n=how-it-works.add>Add</h4>
-                            <img src=/LingoIQ/add.365675e8.svg alt=Add class=how-it-works__block-img>
+                    <div class="how-it-works__blocks-group">
+                        <div class="how-it-works__block">
+                            <h4 class="how-it-works__block-title" data-i18n="how-it-works.add">Add</h4>
+                            <img src="/add.4165d909.svg" alt="Add" class="how-it-works__block-img">
                         </div>
-                        <div class=how-it-works__block>
-                            <h4 class=how-it-works__block-title data-i18n=how-it-works.learn>Learn</h4>
-                            <img src=/LingoIQ/learn.042fb03b.svg alt=Learn class=how-it-works__block-img>
+                        <div class="how-it-works__block">
+                            <h4 class="how-it-works__block-title" data-i18n="how-it-works.learn">Learn</h4>
+                            <img src="/learn.ea124050.svg" alt="Learn" class="how-it-works__block-img">
                         </div>
-                        <div class=how-it-works__block>
-                            <h4 class=how-it-works__block-title data-i18n=how-it-works.repeat>Repeat</h4>
-                            <img src=/LingoIQ/repeat.d2408f2f.svg alt=Repeat class=how-it-works__block-img>
+                        <div class="how-it-works__block">
+                            <h4 class="how-it-works__block-title" data-i18n="how-it-works.repeat">Repeat</h4>
+                            <img src="/repeat.a0477711.svg" alt="Repeat" class="how-it-works__block-img">
                         </div>
-                        <div class=how-it-works__block>
-                            <h4 class=how-it-works__block-title data-i18n=how-it-works.remember>Remember</h4>
-                            <img src=/LingoIQ/ready.f733b096.svg alt=Remember class=how-it-works__block-img>
+                        <div class="how-it-works__block">
+                            <h4 class="how-it-works__block-title" data-i18n="how-it-works.remember">Remember</h4>
+                            <img src="/ready.af7e33bd.svg" alt="Remember" class="how-it-works__block-img">
                         </div>
                     </div>
                 </div>
-                <img class=how-it-works__mascot src=/LingoIQ/mascot-hmm.fea2fcd2.png alt=Mascot-hmm>
+                <img class="how-it-works__mascot" src="/mascot-hmm.9c45e3b5.png" alt="Mascot-hmm">
             </div>
-            <div class=vwa id=vwa-id>
-                <h2 class=vwa__title>VWA</h2>
-                <div class=vwa__content>
-                    <div class=vwa__author-group>
-                        <img src=/LingoIQ/author-img.4d998cdb.png alt="Author with mascot" class=vwa__author-img>
-                        <div class=vwa__author-info>
-                            <h1 class=vwa__author-title>Yehor Kantsyr</h1>
-                            <p class=vwa__author-subtitle data-i18n=vwa.creator>(Creator of LingoIQ)</p>
+            <div class="vwa" id="vwa-id">
+                <h2 class="vwa__title">VWA</h2>
+                <div class="vwa__content">
+                    <div class="vwa__author-group">
+                        <img src="/author-img.87b799eb.png" alt="Author with mascot" class="vwa__author-img">
+                        <div class="vwa__author-info">
+                            <h1 class="vwa__author-title">Yehor Kantsyr</h1>
+                            <p class="vwa__author-subtitle" data-i18n="vwa.creator">(Creator of LingoIQ)</p>
                         </div>
                     </div>
-                    <p class=vwa__pharagrph data-i18n=vwa.pharagrph>
+                    <p class="vwa__pharagrph" data-i18n="vwa.pharagrph">
                         Hi! I’m Yehor, and LingoIQ is my VWA project.
                         <br>
                         <br>
@@ -251,36 +263,37 @@
             </div>
         </div>
     </main>
-    <footer class=footer>
-        <a href=# class=footer-panel__logo-link>
-            <img src=/LingoIQ/lingoiq_logo-footer.d79c25c9.svg alt=logo class=footer-panel__logo-img>
+    <footer class="footer">
+        <a href="#" class="footer-panel__logo-link">
+            <img src="/lingoiq_logo-footer.2cc63f32.svg" alt="logo" class="footer-panel__logo-img">
         </a>
-        <div class=footer__social-media>
-            <a href=# class=footer__social-media-link>
-                <img src=/LingoIQ/youtube.e0150c7f.svg alt=Youtube class=footer__social-media-icon>
+        <div class="footer__social-media">
+            <a href="#" class="footer__social-media-link">
+                <img src="/youtube.79cf5956.svg" alt="Youtube" class="footer__social-media-icon">
             </a>
-            <a href=# class=footer__social-media-link>
-                <img src=/LingoIQ/github.6fc80c25.svg alt=GitHub class=footer__social-media-icon>
+            <a href="#" class="footer__social-media-link">
+                <img src="/github.0767af8f.svg" alt="GitHub" class="footer__social-media-icon">
             </a>
-            <a href=# class=footer__social-media-link>
-                <img src=/LingoIQ/insta.d0d8ff0d.svg alt=Instagram class=footer__social-media-icon>
+            <a href="#" class="footer__social-media-link">
+                <img src="/insta.c3aa5b3d.svg" alt="Instagram" class="footer__social-media-icon">
             </a>
         </div>
-        <div class=footer__politics-group>
-            <p class=footer__copyrighting>© 2026 LingoIQ</p>
-            <ul class=footer__rules-list>
-                <li class=footer__rules-item>
-                    <a href=# class=footer__rules-link data-i18n=footer.privacy>Privacy</a>
+        <div class="footer__politics-group">
+            <p class="footer__copyrighting">© 2026 LingoIQ</p>
+            <ul class="footer__rules-list">
+                <li class="footer__rules-item">
+                    <a href="#" class="footer__rules-link" data-i18n="footer.privacy">Privacy</a>
                 </li>
-                <li class=footer__rules-item>
-                    <a href=# class=footer__rules-link data-i18n=footer.terms>Terms</a>
+                <li class="footer__rules-item">
+                    <a href="#" class="footer__rules-link" data-i18n="footer.terms">Terms</a>
                 </li>
-                <li class=footer__rules-item>
-                    <a href=# class=footer__rules-link data-i18n=footer.cookies>Cookies</a>
+                <li class="footer__rules-item">
+                    <a href="#" class="footer__rules-link" data-i18n="footer.cookies">Cookies</a>
                 </li>
             </ul>
         </div>
     </footer>
-    <script type=module src=/LingoIQ/LingoIQ.29a64cfa.js></script>
+    <script type="module" src="/LingoIQ.6528c13b.js"></script>
 
 
+</body></html>

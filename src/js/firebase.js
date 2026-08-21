@@ -4,6 +4,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBBn_-ncRy17JQRHSzwROwAVNv0VXIZANI",
@@ -21,6 +22,7 @@ export const analytics = getAnalytics(app);
 
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+export const storage = getStorage(app); // 2. Експортуємо storage
 
 // Додаємо підказку для вибору акаунта (уникає зациклення сесії)
 googleProvider.setCustomParameters({

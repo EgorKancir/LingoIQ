@@ -67,14 +67,31 @@
                 </button>
                 <!-- POPUP -->
                 <div class="header__user-info disable">
-                    <button class="header__user-info-button-close">
+                    <button type="button" class="header__user-info-button-close">
                         <img class="header__user-info-button-close-icon" src="./src/img/close-icon.svg" alt="close">
                     </button>
                     <img class="header__user-info-img" src="./src/img/home/author-img.jpg" alt="User">
                     <div class="user-info-group">
+                        <button type="button" class="header__user-info-button-edit" id="edit-profile-toggle-btn">
+                            <img class="header__user-info-button-edit-icon" src="./src/img/userpage/edit-icon.svg"
+                                alt="edit">
+                        </button>
                         <h2 class="header__user-info-name">Loading...</h2>
-                        <button type="button" id="logout-btn" class="logout-button">Log Out</button>
+                        <h2 class="header__user-info-language">Native language: <span id="nativlang"></span></h2>
+                        <button type="button" id="logout-btn" class="header__user-info-button-logout">Log Out</button>
                     </div>
+
+                    <!-- Форма редагування (за замовчуванням прихована або відкривається по кліку на edit-icon) -->
+                    <form class="edit-user-info__form disable" id="edit-user-info-form">
+                        <label class="edit-user-info__label" for="username-edit">
+                            <input class="edit-user-info__input" type="text" id="username-edit" placeholder="Username"
+                                data-i18n-placeholder="header.username">
+                        </label>
+                        <label class="edit-user-info__label" for="avatar-file-edit">
+                            <input class="edit-user-info__input" type="file" id="avatar-file-edit" accept="image/*">
+                        </label>
+                        <button class="edit-user-info__submit" type="submit" id="edit-user-info-btn">Save</button>
+                    </form>
                 </div>
                 <!-- POPUP -->
             </div>
