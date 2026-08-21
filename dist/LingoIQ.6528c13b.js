@@ -899,17 +899,22 @@ parcelHelpers.export(exports, "logout", ()=>logout);
 var _firebaseJs = require("./firebase.js");
 var _auth = require("firebase/auth");
 var _firestore = require("firebase/firestore");
+// Імпортуємо дефолтний аватар через Parcel для гарантії правильного шляху
+var _raccoon1Jpeg = require("../img/avatars/raccoon-1.jpeg");
+var _raccoon1JpegDefault = parcelHelpers.interopDefault(_raccoon1Jpeg);
 /**
  * Створення профілю користувача у Firestore
  */ async function createUserProfile(user, customData = {}) {
     try {
         const userRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
         const snapshot = await (0, _firestore.getDoc)(userRef);
+        // Створюємо запис ТІЛЬКИ якщо користувача ще немає в БД
         if (!snapshot.exists()) {
             await (0, _firestore.setDoc)(userRef, {
                 uid: user.uid,
                 email: user.email,
                 displayName: customData.displayName || user.displayName || 'Learner',
+                photoURL: (0, _raccoon1JpegDefault.default),
                 createdAt: new Date().toISOString(),
                 nativeLang: customData.nativeLang || 'uk'
             });
@@ -921,18 +926,18 @@ var _firestore = require("firebase/firestore");
 }
 async function loginWithGoogle() {
     try {
-        // Фіксуємо збереження сесії в LocalStorage перед відкриттям Popup
         await (0, _auth.setPersistence)((0, _firebaseJs.auth), (0, _auth.browserLocalPersistence));
         console.log("\u0412\u0456\u0434\u043A\u0440\u0438\u0432\u0430\u0454\u043C\u043E \u0432\u0456\u043A\u043D\u043E \u0430\u0432\u0442\u043E\u0440\u0438\u0437\u0430\u0446\u0456\u0457 Google...");
         const result = await (0, _auth.signInWithPopup)((0, _firebaseJs.auth), (0, _firebaseJs.googleProvider));
         console.log("\u0423\u0441\u043F\u0456\u0448\u043D\u0438\u0439 \u0432\u0445\u0456\u0434:", result.user);
-        // Створюємо профіль
+        // Чекаємо повного виконання запису у Firestore
         await createUserProfile(result.user);
-        // Перенаправлення на сторінку користувача
-        window.location.href = 'userpage.html';
+        // Затримка у 100мс запобігає AbortError при різкому переході
+        setTimeout(()=>{
+            window.location.href = 'userpage.html';
+        }, 100);
     } catch (error) {
         console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 Google Auth:", error);
-        // Якщо це просто закриття вікна користувачем, не виводимо помилку
         if (error.code !== 'auth/popup-closed-by-user') alert(`\u{41F}\u{43E}\u{43C}\u{438}\u{43B}\u{43A}\u{430} \u{430}\u{432}\u{442}\u{43E}\u{440}\u{438}\u{437}\u{430}\u{446}\u{456}\u{457} Google: ${error.message}`);
     }
 }
@@ -942,7 +947,9 @@ async function registerWithEmail(email, password, displayName) {
         await createUserProfile(userCredential.user, {
             displayName
         });
-        window.location.href = 'userpage.html';
+        setTimeout(()=>{
+            window.location.href = 'userpage.html';
+        }, 100);
     } catch (error) {
         alert(`\u{41F}\u{43E}\u{43C}\u{438}\u{43B}\u{43A}\u{430} \u{440}\u{435}\u{454}\u{441}\u{442}\u{440}\u{430}\u{446}\u{456}\u{457}: ${error.message}`);
     }
@@ -950,7 +957,9 @@ async function registerWithEmail(email, password, displayName) {
 async function loginWithEmail(email, password) {
     try {
         await (0, _auth.signInWithEmailAndPassword)((0, _firebaseJs.auth), email, password);
-        window.location.href = 'userpage.html';
+        setTimeout(()=>{
+            window.location.href = 'userpage.html';
+        }, 100);
     } catch (error) {
         alert(`\u{41F}\u{43E}\u{43C}\u{438}\u{43B}\u{43A}\u{430} \u{432}\u{445}\u{43E}\u{434}\u{443}: ${error.message}`);
     }
@@ -971,6 +980,6 @@ async function logout() {
     }
 }
 
-},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["6DHTQ","6kb64"], "6kb64", "parcelRequiree231", {})
+},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","../img/avatars/raccoon-1.jpeg":"d2g08","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"d2g08":[function() {},{}]},["6DHTQ","6kb64"], "6kb64", "parcelRequiree231", {})
 
 //# sourceMappingURL=LingoIQ.6528c13b.js.map

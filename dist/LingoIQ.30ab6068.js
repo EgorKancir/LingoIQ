@@ -2346,7 +2346,6 @@ parcelHelpers.export(exports, "app", ()=>app);
 parcelHelpers.export(exports, "analytics", ()=>analytics);
 parcelHelpers.export(exports, "auth", ()=>auth);
 parcelHelpers.export(exports, "googleProvider", ()=>googleProvider);
-parcelHelpers.export(exports, "storage", ()=>storage);
 parcelHelpers.export(exports, "db", ()=>db);
 var _app = require("firebase/app");
 var _analytics = require("firebase/analytics");
@@ -2366,12 +2365,15 @@ const app = (0, _app.initializeApp)(firebaseConfig);
 const analytics = (0, _analytics.getAnalytics)(app);
 const auth = (0, _auth.getAuth)(app);
 const googleProvider = new (0, _auth.GoogleAuthProvider)();
-const storage = getStorage(app); // 2. Експортуємо storage
 // Додаємо підказку для вибору акаунта (уникає зациклення сесії)
 googleProvider.setCustomParameters({
     prompt: 'select_account'
 });
-const db = (0, _firestore.getFirestore)(app);
+const db = (0, _firestore.initializeFirestore)(app, {
+    localCache: (0, _firestore.persistentLocalCache)({
+        tabManager: (0, _firestore.persistentMultipleTabManager)()
+    })
+});
 
 },{"873d4ee39b25abad":"bCaf4","firebase/app":"cYOm2","firebase/analytics":"bf1D2","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"cYOm2":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");

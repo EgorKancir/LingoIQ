@@ -10,6 +10,9 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
+// Імпортуємо дефолтний аватар через Parcel для гарантії правильного шляху
+import DEFAULT_AVATAR from '../img/avatars/raccoon-1.jpeg';
+
 /**
  * Створення профілю користувача у Firestore
  */
@@ -18,12 +21,14 @@ async function createUserProfile(user, customData = {}) {
         const userRef = doc(db, 'users', user.uid);
         const snapshot = await getDoc(userRef);
 
+        // Створюємо запис ТІЛЬКИ якщо користувача ще немає в БД
         if (!snapshot.exists()) {
             await setDoc(userRef, {
                 uid: user.uid,
                 email: user.email,
                 displayName: customData.displayName || user.displayName || 'Learner',
-                createdAt: new Date().toISOString(),
+                photoURL: DEFAULT_AVATAR, // Підставляє згенерований Parcel шлях
+                createdAt: new Date().toISOString(), // Фіксуємо дату першої реєстрації
                 nativeLang: customData.nativeLang || 'uk'
             });
             console.log('Профіль успішно створено у Firestore');
@@ -38,21 +43,21 @@ async function createUserProfile(user, customData = {}) {
  */
 export async function loginWithGoogle() {
     try {
-        // Фіксуємо збереження сесії в LocalStorage перед відкриттям Popup
         await setPersistence(auth, browserLocalPersistence);
 
         console.log('Відкриваємо вікно авторизації Google...');
         const result = await signInWithPopup(auth, googleProvider);
         console.log('Успішний вхід:', result.user);
 
-        // Створюємо профіль
+        // Чекаємо повного виконання запису у Firestore
         await createUserProfile(result.user);
 
-        // Перенаправлення на сторінку користувача
-        window.location.href = 'userpage.html';
+        // Затримка у 100мс запобігає AbortError при різкому переході
+        setTimeout(() => {
+            window.location.href = 'userpage.html';
+        }, 100);
     } catch (error) {
         console.error('Помилка Google Auth:', error);
-        // Якщо це просто закриття вікна користувачем, не виводимо помилку
         if (error.code !== 'auth/popup-closed-by-user') {
             alert(`Помилка авторизації Google: ${error.message}`);
         }
@@ -66,7 +71,10 @@ export async function registerWithEmail(email, password, displayName) {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await createUserProfile(userCredential.user, { displayName });
-        window.location.href = 'userpage.html';
+        
+        setTimeout(() => {
+            window.location.href = 'userpage.html';
+        }, 100);
     } catch (error) {
         alert(`Помилка реєстрації: ${error.message}`);
     }
@@ -75,7 +83,10 @@ export async function registerWithEmail(email, password, displayName) {
 export async function loginWithEmail(email, password) {
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = 'userpage.html';
+        
+        setTimeout(() => {
+            window.location.href = 'userpage.html';
+        }, 100);
     } catch (error) {
         alert(`Помилка входу: ${error.message}`);
     }

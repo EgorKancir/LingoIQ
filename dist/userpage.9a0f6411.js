@@ -177,7 +177,7 @@
 
   // Only insert newRequire.load when it is actually used.
   // The code in this file is linted against ES5, so dynamic import is not allowed.
-  // INSERT_LOAD_HERE
+  function $parcel$resolve(url) {  url = importMap[url] || url;  return import.meta.resolve(distDir + url);}newRequire.resolve = $parcel$resolve;
 
   Object.defineProperty(newRequire, 'root', {
     get: function () {
@@ -717,81 +717,108 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 // ============================================================================
 // 1. ІМПОРТИ МОДУЛІВ
 // ============================================================================
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _firebaseJs = require("./firebase.js");
 var _auth = require("firebase/auth");
 var _firestore = require("firebase/firestore");
-var _storage = require("firebase/storage");
+// Для Parcel v2 обов'язково використовуємо префікс "url:" при імпорті статичних файлів
+var _raccoon1Jpeg = require("url:../img/avatars/raccoon-1.jpeg");
+var _raccoon1JpegDefault = parcelHelpers.interopDefault(_raccoon1Jpeg);
 // ============================================================================
-// 2. ГЛОБАЛЬНІ ЕЛЕМЕНТИ DOM
+// 2. ГЛОБАЛЬНІ ЗМІННІ ТА СТАН
 // ============================================================================
-const editForm = document.getElementById('edit-user-info-form');
-const editToggleBtn = document.getElementById('edit-profile-toggle-btn');
-const userInfoPopup = document.querySelector('.header__user-info');
-const closePopupBtn = document.querySelector('.header__user-info-button-close');
-const userMenuTrigger = document.querySelector('.header__username-settings') || document.querySelector('.header__username');
-const logoutBtn = document.getElementById('logout-btn');
+let editForm;
+let userSection;
+let editToggleBtn;
+let userInfoPopup;
+let closePopupBtn;
+let userMenuTrigger;
+let logoutBtn;
+let cancelEditBtn;
+let selectedAvatarURL = '';
+let isRedirecting = false; // Прапорець для запобігання подвійних редіректів
 // ============================================================================
 // 3. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ ТА АВТОРИЗАЦІЯ
 // ============================================================================
 document.addEventListener('DOMContentLoaded', ()=>{
-    // Перевірка стану авторизації користувача
+    // Ініціалізація DOM елементів
+    editForm = document.getElementById('edit-user-info-form');
+    userSection = document.querySelector('.user-info__user-section');
+    editToggleBtn = document.getElementById('edit-profile-toggle-btn');
+    userInfoPopup = document.querySelector('.user-info');
+    closePopupBtn = document.querySelector('.user-info__button-close');
+    userMenuTrigger = document.querySelector('.header__username-settings') || document.querySelector('.header__username');
+    logoutBtn = document.getElementById('logout-btn');
+    cancelEditBtn = document.getElementById('cancel-edit-btn');
+    populateLanguageList();
+    initEventListeners();
+    initAvatarSelection();
+    // Слухач авторизації
     (0, _auth.onAuthStateChanged)((0, _firebaseJs.auth), async (user)=>{
         if (!user) {
-            window.location.href = './index.html';
+            if (!isRedirecting) {
+                isRedirecting = true;
+                window.location.href = './index.html';
+            }
             return;
         }
-        // Отримання додаткових даних із Firestore
-        try {
-            const userRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
-            const userSnap = await (0, _firestore.getDoc)(userRef);
-            if (userSnap.exists()) {
-                const userData = userSnap.data();
-                renderUserData(userData, user);
-            } else renderUserData({
-                displayName: user.displayName || 'Learner'
-            }, user);
-        } catch (error) {
-            console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445 \u043A\u043E\u0440\u0438\u0441\u0442\u0443\u0432\u0430\u0447\u0430:", error);
-        }
-    });
-    // Обробка кнопка виходу з акаунта
-    if (logoutBtn) logoutBtn.addEventListener('click', async (e)=>{
-        e.preventDefault();
-        try {
-            await (0, _auth.signOut)((0, _firebaseJs.auth));
-            window.location.href = './index.html';
-        } catch (error) {
-            console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043F\u0456\u0434 \u0447\u0430\u0441 \u0432\u0438\u0445\u043E\u0434\u0443 \u0437 \u0430\u043A\u0430\u0443\u043D\u0442\u0430:", error);
-        }
+        // Асинхронний виклик із повною ізоляцією помилок
+        await loadUserData(user);
     });
 });
+/**
+ * Окрема асинхронна функція завантаження даних профілю
+ */ async function loadUserData(user) {
+    try {
+        const userRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
+        const userSnap = await (0, _firestore.getDoc)(userRef);
+        if (userSnap.exists()) renderUserData(userSnap.data(), user);
+        else renderUserData({
+            displayName: user.displayName || 'Learner'
+        }, user);
+    } catch (error) {
+        // Мережеві помилки та скасування запитів браузером вважаємо нормальними під час навігації
+        const ignoredErrors = [
+            'AbortError',
+            'unavailable',
+            'network-request-failed'
+        ];
+        if (!ignoredErrors.some((e)=>error.name === e || error.code?.includes(e))) console.warn("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u043F\u0440\u043E\u0444\u0456\u043B\u044E \u0437 Firestore (\u0432\u0438\u043A\u043E\u0440\u0438\u0441\u0442\u043E\u0432\u0443\u0454\u043C\u043E \u0444\u043E\u043B\u0431\u0435\u043A):", error);
+        // Рендеримо базовi дані з Firebase Auth, якщо Firestore недоступний
+        renderUserData({
+            displayName: user.displayName || 'Learner'
+        }, user);
+    }
+}
 // ============================================================================
 // 4. ФУНКЦІЇ РЕНДЕРИНГУ ДАНИХ (UI)
 // ============================================================================
-/**
- * Оновлення персональних даних користувача у DOM
- */ function renderUserData(data, user) {
+function renderUserData(data, user) {
     const usernameElement = document.querySelector('.header__username');
-    const popupNameElement = document.querySelector('.header__user-info-name');
+    const popupNameElement = document.querySelector('.user-info__username');
     const nativeLangElement = document.getElementById('nativlang');
     const name = data.displayName || user.displayName || 'Learner';
     if (usernameElement) usernameElement.textContent = name;
     if (popupNameElement) popupNameElement.textContent = name;
-    // Рендер рідної мови (якщо вказана в Firestore)
     if (nativeLangElement && data.nativeLang) nativeLangElement.textContent = data.nativeLang;
-    // Оновлення фото аватара
-    if (user.photoURL) {
-        const headerAvatar = document.querySelector('.header__username-avatar');
-        const popupAvatar = document.querySelector('.header__user-info-img');
-        if (headerAvatar) headerAvatar.src = user.photoURL;
-        if (popupAvatar) popupAvatar.src = user.photoURL;
+    // Аватар з Firestore або дефолтний з імпорту Parcel
+    const currentAvatar = data.photoURL || (0, _raccoon1JpegDefault.default);
+    const headerAvatar = document.querySelector('.header__username-avatar');
+    const popupAvatar = document.querySelector('.user-info__img');
+    if (headerAvatar) headerAvatar.src = currentAvatar;
+    if (popupAvatar) popupAvatar.src = currentAvatar;
+    // Дні навчання з дати реєстрації
+    if (data.createdAt) {
+        const registrationDate = new Date(data.createdAt);
+        const today = new Date();
+        const diffTime = Math.abs(today - registrationDate);
+        const daysStudying = Math.floor(diffTime / 86400000) + 1;
+        const daysElement = document.getElementById('days-studying-count');
+        if (daysElement) daysElement.textContent = `${daysStudying} d.`;
     }
-    // Рендер вивчаємих мов
     if (data.languages && Array.isArray(data.languages)) renderLanguages(data.languages);
 }
-/**
- * Рендеринг списку вивчаємих мов
- */ function renderLanguages(languages) {
+function renderLanguages(languages) {
     const listContainer = document.querySelector('.your-languages__language-list');
     if (!listContainer) return;
     listContainer.innerHTML = languages.map((lang)=>`
@@ -804,87 +831,172 @@ document.addEventListener('DOMContentLoaded', ()=>{
     `).join('');
 }
 // ============================================================================
-// 5. ЛОГІКА ВІДКРИТТЯ ТА ЗАКРИТТЯ ПОПАПІВ
+// 5. УПРАВЛІННЯ ПОПАПАМИ ТА ПОДІЯМИ
 // ============================================================================
-/**
- * Повне закриття профілю та приховування форми редагування
- */ const closeAllPopups = ()=>{
-    if (userInfoPopup) userInfoPopup.classList.add('disable');
+function showUserSection() {
     if (editForm) {
         editForm.classList.add('disable');
         editForm.reset();
     }
+    if (userSection) userSection.classList.remove('disable');
+}
+const closeAllPopups = ()=>{
+    if (userInfoPopup) userInfoPopup.classList.add('disable');
+    showUserSection();
 };
-// Відкриття головного попапу профілю
-if (userMenuTrigger) userMenuTrigger.addEventListener('click', (e)=>{
-    e.stopPropagation();
-    if (userInfoPopup) userInfoPopup.classList.remove('disable');
-});
-// Перемикання форми редагування при кліку на олівець
-if (editToggleBtn && editForm) editToggleBtn.addEventListener('click', (e)=>{
-    e.stopPropagation();
-    editForm.classList.toggle('disable');
-});
-// Закриття через кнопку-хрестик
-if (closePopupBtn) closePopupBtn.addEventListener('click', (e)=>{
-    e.stopPropagation();
-    closeAllPopups();
-});
-// Закриття кліком поза межами попапу
-document.addEventListener('click', (e)=>{
-    if (userInfoPopup && !userInfoPopup.classList.contains('disable')) {
-        if (!userInfoPopup.contains(e.target) && !userMenuTrigger?.contains(e.target)) closeAllPopups();
-    }
-});
-// Закриття клавішею Escape
-document.addEventListener('keydown', (e)=>{
-    if (e.key === 'Escape') closeAllPopups();
-});
+function initEventListeners() {
+    if (logoutBtn) logoutBtn.addEventListener('click', async (e)=>{
+        e.preventDefault();
+        try {
+            await (0, _auth.signOut)((0, _firebaseJs.auth));
+            window.location.href = './index.html';
+        } catch (error) {
+            console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043F\u0456\u0434 \u0447\u0430\u0441 \u0432\u0438\u0445\u043E\u0434\u0443:", error);
+        }
+    });
+    if (userMenuTrigger) userMenuTrigger.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if (userInfoPopup) userInfoPopup.classList.remove('disable');
+    });
+    if (editToggleBtn) editToggleBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if (userSection) userSection.classList.add('disable');
+        if (editForm) editForm.classList.remove('disable');
+    });
+    if (cancelEditBtn) cancelEditBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        showUserSection();
+    });
+    if (closePopupBtn) closePopupBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        closeAllPopups();
+    });
+    document.addEventListener('click', (e)=>{
+        if (userInfoPopup && !userInfoPopup.classList.contains('disable')) {
+            if (!userInfoPopup.contains(e.target) && !userMenuTrigger?.contains(e.target)) closeAllPopups();
+        }
+    });
+    document.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape') closeAllPopups();
+    });
+    if (editForm) editForm.addEventListener('submit', handleFormSubmit);
+}
 // ============================================================================
-// 6. ОБРОБКА РЕДАГУВАННЯ ПРОФІЛЮ (SAVE / UPLOAD)
+// 6. ВИБІР АВАТАРА
 // ============================================================================
-if (editForm) editForm.addEventListener('submit', async (e)=>{
+function initAvatarSelection() {
+    const avatarOptions = document.querySelectorAll('.user-info__avatar-option');
+    avatarOptions.forEach((avatarImg)=>{
+        avatarImg.addEventListener('click', (e)=>{
+            avatarOptions.forEach((img)=>img.classList.remove('active'));
+            e.target.classList.add('active');
+            selectedAvatarURL = e.target.dataset.avatar || e.target.src;
+        });
+    });
+}
+// ============================================================================
+// 7. ЗБЕРЕЖЕННЯ ФОРМИ
+// ============================================================================
+async function handleFormSubmit(e) {
     e.preventDefault();
     const user = (0, _firebaseJs.auth).currentUser;
     if (!user) return;
     const submitBtn = document.getElementById('edit-user-info-btn');
     const newUsername = document.getElementById('username-edit')?.value.trim();
-    const avatarFileInput = document.getElementById('avatar-file-edit');
-    const file = avatarFileInput?.files?.[0];
+    const newNativeLang = document.getElementById('native-lang-input')?.value.trim();
     try {
         if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Saving...';
         }
-        let photoURL = user.photoURL;
-        // Завантаження файлу в Firebase Storage
-        if (file) {
-            const storageRef = (0, _storage.ref)((0, _firebaseJs.storage), `avatars/${user.uid}/${Date.now()}_${file.name}`);
-            const snapshot = await (0, _storage.uploadBytes)(storageRef, file);
-            photoURL = await (0, _storage.getDownloadURL)(snapshot.ref);
+        const firestoreUpdates = {};
+        if (newUsername) firestoreUpdates.displayName = newUsername;
+        if (newNativeLang) firestoreUpdates.nativeLang = newNativeLang;
+        if (selectedAvatarURL) firestoreUpdates.photoURL = selectedAvatarURL;
+        if (Object.keys(firestoreUpdates).length > 0) await (0, _firestore.setDoc)((0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid), firestoreUpdates, {
+            merge: true
+        });
+        if (newUsername) document.querySelectorAll('.user-info__username, .header__username').forEach((el)=>{
+            el.textContent = newUsername;
+        });
+        if (selectedAvatarURL) document.querySelectorAll('.user-info__img, .header__username-avatar').forEach((img)=>{
+            img.src = selectedAvatarURL;
+        });
+        if (newNativeLang) {
+            const nativeLangSpan = document.getElementById('nativlang');
+            if (nativeLangSpan) nativeLangSpan.textContent = newNativeLang;
         }
-        // Формування оновленого об'єкта
-        const updatedData = {};
-        if (newUsername) updatedData.displayName = newUsername;
-        if (photoURL) updatedData.photoURL = photoURL;
-        // Оновлення в Firebase Auth & Firestore
-        await (0, _auth.updateProfile)(user, updatedData);
-        await (0, _firestore.updateDoc)((0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid), updatedData);
-        // Оновлення інтерфейсу без перезавантаження
-        if (newUsername) document.querySelectorAll('.header__user-info-name, .header__username').forEach((el)=>el.textContent = newUsername);
-        if (photoURL) document.querySelectorAll('.header__user-info-img, .header__username-avatar').forEach((img)=>img.src = photoURL);
-        closeAllPopups();
+        showUserSection();
     } catch (error) {
-        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043F\u0456\u0434 \u0447\u0430\u0441 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445:", error);
-        alert("\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u0437\u043C\u0456\u043D\u0438. \u0421\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0449\u0435 \u0440\u0430\u0437.");
+        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F:", error);
+        alert("\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u0437\u043C\u0456\u043D\u0438.");
     } finally{
         if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Save';
         }
     }
-});
+}
+// ============================================================================
+// 8. СПИСОК МОВ
+// ============================================================================
+function populateLanguageList() {
+    const datalist = document.getElementById('languages-list');
+    if (!datalist) return;
+    const langCodes = [
+        'uk',
+        'de',
+        'en',
+        'es',
+        'fr',
+        'it',
+        'pl',
+        'pt',
+        'ro',
+        'tr',
+        'zh',
+        'ja',
+        'ko',
+        'ar',
+        'hi',
+        'bn',
+        'cs',
+        'sk',
+        'hu',
+        'nl',
+        'sv',
+        'no',
+        'fi',
+        'da',
+        'el',
+        'he',
+        'id',
+        'ms',
+        'th',
+        'vi',
+        'bg',
+        'hr',
+        'sr',
+        'sl',
+        'lt',
+        'lv',
+        'et'
+    ];
+    const displayNames = new Intl.DisplayNames([
+        'uk',
+        'en'
+    ], {
+        type: 'language'
+    });
+    datalist.innerHTML = langCodes.map((code)=>{
+        const langName = displayNames.of(code);
+        return `<option value="${langName} (${code.toUpperCase()})">${langName}</option>`;
+    }).join('');
+}
 
-},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","firebase/storage":"kEoU9"}]},["aNdOE","1noC9"], "1noC9", "parcelRequiree231", {})
+},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","url:../img/avatars/raccoon-1.jpeg":"fhGo5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fhGo5":[function(require,module,exports,__globalThis) {
+module.exports = module.bundle.resolve("raccoon-1.61f92196.jpeg") + "?" + Date.now();
+
+},{}]},["aNdOE","1noC9"], "1noC9", "parcelRequiree231", {}, "./", "/")
 
 //# sourceMappingURL=userpage.9a0f6411.js.map
