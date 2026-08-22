@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang=en><script type=module src=/LingoIQ/LingoIQ.c692618f.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.9624c703.css><link rel=stylesheet href=/LingoIQ/LingoIQ.2c7bf6a3.css><link rel=stylesheet href=/LingoIQ/userpage.e1e2d956.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
+<!DOCTYPE html><html lang=en><script type=importmap>{"imports":{"4OWXH":"/LingoIQ/raccoon-1.5dce9519.jpeg","7wAgu":"/LingoIQ/raccoon-1.5dce9519.jpeg"}}</script><script type=module src=/LingoIQ/LingoIQ.fa613f32.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.6ad72cc4.css><link rel=stylesheet href=/LingoIQ/LingoIQ.1af9db9d.css><link rel=stylesheet href=/LingoIQ/userpage.81fb9d86.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
     <header class="container header">
         <div class=header__content>
             <a class=logo__link href=/LingoIQ/index.html>
@@ -46,30 +46,55 @@
                     <img src=/LingoIQ/avatar.7944da8d.svg alt=icon class=header__username-avatar>
                 </button>
                 
-                <div class="disable header__user-info">
-                    <button type=button class=header__user-info-button-close>
-                        <img class=header__user-info-button-close-icon src=/LingoIQ/close-icon.a10ddf58.svg alt=close>
+                <div class="disable user-info">
+                    <button type=button class=user-info__button-close>
+                        <img class=user-info__button-close-icon src=/LingoIQ/close-icon.a10ddf58.svg alt=close>
                     </button>
-                    <img class=header__user-info-img src=/LingoIQ/author-img.f4236d63.jpg alt=User>
-                    <div class=user-info-group>
-                        <button type=button class=header__user-info-button-edit id=edit-profile-toggle-btn>
-                            <img class=header__user-info-button-edit-icon src=/LingoIQ/edit-icon.fdc68859.svg alt=edit>
-                        </button>
-                        <h2 class=header__user-info-name>Loading...</h2>
-                        <h2 class=header__user-info-language>Native language: <span id=nativlang></span></h2>
-                        <button type=button id=logout-btn class=header__user-info-button-logout>Log Out</button>
-                    </div>
+                    <img class=user-info__img src=/LingoIQ/author-img.f4236d63.jpg alt=User>
+                    <div class=user-info__group>
+                        <div class=user-info__user-section>
+                            <h2 class=user-info__username>Loading...</h2>
+                            <h2 class=user-info__language>Native language: <span id=nativlang></span></h2>
+                            <h2 class=user-info__days-learning>Days: <span id=daysLearning></span></h2>
+                            <button type=button id=logout-btn class=user-info__button-logout>Log Out</button>
+                            <button type=button class=user-info__button-edit id=edit-profile-toggle-btn>
+                                <img class=user-info__button-edit-icon src=/LingoIQ/edit-icon.fdc68859.svg alt=edit>
+                            </button>
+                        </div>
+                        
+                        <form class="disable user-info__edit-section" id=edit-user-info-form>
+                            <label class=user-info__label for=username-edit>
+                                <input class=user-info__input id=username-edit placeholder="New Username" data-i18n-placeholder=header.username>
+                            </label>
 
-                    
-                    <form class="disable edit-user-info__form" id=edit-user-info-form>
-                        <label class=edit-user-info__label for=username-edit>
-                            <input class=edit-user-info__input id=username-edit placeholder=Username data-i18n-placeholder=header.username>
-                        </label>
-                        <label class=edit-user-info__label for=avatar-file-edit>
-                            <input class=edit-user-info__input type=file id=avatar-file-edit accept=image/*>
-                        </label>
-                        <button class=edit-user-info__submit id=edit-user-info-btn>Save</button>
-                    </form>
+                            <label class=user-info__label for=native-lang-input>
+                                <input class=user-info__input list=languages-list id=native-lang-input placeholder="Search native language..." autocomplete=off>
+                                <datalist id=languages-list></datalist>
+                            </label>
+                            
+                            <div class=user-info__avatars-section>
+                                <h2 class=user-info__avatars-title>Choose your avatar</h2>
+                                <div class=user-info__avatars-grid>
+                                    <img class="active user-info__avatar-option" src=/LingoIQ/raccoon-1.5dce9519.jpeg alt="Raccoon 1">
+                                    <img class=user-info__avatar-option src=/LingoIQ/raccoon-2.128b8f44.jpeg alt="Raccoon 2">
+                                    <img class=user-info__avatar-option src=/LingoIQ/raccoon-3.9c974482.jpeg alt="Raccoon 3">
+                                    <img class=user-info__avatar-option src=/LingoIQ/raccoon-4.2a81261e.jpeg alt="Raccoon 4">
+                                    <img class=user-info__avatar-option src=/LingoIQ/raccoon-5.e814fd8d.jpeg alt="Raccoon 5">
+                                    <img class=user-info__avatar-option src=/LingoIQ/raccoon-6.ca78d7a4.jpeg alt="Raccoon 6">
+                                    <img class=user-info__avatar-option src=/LingoIQ/raccoon-7.26571c77.jpeg alt="Raccoon 7">
+                                    <img class=user-info__avatar-option src=/LingoIQ/raccoon-8.ff264b64.jpeg alt="Raccoon 8">
+                                    <img class=user-info__avatar-option src=/LingoIQ/raccoon-9.79dc1ef0.jpeg alt="Raccoon 9">
+                                    <img class=user-info__avatar-option src=/LingoIQ/raccoon-10.723cab3a.jpeg alt="Raccoon 10">
+                                    <img class=user-info__avatar-option src=/LingoIQ/raccoon-11.644c1938.jpeg alt="Raccoon 11">
+                                    <img class=user-info__avatar-option src=/LingoIQ/raccoon-12.5660b313.jpeg alt="Raccoon 12">
+                                </div>
+                            </div>
+                            <div class=user-info__buttons-group>
+                                <button class=user-info__submit id=edit-user-info-btn>Save</button>
+                                <button class=user-info__button-cancel type=button id=cancel-edit-btn>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 
             </div>
@@ -204,6 +229,8 @@
             </ul>
         </div>
     </footer>
-    <script type=module src=/LingoIQ/userpage.c7bf571a.js></script>
+    <script type=module src=/LingoIQ/userpage.9ad468fc.js></script>
+    <script type=module src=/LingoIQ/userpage.b8c62165.js></script>
+
 
 
