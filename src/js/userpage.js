@@ -67,7 +67,8 @@ async function loadUserData(user) {
         if (userSnap.exists()) {
             renderUserData(userSnap.data(), user);
         } else {
-            renderUserData({ displayName: user.displayName || 'Learner' }, user);
+            // Якщо документа в базі ще немає, передаємо базові дані з Auth
+            renderUserData({ displayName: user.displayName || 'Learner', photoURL: user.photoURL }, user);
         }
     } catch (error) {
         // Мережеві помилки та скасування запитів браузером вважаємо нормальними під час навігації
@@ -78,7 +79,7 @@ async function loadUserData(user) {
         }
         
         // Рендеримо базовi дані з Firebase Auth, якщо Firestore недоступний
-        renderUserData({ displayName: user.displayName || 'Learner' }, user);
+        renderUserData({ displayName: user.displayName || 'Learner', photoURL: user.photoURL }, user);
     }
 }
 
@@ -89,53 +90,46 @@ function renderUserData(data, user) {
     const usernameElement = document.querySelector('.header__username');
     const popupNameElement = document.querySelector('.user-info__username');
     const nativeLangElement = document.getElementById('nativlang');
+    const daysElement = document.getElementById('daysLearning');
 
     const name = data.displayName || user.displayName || 'Learner';
     if (usernameElement) usernameElement.textContent = name;
     if (popupNameElement) popupNameElement.textContent = name;
 
-    if (nativeLangElement && data.nativeLang) {
-        nativeLangElement.textContent = data.nativeLang;
+    if (nativeLangElement) {
+        nativeLangElement.textContent = data.nativeLang || 'uk';
     }
 
-    // Аватар з Firestore або дефолтний з імпорту Parcel
-    const currentAvatar = data.photoURL || defaultAvatar;
+    // Аватар з Firestore, Auth або дефолтний з імпорту Parcel
+    const currentAvatar = data.photoURL || user.photoURL || defaultAvatar;
     const headerAvatar = document.querySelector('.header__username-avatar');
     const popupAvatar = document.querySelector('.user-info__img');
 
     if (headerAvatar) headerAvatar.src = currentAvatar;
     if (popupAvatar) popupAvatar.src = currentAvatar;
 
-    // Дні навчання з дати реєстрації
-    if (data.createdAt) {
-        const registrationDate = new Date(data.createdAt);
-        const today = new Date();
-        const diffTime = Math.abs(today - registrationDate);
-        const daysStudying = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-        const daysElement = document.getElementById('days-studying-count');
-        if (daysElement) {
-            daysElement.textContent = `${daysStudying} d.`;
+    // --- ФУНКЦІЯ ПІДРАХУНКУ ДНІВ (Logic) ---
+    if (daysElement) {
+        if (data.createdAt) {
+            const registrationDate = new Date(data.createdAt);
+            const today = new Date();
+            
+            // Скидаємо час до півночі для точного підрахунку днів без урахування годин
+            const regDay = new Date(registrationDate.getFullYear(), registrationDate.getMonth(), registrationDate.getDate());
+            const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            
+            const diffTime = todayDay - regDay;
+            const daysStudying = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            daysElement.textContent = daysStudying >= 0 ? daysStudying : 0;
+        } else {
+            daysElement.textContent = '0';
         }
     }
 
     if (data.languages && Array.isArray(data.languages)) {
         renderLanguages(data.languages);
     }
-}
-
-function renderLanguages(languages) {
-    const listContainer = document.querySelector('.your-languages__language-list');
-    if (!listContainer) return;
-
-    listContainer.innerHTML = languages.map(lang => `
-        <li class="your-languages__item">
-            <a href="./languagepage.html?lang=${lang.code}" class="your-languages__item-link">
-                <img src="./src/img/country-flags-main/svg/${lang.flag}.svg" alt="Flag" class="your-languages__item-flag">
-                <span class="your-languages__item-title">${lang.code.toUpperCase()}</span>
-            </a>
-        </li>
-    `).join('');
 }
 
 // ============================================================================
@@ -226,7 +220,8 @@ function initAvatarSelection() {
         avatarImg.addEventListener('click', (e) => {
             avatarOptions.forEach(img => img.classList.remove('active'));
             e.target.classList.add('active');
-            selectedAvatarURL = e.target.dataset.avatar || e.target.src;
+            
+            selectedAvatarURL = e.target.src;
         });
     });
 }
@@ -309,3 +304,22 @@ function populateLanguageList() {
         return `<option value="${langName} (${code.toUpperCase()})">${langName}</option>`;
     }).join('');
 }
+
+console.log("СКРИПТ ЗАПРАЦЮВАВ!");
+
+window.debugGetData = async function() {
+    const user = auth.currentUser;
+    if (!user) {
+        console.log("Користувач не залогінений!");
+        return;
+    }
+    const userRef = doc(db, 'users', user.uid);
+    const snap = await getDoc(userRef);
+    if (snap.exists()) {
+        console.log("АНАЛІЗ БАЗИ ДАНИХ:", snap.data());
+    } else {
+        console.log("Документ для цього юзера відсутній у Firestore!");
+    }
+};
+
+debugGetData()

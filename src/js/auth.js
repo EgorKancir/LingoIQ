@@ -10,84 +10,95 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
-// Імпортуємо дефолтний аватар через Parcel для гарантії правильного шляху
+// Імпортуємо дефолтний аватар через Parcel
 import DEFAULT_AVATAR from '../img/avatars/raccoon-1.jpeg';
 
 /**
- * Створення профілю користувача у Firestore
+ * Створення або оновлення профілю користувача у Firestore
+ * Гарантує, що поле createdAt завжди буде присутнє.
  */
 async function createUserProfile(user, customData = {}) {
+    if (!user) return;
+    
+    const userRef = doc(db, 'users', user.uid);
+    const timestamp = new Date().toISOString();
+
     try {
-        const userRef = doc(db, 'users', user.uid);
         const snapshot = await getDoc(userRef);
 
-        // Створюємо запис ТІЛЬКИ якщо користувача ще немає в БД
         if (!snapshot.exists()) {
+            // Створення нового профілю
             await setDoc(userRef, {
                 uid: user.uid,
                 email: user.email,
                 displayName: customData.displayName || user.displayName || 'Learner',
-                photoURL: DEFAULT_AVATAR, // Підставляє згенерований Parcel шлях
-                createdAt: new Date().toISOString(), // Фіксуємо дату першої реєстрації
+                photoURL: user.photoURL || DEFAULT_AVATAR,
+                createdAt: timestamp,
                 nativeLang: customData.nativeLang || 'uk'
             });
             console.log('Профіль успішно створено у Firestore');
+        } else {
+            // Якщо профіль існує, але немає поля createdAt (наприклад, старі акаунти)
+            const data = snapshot.data();
+            if (!data.createdAt) {
+                await setDoc(userRef, { createdAt: timestamp }, { merge: true });
+                console.log('Поле createdAt було додано до існуючого профілю');
+            }
         }
     } catch (error) {
-        console.error('Помилка запису профілю Firestore:', error);
+        console.error('Помилка Firestore (можливо, проблеми з Rules):', error);
+        // Не перериваємо процес, якщо Firestore не відповів, 
+        // щоб користувач все одно міг увійти
     }
 }
 
 /**
- * Вхід / Реєстрація через Google
+ * Вхід через Google
  */
 export async function loginWithGoogle() {
     try {
         await setPersistence(auth, browserLocalPersistence);
-
-        console.log('Відкриваємо вікно авторизації Google...');
         const result = await signInWithPopup(auth, googleProvider);
-        console.log('Успішний вхід:', result.user);
-
-        // Чекаємо повного виконання запису у Firestore
+        
+        // Чекаємо обробки профілю в БД перед переходом
         await createUserProfile(result.user);
 
-        // Затримка у 100мс запобігає AbortError при різкому переході
-        setTimeout(() => {
-            window.location.href = 'userpage.html';
-        }, 100);
+        window.location.href = 'userpage.html';
     } catch (error) {
         console.error('Помилка Google Auth:', error);
         if (error.code !== 'auth/popup-closed-by-user') {
-            alert(`Помилка авторизації Google: ${error.message}`);
+            alert(`Помилка авторизації: ${error.message}`);
         }
     }
 }
 
 /**
- * Вхід та реєстрація через Email
+ * Реєстрація через Email
  */
 export async function registerWithEmail(email, password, displayName) {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await createUserProfile(userCredential.user, { displayName });
         
-        setTimeout(() => {
-            window.location.href = 'userpage.html';
-        }, 100);
+        window.location.href = 'userpage.html';
     } catch (error) {
+        console.error('Помилка реєстрації:', error);
         alert(`Помилка реєстрації: ${error.message}`);
     }
 }
 
+/**
+ * Вхід через Email
+ */
 export async function loginWithEmail(email, password) {
     try {
         await signInWithEmailAndPassword(auth, email, password);
+        // Після входу також перевіряємо профіль
+        await createUserProfile(auth.currentUser);
         
-        setTimeout(() => {
-            window.location.href = 'userpage.html';
-        }, 100);
+        window.location.href = 'userpage.html';
     } catch (error) {
+        console.error('Помилка входу:', error);
         alert(`Помилка входу: ${error.message}`);
     }
 }
@@ -104,6 +115,9 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
+/**
+ * Вихід з акаунту
+ */
 export async function logout() {
     try {
         await signOut(auth);

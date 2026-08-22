@@ -773,8 +773,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
         const userRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
         const userSnap = await (0, _firestore.getDoc)(userRef);
         if (userSnap.exists()) renderUserData(userSnap.data(), user);
-        else renderUserData({
-            displayName: user.displayName || 'Learner'
+        else // Якщо документа в базі ще немає, передаємо базові дані з Auth
+        renderUserData({
+            displayName: user.displayName || 'Learner',
+            photoURL: user.photoURL
         }, user);
     } catch (error) {
         // Мережеві помилки та скасування запитів браузером вважаємо нормальними під час навігації
@@ -786,7 +788,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
         if (!ignoredErrors.some((e)=>error.name === e || error.code?.includes(e))) console.warn("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u043F\u0440\u043E\u0444\u0456\u043B\u044E \u0437 Firestore (\u0432\u0438\u043A\u043E\u0440\u0438\u0441\u0442\u043E\u0432\u0443\u0454\u043C\u043E \u0444\u043E\u043B\u0431\u0435\u043A):", error);
         // Рендеримо базовi дані з Firebase Auth, якщо Firestore недоступний
         renderUserData({
-            displayName: user.displayName || 'Learner'
+            displayName: user.displayName || 'Learner',
+            photoURL: user.photoURL
         }, user);
     }
 }
@@ -797,38 +800,31 @@ function renderUserData(data, user) {
     const usernameElement = document.querySelector('.header__username');
     const popupNameElement = document.querySelector('.user-info__username');
     const nativeLangElement = document.getElementById('nativlang');
+    const daysElement = document.getElementById('daysLearning');
     const name = data.displayName || user.displayName || 'Learner';
     if (usernameElement) usernameElement.textContent = name;
     if (popupNameElement) popupNameElement.textContent = name;
-    if (nativeLangElement && data.nativeLang) nativeLangElement.textContent = data.nativeLang;
-    // Аватар з Firestore або дефолтний з імпорту Parcel
-    const currentAvatar = data.photoURL || (0, _raccoon1JpegDefault.default);
+    if (nativeLangElement) nativeLangElement.textContent = data.nativeLang || 'uk';
+    // Аватар з Firestore, Auth або дефолтний з імпорту Parcel
+    const currentAvatar = data.photoURL || user.photoURL || (0, _raccoon1JpegDefault.default);
     const headerAvatar = document.querySelector('.header__username-avatar');
     const popupAvatar = document.querySelector('.user-info__img');
     if (headerAvatar) headerAvatar.src = currentAvatar;
     if (popupAvatar) popupAvatar.src = currentAvatar;
-    // Дні навчання з дати реєстрації
-    if (data.createdAt) {
-        const registrationDate = new Date(data.createdAt);
-        const today = new Date();
-        const diffTime = Math.abs(today - registrationDate);
-        const daysStudying = Math.floor(diffTime / 86400000) + 1;
-        const daysElement = document.getElementById('days-studying-count');
-        if (daysElement) daysElement.textContent = `${daysStudying} d.`;
+    // --- ФУНКЦІЯ ПІДРАХУНКУ ДНІВ (Logic) ---
+    if (daysElement) {
+        if (data.createdAt) {
+            const registrationDate = new Date(data.createdAt);
+            const today = new Date();
+            // Скидаємо час до півночі для точного підрахунку днів без урахування годин
+            const regDay = new Date(registrationDate.getFullYear(), registrationDate.getMonth(), registrationDate.getDate());
+            const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const diffTime = todayDay - regDay;
+            const daysStudying = Math.floor(diffTime / 86400000);
+            daysElement.textContent = daysStudying >= 0 ? daysStudying : 0;
+        } else daysElement.textContent = '0';
     }
     if (data.languages && Array.isArray(data.languages)) renderLanguages(data.languages);
-}
-function renderLanguages(languages) {
-    const listContainer = document.querySelector('.your-languages__language-list');
-    if (!listContainer) return;
-    listContainer.innerHTML = languages.map((lang)=>`
-        <li class="your-languages__item">
-            <a href="./languagepage.html?lang=${lang.code}" class="your-languages__item-link">
-                <img src="./src/img/country-flags-main/svg/${lang.flag}.svg" alt="Flag" class="your-languages__item-flag">
-                <span class="your-languages__item-title">${lang.code.toUpperCase()}</span>
-            </a>
-        </li>
-    `).join('');
 }
 // ============================================================================
 // 5. УПРАВЛІННЯ ПОПАПАМИ ТА ПОДІЯМИ
@@ -890,7 +886,7 @@ function initAvatarSelection() {
         avatarImg.addEventListener('click', (e)=>{
             avatarOptions.forEach((img)=>img.classList.remove('active'));
             e.target.classList.add('active');
-            selectedAvatarURL = e.target.dataset.avatar || e.target.src;
+            selectedAvatarURL = e.target.src;
         });
     });
 }
@@ -993,6 +989,19 @@ function populateLanguageList() {
         return `<option value="${langName} (${code.toUpperCase()})">${langName}</option>`;
     }).join('');
 }
+console.log("\u0421\u041A\u0420\u0418\u041F\u0422 \u0417\u0410\u041F\u0420\u0410\u0426\u042E\u0412\u0410\u0412!");
+window.debugGetData = async function() {
+    const user = (0, _firebaseJs.auth).currentUser;
+    if (!user) {
+        console.log("\u041A\u043E\u0440\u0438\u0441\u0442\u0443\u0432\u0430\u0447 \u043D\u0435 \u0437\u0430\u043B\u043E\u0433\u0456\u043D\u0435\u043D\u0438\u0439!");
+        return;
+    }
+    const userRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
+    const snap = await (0, _firestore.getDoc)(userRef);
+    if (snap.exists()) console.log("\u0410\u041D\u0410\u041B\u0406\u0417 \u0411\u0410\u0417\u0418 \u0414\u0410\u041D\u0418\u0425:", snap.data());
+    else console.log("\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442 \u0434\u043B\u044F \u0446\u044C\u043E\u0433\u043E \u044E\u0437\u0435\u0440\u0430 \u0432\u0456\u0434\u0441\u0443\u0442\u043D\u0456\u0439 \u0443 Firestore!");
+};
+debugGetData();
 
 },{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","url:../img/avatars/raccoon-1.jpeg":"fhGo5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fhGo5":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("raccoon-1.61f92196.jpeg") + "?" + Date.now();
