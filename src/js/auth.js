@@ -1,3 +1,6 @@
+// ============================================================================
+// 1. ІМПОРТИ МОДУЛІВ ТА СЕРВІСІВ
+// ============================================================================
 import { auth, googleProvider, db } from './firebase.js';
 import {
     createUserWithEmailAndPassword,
@@ -6,16 +9,20 @@ import {
     setPersistence,
     browserLocalPersistence,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    updateProfile
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 // Імпортуємо дефолтний аватар через Parcel
 import DEFAULT_AVATAR from '../img/avatars/raccoon-1.jpeg';
 
+// ============================================================================
+// 2. ДОПОМІЖНІ ФУНКЦІЇ (FIRESTORE PROFILES)
+// ============================================================================
 /**
- * Створення або оновлення профілю користувача у Firestore
- * Гарантує, що поле createdAt завжди буде присутнє.
+ * Створення або оновлення профілю користувача у Firestore.
+ * Гарантує, що введене ім'я з форми коректно зберігається та не замінюється на 'Learner'.
  */
 async function createUserProfile(user, customData = {}) {
     if (!user) return;
@@ -26,32 +33,47 @@ async function createUserProfile(user, customData = {}) {
     try {
         const snapshot = await getDoc(userRef);
 
+        // Очищаємо та перевіряємо кастомне ім'я з форми
+        const inputName = customData.displayName ? customData.displayName.trim() : '';
+        const finalDisplayName = inputName || user.displayName || 'Learner';
+
         if (!snapshot.exists()) {
             // Створення нового профілю
             await setDoc(userRef, {
                 uid: user.uid,
                 email: user.email,
-                displayName: customData.displayName || user.displayName || 'Learner',
+                displayName: finalDisplayName,
                 photoURL: user.photoURL || DEFAULT_AVATAR,
                 createdAt: timestamp,
                 nativeLang: customData.nativeLang || 'uk'
             });
             console.log('Профіль успішно створено у Firestore');
         } else {
-            // Якщо профіль існує, але немає поля createdAt (наприклад, старі акаунти)
+            // Оновлюємо дані, якщо в базі було 'Learner', а тепер є реальне ім'я
             const data = snapshot.data();
+            const updates = {};
+            
             if (!data.createdAt) {
-                await setDoc(userRef, { createdAt: timestamp }, { merge: true });
-                console.log('Поле createdAt було додано до існуючого профілю');
+                updates.createdAt = timestamp;
+            }
+            
+            if (inputName !== '' || !data.displayName || data.displayName === 'Learner') {
+                updates.displayName = finalDisplayName;
+            }
+
+            if (Object.keys(updates).length > 0) {
+                await setDoc(userRef, updates, { merge: true });
+                console.log('Профіль оновлено у Firestore');
             }
         }
     } catch (error) {
-        console.error('Помилка Firestore (можливо, проблеми з Rules):', error);
-        // Не перериваємо процес, якщо Firestore не відповів, 
-        // щоб користувач все одно міг увійти
+        console.error('Помилка Firestore:', error);
     }
 }
 
+// ============================================================================
+// 3. ФУНКЦІЇ АВТОРИЗАЦІЇ ТА РЕЄСТРАЦІЇ
+// ============================================================================
 /**
  * Вхід через Google
  */
@@ -60,7 +82,6 @@ export async function loginWithGoogle() {
         await setPersistence(auth, browserLocalPersistence);
         const result = await signInWithPopup(auth, googleProvider);
         
-        // Чекаємо обробки профілю в БД перед переходом
         await createUserProfile(result.user);
 
         window.location.href = 'userpage.html';
@@ -78,7 +99,15 @@ export async function loginWithGoogle() {
 export async function registerWithEmail(email, password, displayName) {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await createUserProfile(userCredential.user, { displayName });
+        const user = userCredential.user;
+
+        // Оновлюємо ім'я у самому Firebase Auth об'єкті
+        if (displayName) {
+            await updateProfile(user, { displayName });
+        }
+        
+        // Зберігаємо профіль у Firestore з урахуванням введеного імені
+        await createUserProfile(user, { displayName });
         
         window.location.href = 'userpage.html';
     } catch (error) {
@@ -92,9 +121,8 @@ export async function registerWithEmail(email, password, displayName) {
  */
 export async function loginWithEmail(email, password) {
     try {
-        await signInWithEmailAndPassword(auth, email, password);
-        // Після входу також перевіряємо профіль
-        await createUserProfile(auth.currentUser);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        await createUserProfile(userCredential.user);
         
         window.location.href = 'userpage.html';
     } catch (error) {
@@ -102,18 +130,6 @@ export async function loginWithEmail(email, password) {
         alert(`Помилка входу: ${error.message}`);
     }
 }
-
-/**
- * Глобальний слухач авторизації
- */
-onAuthStateChanged(auth, (user) => {
-    const currentPath = window.location.pathname;
-    const isIndex = currentPath.endsWith('index.html') || currentPath === '/' || currentPath === '';
-
-    if (user && isIndex) {
-        window.location.href = 'userpage.html';
-    }
-});
 
 /**
  * Вихід з акаунту
@@ -126,3 +142,18 @@ export async function logout() {
         console.error('Помилка виходу:', error);
     }
 }
+
+// ============================================================================
+// 4. СЛУХАЧІ СТАНУ АВТОРИЗАЦІЇ
+// ============================================================================
+/**
+ * Глобальний слухач авторизації для головної сторінки (index.html)
+ */
+onAuthStateChanged(auth, (user) => {
+    const currentPath = window.location.pathname;
+    const isIndex = currentPath.endsWith('index.html') || currentPath === '/' || currentPath === '';
+
+    if (user && isIndex) {
+        window.location.href = 'userpage.html';
+    }
+});

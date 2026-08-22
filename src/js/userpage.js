@@ -51,40 +51,61 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Асинхронний виклик із повною ізоляцією помилок
+        console.log("Користувач успішно авторизований:", user.uid);
+
+        // Додаємо глобальну функцію для перевірки бази прямо з консолі браузера
+        window.debugGetData = async function() {
+            const userRef = doc(db, 'users', user.uid);
+            const snap = await getDoc(userRef);
+            if (snap.exists()) {
+                console.log("АНАЛІЗ БАЗИ ДАНИХ ФІРЕБЕЙС:", snap.data());
+            } else {
+                console.log("Документ для цього юзера відсутній у Firestore!");
+            }
+        };
+
+        // Завантажуємо дані профілю
         await loadUserData(user);
     });
 });
 
-/**
- * Окрема асинхронна функція завантаження даних профілю
- */
+// ============================================================================
+// 4. ФУНКЦІЯ ЗАВАНТАЖЕННЯ ДАНИХ ПРОФІЛЮ (loadUserData)
+// ============================================================================
 async function loadUserData(user) {
     try {
         const userRef = doc(db, 'users', user.uid);
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
+            console.log("=== ДАНІ З ФІРЕБЕЙСУ ===", userSnap.data());
             renderUserData(userSnap.data(), user);
         } else {
-            // Якщо документа в базі ще немає, передаємо базові дані з Auth
-            renderUserData({ displayName: user.displayName || 'Learner', photoURL: user.photoURL }, user);
+            console.log("=== ДОКУМЕНТ НЕ ЗНАЙДЕНО, СТВОРЮЮ НОВИЙ В БАЗІ ===");
+            
+            // Створюємо базовий профіль автоматично, якщо його немає
+            const newUserData = {
+                uid: user.uid,
+                email: user.email || '',
+                displayName: user.displayName || 'Learner',
+                photoURL: user.photoURL || '',
+                nativeLang: 'uk',
+                createdAt: new Date().toISOString()
+            };
+
+            await setDoc(userRef, newUserData);
+            console.log("=== НОВИЙ ДОКУМЕНТ УСПІШНО СТВОРЕНО ===");
+            
+            renderUserData(newUserData, user);
         }
     } catch (error) {
-        // Мережеві помилки та скасування запитів браузером вважаємо нормальними під час навігації
-        const ignoredErrors = ['AbortError', 'unavailable', 'network-request-failed'];
-        
-        if (!ignoredErrors.some(e => error.name === e || error.code?.includes(e))) {
-            console.warn('Помилка завантаження профілю з Firestore (використовуємо фолбек):', error);
-        }
-        
-        // Рендеримо базовi дані з Firebase Auth, якщо Firestore недоступний
+        console.warn('Помилка завантаження або створення профілю:', error);
         renderUserData({ displayName: user.displayName || 'Learner', photoURL: user.photoURL }, user);
     }
 }
 
 // ============================================================================
-// 4. ФУНКЦІЇ РЕНДЕРИНГУ ДАНИХ (UI)
+// 5. ФУНКЦІЇ РЕНДЕРИНГУ ДАНИХ (UI)
 // ============================================================================
 function renderUserData(data, user) {
     const usernameElement = document.querySelector('.header__username');
@@ -100,7 +121,6 @@ function renderUserData(data, user) {
         nativeLangElement.textContent = data.nativeLang || 'uk';
     }
 
-    // Аватар з Firestore, Auth або дефолтний з імпорту Parcel
     const currentAvatar = data.photoURL || user.photoURL || defaultAvatar;
     const headerAvatar = document.querySelector('.header__username-avatar');
     const popupAvatar = document.querySelector('.user-info__img');
@@ -108,13 +128,12 @@ function renderUserData(data, user) {
     if (headerAvatar) headerAvatar.src = currentAvatar;
     if (popupAvatar) popupAvatar.src = currentAvatar;
 
-    // --- ФУНКЦІЯ ПІДРАХУНКУ ДНІВ (Logic) ---
+    // Підрахунок днів навчання
     if (daysElement) {
         if (data.createdAt) {
             const registrationDate = new Date(data.createdAt);
             const today = new Date();
             
-            // Скидаємо час до півночі для точного підрахунку днів без урахування годин
             const regDay = new Date(registrationDate.getFullYear(), registrationDate.getMonth(), registrationDate.getDate());
             const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
             
@@ -126,14 +145,10 @@ function renderUserData(data, user) {
             daysElement.textContent = '0';
         }
     }
-
-    if (data.languages && Array.isArray(data.languages)) {
-        renderLanguages(data.languages);
-    }
 }
 
 // ============================================================================
-// 5. УПРАВЛІННЯ ПОПАПАМИ ТА ПОДІЯМИ
+// 6. УПРАВЛІННЯ ПОПАПАМИ ТА ПОДІЯМИ
 // ============================================================================
 function showUserSection() {
     if (editForm) {
@@ -212,7 +227,7 @@ function initEventListeners() {
 }
 
 // ============================================================================
-// 6. ВИБІР АВАТАРА
+// 7. ВИБІР АВАТАРА
 // ============================================================================
 function initAvatarSelection() {
     const avatarOptions = document.querySelectorAll('.user-info__avatar-option');
@@ -220,14 +235,13 @@ function initAvatarSelection() {
         avatarImg.addEventListener('click', (e) => {
             avatarOptions.forEach(img => img.classList.remove('active'));
             e.target.classList.add('active');
-            
             selectedAvatarURL = e.target.src;
         });
     });
 }
 
 // ============================================================================
-// 7. ЗБЕРЕЖЕННЯ ФОРМИ
+// 8. ЗБЕРЕЖЕННЯ ФОРМИ
 // ============================================================================
 async function handleFormSubmit(e) {
     e.preventDefault();
@@ -285,7 +299,7 @@ async function handleFormSubmit(e) {
 }
 
 // ============================================================================
-// 8. СПИСОК МОВ
+// 9. СПИСОК МОВ
 // ============================================================================
 function populateLanguageList() {
     const datalist = document.getElementById('languages-list');
@@ -304,22 +318,3 @@ function populateLanguageList() {
         return `<option value="${langName} (${code.toUpperCase()})">${langName}</option>`;
     }).join('');
 }
-
-console.log("СКРИПТ ЗАПРАЦЮВАВ!");
-
-window.debugGetData = async function() {
-    const user = auth.currentUser;
-    if (!user) {
-        console.log("Користувач не залогінений!");
-        return;
-    }
-    const userRef = doc(db, 'users', user.uid);
-    const snap = await getDoc(userRef);
-    if (snap.exists()) {
-        console.log("АНАЛІЗ БАЗИ ДАНИХ:", snap.data());
-    } else {
-        console.log("Документ для цього юзера відсутній у Firestore!");
-    }
-};
-
-debugGetData()
