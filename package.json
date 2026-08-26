@@ -4,11 +4,11 @@
   "homepage": "https://github.com/EgorKancir/LingoIQ",
   "type": "module",
   "scripts": {
-    "build": "npx parcel build index.html userpage.html --public-url /LingoIQ/ --no-scope-hoist",
+    "build": "npx parcel build index.html userpage.html languagepage.html --public-url /LingoIQ/ --no-scope-hoist",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "parcel index.html userpage.html",
+    "dev": "parcel index.html userpage.html languagepage.html",
     "clean": "rm -rf .parcel-cache dist",
     "server": "npx json-server ./src/db.json"
   },

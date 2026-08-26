@@ -3,7 +3,7 @@
 // ============================================================================
 import { auth, db } from './firebase.js';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 // Для Parcel v2 обов'язково використовуємо префікс "url:" при імпорті статичних файлів
 import defaultAvatar from 'url:../img/avatars/raccoon-1.jpeg';
@@ -21,7 +21,8 @@ let logoutBtn;
 let cancelEditBtn;
 
 let selectedAvatarURL = '';
-let isRedirecting = false; // Прапорець для запобігання подвійних редіректів
+let isRedirecting = false;
+let currentUserLanguages = [];
 
 // ============================================================================
 // 3. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ ТА АВТОРИЗАЦІЯ
@@ -37,9 +38,19 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutBtn = document.getElementById('logout-btn');
     cancelEditBtn = document.getElementById('cancel-edit-btn');
 
+    // Заповнюємо списки мов (datalists)
     populateLanguageList();
+    populateAddLanguageList();
+
     initEventListeners();
     initAvatarSelection();
+    initYourLanguagesLogic();
+
+    // Виклик глобальної функції перекладу
+    if (typeof window.initLanguagePicker === 'function') {
+        window.initLanguagePicker();
+        console.log('LingoIQ: i18n успішно ініціалізовано!');
+    }
 
     // Слухач авторизації
     onAuthStateChanged(auth, async (user) => {
@@ -53,8 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log("Користувач успішно авторизований:", user.uid);
 
-        // Додаємо глобальну функцію для перевірки бази прямо з консолі браузера
-        window.debugGetData = async function() {
+        window.debugGetData = async function () {
             const userRef = doc(db, 'users', user.uid);
             const snap = await getDoc(userRef);
             if (snap.exists()) {
@@ -64,8 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // Завантажуємо дані профілю
+        // Завантажуємо профіль та мови користувача
         await loadUserData(user);
+        currentUserLanguages = await loadUserLanguages(user.uid);
+        renderUserLanguages(currentUserLanguages);
     });
 });
 
@@ -82,20 +94,18 @@ async function loadUserData(user) {
             renderUserData(userSnap.data(), user);
         } else {
             console.log("=== ДОКУМЕНТ НЕ ЗНАЙДЕНО, СТВОРЮЮ НОВИЙ В БАЗІ ===");
-            
-            // Створюємо базовий профіль автоматично, якщо його немає
+
             const newUserData = {
                 uid: user.uid,
                 email: user.email || '',
                 displayName: user.displayName || 'Learner',
                 photoURL: user.photoURL || '',
                 nativeLang: 'uk',
+                languages: [],
                 createdAt: new Date().toISOString()
             };
 
             await setDoc(userRef, newUserData);
-            console.log("=== НОВИЙ ДОКУМЕНТ УСПІШНО СТВОРЕНО ===");
-            
             renderUserData(newUserData, user);
         }
     } catch (error) {
@@ -128,18 +138,17 @@ function renderUserData(data, user) {
     if (headerAvatar) headerAvatar.src = currentAvatar;
     if (popupAvatar) popupAvatar.src = currentAvatar;
 
-    // Підрахунок днів навчання
     if (daysElement) {
         if (data.createdAt) {
             const registrationDate = new Date(data.createdAt);
             const today = new Date();
-            
+
             const regDay = new Date(registrationDate.getFullYear(), registrationDate.getMonth(), registrationDate.getDate());
             const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            
+
             const diffTime = todayDay - regDay;
             const daysStudying = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            
+
             daysElement.textContent = daysStudying >= 0 ? daysStudying : 0;
         } else {
             daysElement.textContent = '0';
@@ -241,7 +250,7 @@ function initAvatarSelection() {
 }
 
 // ============================================================================
-// 8. ЗБЕРЕЖЕННЯ ФОРМИ
+// 8. ЗБЕРЕЖЕННЯ ФОРМИ ПРОФІЛЮ
 // ============================================================================
 async function handleFormSubmit(e) {
     e.preventDefault();
@@ -299,7 +308,7 @@ async function handleFormSubmit(e) {
 }
 
 // ============================================================================
-// 9. СПИСОК МОВ
+// 9. СПИСКИ МОВ (DATALISTS)
 // ============================================================================
 function populateLanguageList() {
     const datalist = document.getElementById('languages-list');
@@ -317,4 +326,177 @@ function populateLanguageList() {
         const langName = displayNames.of(code);
         return `<option value="${langName} (${code.toUpperCase()})">${langName}</option>`;
     }).join('');
+}
+
+function populateAddLanguageList() {
+    const datalist = document.getElementById('add-languages-list');
+    if (!datalist) return;
+
+    const langCodes = [
+        'uk', 'de', 'en', 'es', 'fr', 'it', 'pl', 'pt', 'ro', 'tr', 'zh',
+        'ja', 'ko', 'ar', 'hi', 'bn', 'cs', 'sk', 'hu', 'nl', 'sv', 'no', 'fi',
+        'da', 'el', 'he', 'id', 'ms', 'th', 'vi', 'bg', 'hr', 'sr', 'sl', 'lt', 'lv', 'et'
+    ];
+
+    const displayNames = new Intl.DisplayNames(['uk', 'en'], { type: 'language' });
+
+    datalist.innerHTML = langCodes.map(code => {
+        const langName = displayNames.of(code);
+        return `<option value="${langName} (${code.toUpperCase()})" data-code="${code}"></option>`;
+    }).join('');
+}
+
+// ------------------------------------------------------------------------------------------------------------------
+// --------------------------------------- YOUR-LANGUAGES & FIRESTORE -----------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------
+
+function getFlagUrl(langCode) {
+    const flagMap = {
+        en: 'gb',
+        uk: 'ua'
+    };
+    const countryCode = flagMap[langCode] || langCode;
+    return `https://flagcdn.com/${countryCode.toLowerCase()}.svg`;
+}
+
+function renderUserLanguages(userLanguages = []) {
+    const languageListContainer = document.querySelector('.your-languages__language-list');
+    if (!languageListContainer) return;
+
+    languageListContainer.innerHTML = '';
+
+    if (!userLanguages || userLanguages.length === 0) {
+        languageListContainer.innerHTML = '<p class="no-languages-text" style="color: white; padding: 10px;">No languages added yet</p>';
+        return;
+    }
+
+    userLanguages.forEach(langObj => {
+        const langCode = langObj.code.toLowerCase();
+        const langUpper = langCode.toUpperCase();
+        const flagSrc = getFlagUrl(langCode);
+        
+        const listItem = document.createElement('li');
+        listItem.className = 'your-languages__item';
+
+        listItem.innerHTML = `
+            <a href="./languagepage.html?lang=${langCode}" class="your-languages__item-link"> 
+                <img src="${flagSrc}" alt="${langUpper} Flag"
+                    class="your-languages__item-flag" onerror="this.src='./src/img/default-flag.svg'">
+                <span class="your-languages__item-title">${langUpper}</span>
+            </a>
+        `;
+
+        languageListContainer.appendChild(listItem);
+    });
+}
+
+function getSelectedLanguageCode() {
+    const input = document.getElementById('add-language-input');
+    const datalist = document.getElementById('add-languages-list');
+    if (!input || !datalist) return null;
+
+    const val = input.value.trim();
+    const options = datalist.querySelectorAll('option');
+    let code = null;
+
+    options.forEach(opt => {
+        if (opt.value === val) {
+            code = opt.getAttribute('data-code');
+        }
+    });
+
+    return code;
+}
+
+async function loadUserLanguages(userId) {
+    try {
+        const userDocRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userDocRef);
+
+        if (userSnap.exists()) {
+            const userData = userSnap.data();
+            return userData.languages || [];
+        } else {
+            return [];
+        }
+    } catch (error) {
+        console.error("Помилка завантаження мов з бази:", error);
+        return [];
+    }
+}
+
+async function saveLanguageToFirestore(userId, langCode) {
+    try {
+        const userDocRef = doc(db, "users", userId);
+        await updateDoc(userDocRef, {
+            languages: arrayUnion({ code: langCode, addedAt: new Date().toISOString() })
+        });
+        console.log("Мову успішно збережено в Firestore!");
+    } catch (error) {
+        console.error("Помилка збереження мови в базу:", error);
+        throw error;
+    }
+}
+
+function initYourLanguagesLogic() {
+    const addBtn = document.querySelector('.your-languages__language-addbutton');
+    const form = document.getElementById('add-language-form');
+    const cancelBtn = document.getElementById('add-language-cencel-btn');
+    const submitBtn = document.getElementById('add-language-btn');
+    const input = document.getElementById('add-language-input');
+
+    if (addBtn && form) {
+        addBtn.addEventListener('click', () => {
+            form.classList.toggle('disable');
+            addBtn.classList.toggle('disable');
+            if (input) input.value = '';
+        });
+    }
+
+    if (cancelBtn && form) {
+        cancelBtn.addEventListener('click', () => {
+            form.classList.add('disable');
+            if (addBtn) addBtn.classList.remove('disable');
+            if (input) input.value = '';
+        });
+    }
+
+    if (submitBtn) {
+        submitBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            const langCode = getSelectedLanguageCode();
+            const user = auth.currentUser;
+
+            if (!langCode) {
+                alert('Будь ласка, оберіть мову зі списку!');
+                return;
+            }
+
+            if (!user) {
+                alert('Будь ласка, увійдіть у систему!');
+                return;
+            }
+
+            const languageExists = currentUserLanguages.some(lang => lang.code === langCode);
+            
+            if (languageExists) {
+                alert('Ця мова вже є у вашому списку вивчення!');
+                return;
+            }
+
+            try {
+                await saveLanguageToFirestore(user.uid, langCode);
+
+                currentUserLanguages.push({ code: langCode });
+                renderUserLanguages(currentUserLanguages);
+
+                form.classList.add('disable');
+                if (addBtn) addBtn.classList.remove('disable');
+                input.value = '';
+            } catch (error) {
+                alert('Не вдалося зберегти мову. Спробуйте ще раз.');
+            }
+        });
+    }
 }

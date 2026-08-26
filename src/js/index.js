@@ -1,11 +1,12 @@
 import { Buffer } from 'buffer';
-import { initLanguagePicker } from './i18n';
+
+
 import {
     registerWithEmail,
     loginWithEmail,
     loginWithGoogle
 } from './auth.js';
-
+import { initLanguagePicker } from './i18n.js';
 // Призначаємо Buffer та global для браузерного середовища Parcel
 window.global = window;
 window.Buffer = Buffer;

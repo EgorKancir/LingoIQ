@@ -5,6 +5,8 @@ import uk from '../i18n/uk.json';
 
 const translations = { en, de, uk };
 let currentLang = localStorage.getItem('lingoiq_lang') || 'en';
+// Робдимо функцію доступною глобально
+window.initLanguagePicker = initLanguagePicker;
 
 // 1. Підстановка тексту на сторінці
 function applyTranslations(lang) {

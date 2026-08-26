@@ -39,22 +39,27 @@
                 </ul>
             </nav>
             <div class="header__language">
-                <button type="button" class="header__language-button">
+                <button type="button" class="header__language-button" id="language-toggle-btn">
                     <img src="./src/img/language-icon.svg" alt="Language-button">
                 </button>
                 <!-- POPUP -->
-                <div class="header-language-popup disable">
+                <div class="header-language-popup disable" id="language-popup">
                     <ul class="header-language-popup__list">
                         <li class="header-language-popup__item">
                             <button class="header-language-popup__button header-language-popup__button--active"
-                                type="button" id="English">English</button>
+                                type="button" data-lang="en">
+                                English
+                            </button>
                         </li>
                         <li class="header-language-popup__item">
-                            <button class="header-language-popup__button" type="button" id="German">German</button>
+                            <button class="header-language-popup__button" type="button" data-lang="de">
+                                Deutsch
+                            </button>
                         </li>
                         <li class="header-language-popup__item">
-                            <button class="header-language-popup__button" type="button"
-                                id="Ukrainian">Ukrainian</button>
+                            <button class="header-language-popup__button" type="button" data-lang="uk">
+                                Українська
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -85,8 +90,8 @@
                         <!-- Форма редагування (за замовчуванням прихована або відкривається по кліку на edit-icon) -->
                         <form class="user-info__edit-section disable" id="edit-user-info-form">
                             <label class="user-info__label" for="username-edit">
-                                <input class="user-info__input" type="text" id="username-edit" placeholder="New Username"
-                                    data-i18n-placeholder="header.username">
+                                <input class="user-info__input" type="text" id="username-edit"
+                                    placeholder="New Username" data-i18n-placeholder="header.username">
                             </label>
 
                             <label class="user-info__label" for="native-lang-input">
@@ -98,18 +103,30 @@
                             <div class="user-info__avatars-section">
                                 <h2 class="user-info__avatars-title">Choose your avatar</h2>
                                 <div class="user-info__avatars-grid">
-                                    <img class="user-info__avatar-option active" src="./src/img/avatars/raccoon-1.jpeg" alt="Raccoon 1">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-2.jpeg" alt="Raccoon 2">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-3.jpeg" alt="Raccoon 3">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-4.jpeg" alt="Raccoon 4">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-5.jpeg" alt="Raccoon 5">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-6.jpeg" alt="Raccoon 6">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-7.jpeg" alt="Raccoon 7">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-8.jpeg" alt="Raccoon 8">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-9.jpeg" alt="Raccoon 9">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-10.jpeg" alt="Raccoon 10">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-11.jpeg" alt="Raccoon 11">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-12.jpeg" alt="Raccoon 12">
+                                    <img class="user-info__avatar-option active" src="./src/img/avatars/raccoon-1.jpeg"
+                                        alt="Raccoon 1">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-2.jpeg"
+                                        alt="Raccoon 2">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-3.jpeg"
+                                        alt="Raccoon 3">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-4.jpeg"
+                                        alt="Raccoon 4">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-5.jpeg"
+                                        alt="Raccoon 5">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-6.jpeg"
+                                        alt="Raccoon 6">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-7.jpeg"
+                                        alt="Raccoon 7">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-8.jpeg"
+                                        alt="Raccoon 8">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-9.jpeg"
+                                        alt="Raccoon 9">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-10.jpeg"
+                                        alt="Raccoon 10">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-11.jpeg"
+                                        alt="Raccoon 11">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-12.jpeg"
+                                        alt="Raccoon 12">
                                 </div>
                             </div>
                             <div class="user-info__buttons-group">
@@ -183,31 +200,25 @@
                 <h2 class="your-languages__title">Your languages</h2>
                 <div class="your-languages__language-group">
                     <ul class="your-languages__language-list">
-                        <li class="your-languages__item">
-                            <a href="./languagepage.html" class="your-languages__item-link">
-                                <img src="./src/img/country-flags-main/svg/de.svg" alt="Flag"
-                                    class="your-languages__item-flag">
-                                <span class="your-languages__item-title">DE</span>
-                            </a>
-                        </li>
-                        <li class="your-languages__item">
-                            <a href="#" class="your-languages__item-link">
-                                <img src="./src/img/country-flags-main/svg/fr.svg" alt="Flag"
-                                    class="your-languages__item-flag">
-                                <span class="your-languages__item-title">FR</span>
-                            </a>
-                        </li>
-                        <li class="your-languages__item">
-                            <a href="#" class="your-languages__item-link">
-                                <img src="./src/img/country-flags-main/svg/sh.svg" alt="Flag"
-                                    class="your-languages__item-flag">
-                                <span class="your-languages__item-title">EN</span>
-                            </a>
-                        </li>
+                        <!-- Нові мови....... -->
                     </ul>
                     <button class="your-languages__language-addbutton">
                         <img class="your-languages__language-button-icon" src="./src/img/plus.svg" alt="plus">
                     </button>
+                    <form class="your-languages__add-language-form disable" id="add-language-form">
+                        <label class="your-languages__label" for="add-language-input">Choose a new language to learn
+                            <!-- Інпут із прив'язаним datalist -->
+                            <input type="text" id="add-language-input" list="add-languages-list" placeholder="Language"
+                                class="your-language-popup__input" autocomplete="off">
+                        </label>
+                        <!-- Сам datalist, який заповнюватиме функція -->
+                        <datalist id="add-languages-list"></datalist>
+                        <div class="your-languages__buttons-group">
+                            <button class="your-languages__submit" type="submit" id="add-language-btn">Add</button>
+                            <button class="your-languages__button-cancel" type="button"
+                                id="add-language-cencel-btn">Cancel</button>
+                        </div>
+                    </form>
                 </div>
             </div>
             <h1 class="quote">
@@ -268,9 +279,10 @@
             </ul>
         </div>
     </footer>
-    <script type="module" src="./src/js/userpage.js"></script>
+    
     <script type="module" src="./src/js/auth.js"></script>
-
+    <script type="module" src="./src/js/i18n.js"></script>
+    <script type="module" src="./src/js/userpage.js"></script>
 </body>
 
 </html>
