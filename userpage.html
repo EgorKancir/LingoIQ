@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang=en><script type=importmap>{"imports":{"4OWXH":"/LingoIQ/raccoon-1.5dce9519.jpeg","7wAgu":"/LingoIQ/raccoon-1.5dce9519.jpeg"}}</script><script type=module src=/LingoIQ/LingoIQ.fa613f32.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.6ad72cc4.css><link rel=stylesheet href=/LingoIQ/LingoIQ.1af9db9d.css><link rel=stylesheet href=/LingoIQ/userpage.81fb9d86.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
+<!DOCTYPE html><html lang=en><script type=importmap>{"imports":{"4OWXH":"/LingoIQ/raccoon-1.5dce9519.jpeg","7wAgu":"/LingoIQ/raccoon-1.5dce9519.jpeg"}}</script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.065170d9.css><link rel=stylesheet href=/LingoIQ/LingoIQ.1af9db9d.css><link rel=stylesheet href=/LingoIQ/userpage.d48d9de6.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
     <header class="container header">
         <div class=header__content>
             <a class=logo__link href=/LingoIQ/index.html>
@@ -21,20 +21,26 @@
                 </ul>
             </nav>
             <div class=header__language>
-                <button type=button class=header__language-button>
+                <button type=button class=header__language-button id=language-toggle-btn>
                     <img src=/LingoIQ/language-icon.3ed870db.svg alt=Language-button>
                 </button>
                 
-                <div class="disable header-language-popup">
+                <div class="disable header-language-popup" id=language-popup>
                     <ul class=header-language-popup__list>
                         <li class=header-language-popup__item>
-                            <button class="header-language-popup__button header-language-popup__button--active" type=button id=English>English</button>
+                            <button class="header-language-popup__button header-language-popup__button--active" type=button data-lang=en>
+                                English
+                            </button>
                         </li>
                         <li class=header-language-popup__item>
-                            <button class=header-language-popup__button type=button id=German>German</button>
+                            <button class=header-language-popup__button type=button data-lang=de>
+                                Deutsch
+                            </button>
                         </li>
                         <li class=header-language-popup__item>
-                            <button class=header-language-popup__button type=button id=Ukrainian>Ukrainian</button>
+                            <button class=header-language-popup__button type=button data-lang=uk>
+                                Українська
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -147,28 +153,23 @@
                 <h2 class=your-languages__title>Your languages</h2>
                 <div class=your-languages__language-group>
                     <ul class=your-languages__language-list>
-                        <li class=your-languages__item>
-                            <a href=/LingoIQ/languagepage.html class=your-languages__item-link>
-                                <img src=/LingoIQ/de.974f9cd9.svg alt=Flag class=your-languages__item-flag>
-                                <span class=your-languages__item-title>DE</span>
-                            </a>
-                        </li>
-                        <li class=your-languages__item>
-                            <a href=# class=your-languages__item-link>
-                                <img src=/LingoIQ/fr.eb868335.svg alt=Flag class=your-languages__item-flag>
-                                <span class=your-languages__item-title>FR</span>
-                            </a>
-                        </li>
-                        <li class=your-languages__item>
-                            <a href=# class=your-languages__item-link>
-                                <img src=/LingoIQ/sh.91ad8702.svg alt=Flag class=your-languages__item-flag>
-                                <span class=your-languages__item-title>EN</span>
-                            </a>
-                        </li>
+                        
                     </ul>
                     <button class=your-languages__language-addbutton>
                         <img class=your-languages__language-button-icon src=/LingoIQ/plus.11e1ee4d.svg alt=plus>
                     </button>
+                    <form class="disable your-languages__add-language-form" id=add-language-form>
+                        <label class=your-languages__label for=add-language-input>Choose a new language to learn
+                            
+                            <input id=add-language-input list=add-languages-list placeholder=Language class=your-language-popup__input autocomplete=off>
+                        </label>
+                        
+                        <datalist id=add-languages-list></datalist>
+                        <div class=your-languages__buttons-group>
+                            <button class=your-languages__submit id=add-language-btn>Add</button>
+                            <button class=your-languages__button-cancel type=button id=add-language-cencel-btn>Cancel</button>
+                        </div>
+                    </form>
                 </div>
             </div>
             <h1 class=quote>
@@ -229,8 +230,9 @@
             </ul>
         </div>
     </footer>
-    <script type=module src=/LingoIQ/userpage.9ad468fc.js></script>
-    <script type=module src=/LingoIQ/userpage.b8c62165.js></script>
-
+    
+    <script type=module src=/LingoIQ/userpage.564520a1.js></script>
+    <script type=module src=/LingoIQ/userpage.5eece4c5.js></script>
+    <script type=module src=/LingoIQ/userpage.7f555920.js></script>
 
 
