@@ -22,16 +22,16 @@
             <nav class="home-navigation">
                 <ul class="home-navigation__list">
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="#features-id">Home</a>
+                        <a class="home-navigation__link" href="./userpage.html">Home</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="#how-it-works-id">Calendar</a>
+                        <a class="home-navigation__link" href="#calendar">Calendar</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="#vwa-id">Languages</a>
+                        <a class="home-navigation__link" href="./userpage.html">Languages</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="#vwa-id">Websites</a>
+                        <a class="home-navigation__link" href="#websites">Websites</a>
                     </li>
                 </ul>
             </nav>
@@ -84,11 +84,11 @@
                                     alt="edit">
                             </button>
                         </div>
-                        <!-- Форма редагування (за замовчуванням прихована або відкривається по кліку на edit-icon) -->
+                        <!-- Форма редагування профілю -->
                         <form class="user-info__edit-section disable" id="edit-user-info-form">
                             <label class="user-info__label" for="username-edit">
                                 <input class="user-info__input" type="text" id="username-edit"
-                                    placeholder="New Username" data-i18n-placeholder="header.username">
+                                    placeholder="New Username">
                             </label>
 
                             <label class="user-info__label" for="native-lang-input">
@@ -96,40 +96,27 @@
                                     placeholder="Search native language..." autocomplete="off">
                                 <datalist id="languages-list"></datalist>
                             </label>
-                            <!-- Новий блок вибору пресетів замість <input type="file"> -->
+
                             <div class="user-info__avatars-section">
                                 <h2 class="user-info__avatars-title">Choose your avatar</h2>
                                 <div class="user-info__avatars-grid">
-                                    <img class="user-info__avatar-option active" src="./src/img/avatars/raccoon-1.jpeg"
-                                        alt="Raccoon 1">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-2.jpeg"
-                                        alt="Raccoon 2">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-3.jpeg"
-                                        alt="Raccoon 3">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-4.jpeg"
-                                        alt="Raccoon 4">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-5.jpeg"
-                                        alt="Raccoon 5">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-6.jpeg"
-                                        alt="Raccoon 6">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-7.jpeg"
-                                        alt="Raccoon 7">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-8.jpeg"
-                                        alt="Raccoon 8">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-9.jpeg"
-                                        alt="Raccoon 9">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-10.jpeg"
-                                        alt="Raccoon 10">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-11.jpeg"
-                                        alt="Raccoon 11">
-                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-12.jpeg"
-                                        alt="Raccoon 12">
+                                    <img class="user-info__avatar-option active" src="./src/img/avatars/raccoon-1.jpeg" alt="Raccoon 1">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-2.jpeg" alt="Raccoon 2">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-3.jpeg" alt="Raccoon 3">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-4.jpeg" alt="Raccoon 4">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-5.jpeg" alt="Raccoon 5">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-6.jpeg" alt="Raccoon 6">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-7.jpeg" alt="Raccoon 7">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-8.jpeg" alt="Raccoon 8">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-9.jpeg" alt="Raccoon 9">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-10.jpeg" alt="Raccoon 10">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-11.jpeg" alt="Raccoon 11">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-12.jpeg" alt="Raccoon 12">
                                 </div>
                             </div>
                             <div class="user-info__buttons-group">
                                 <button class="user-info__submit" type="submit" id="edit-user-info-btn">Save</button>
-                                <button class="user-info__button-cancel" type="button"
-                                    id="cancel-edit-btn">Cancel</button>
+                                <button class="user-info__button-cancel" type="button" id="cancel-edit-btn">Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -138,45 +125,53 @@
             </div>
         </div>
     </header>
+
     <main class="main">
         <div class="container main__content">
+            <!-- <button class="back-btn">Back</button> -->
+            <!-- Динамічний прапор та назва мови -->
             <img src="./src/img/country-flags-main/svg/de.svg" alt="Flag" class="languge-falg">
             <h1 class="language-name">Deutsch</h1>
+
+            <!-- Блок прогресу (Пункти 2, 3, 4) -->
             <div class="progress">
                 <h2 class="progress__title">Progress</h2>
                 <div class="progress__info-group">
-                    <p class="progress__days">Days: <span class="progress__days-number">100</span></p>
-                    <p class="progress__words">Words: <span class="progress__words-number">1000</span></p>
+                    <p class="progress__days">Days: <span class="progress__days-number" id="languageDaysLearning">0</span></p>
+                    <p class="progress__words">Words: <span class="progress__words-number" id="languageWordsCount">0</span></p>
                 </div>
                 <div class="progress__graph">
-                    <div class="progress__graph-block">
-                        <p class="progress__graph-percent">50%</p>
+                    <!-- Заглушка для графіку / шкали відсотків (Пункт 4) -->
+                    <div class="progress__graph-block" id="languageProgressBar">
+                        <p class="progress__graph-percent" id="languageProgressPercent">0%</p>
                     </div>
                 </div>
             </div>
+
+            <!-- Навігація по розділах мови (Пункт 1) -->
             <div class="web-navigation">
                 <h2 class="web-navigation__title">Navigation</h2>
                 <ul class="web-navigation__pages-list">
                     <li class="web-navigation__pages-item">
-                        <a href="./glossary.html" class="web-navigation__page-link">
+                        <a href="./glossary.html" class="web-navigation__page-link" data-page="glossary">
                             <img src="./src/img/languagepage/glossary-icon.svg" alt="Icon" class="web-navigation__page-icon">
                             <h3 class="web-navigation__page-name">Glossary</h3>
                         </a>
                     </li>
                     <li class="web-navigation__pages-item">
-                        <a href="./rules.html" class="web-navigation__page-link">
+                        <a href="./rules.html" class="web-navigation__page-link" data-page="rules">
                             <img src="./src/img/languagepage/rules-icon.svg" alt="Icon" class="web-navigation__page-icon">
                             <h3 class="web-navigation__page-name">Rules</h3>
                         </a>
                     </li>
                     <li class="web-navigation__pages-item">
-                        <a href="#" class="web-navigation__page-link">
+                        <a href="./training-center.html" class="web-navigation__page-link" data-page="trainer">
                             <img src="./src/img/languagepage/training-center-icon.svg" alt="Icon" class="web-navigation__page-icon">
                             <h3 class="web-navigation__page-name">Training Center</h3>
                         </a>
                     </li>
                     <li class="web-navigation__pages-item">
-                        <a href="#" class="web-navigation__page-link">
+                        <a href="./statistics.html" class="web-navigation__page-link" data-page="statistics">
                             <img src="./src/img/languagepage/statistik-icon.svg" alt="Icon" class="web-navigation__page-icon">
                             <h3 class="web-navigation__page-name">Statistic</h3>
                         </a>
@@ -185,6 +180,7 @@
             </div>
         </div>
     </main>
+
     <footer class="footer">
         <a href="#" class="footer-panel__logo-link">
             <img src="./src/img/lingoiq_logo-footer.svg" alt="logo" class="footer-panel__logo-img">
@@ -215,8 +211,7 @@
             </ul>
         </div>
     </footer>
-    <script type="module" src="./src/js/auth.js"></script>
-    <script type="module" src="./src/js/i18n.js"></script>
+
     <script type="module" src="./src/js/languagepage.js"></script>
 </body>
 </html>

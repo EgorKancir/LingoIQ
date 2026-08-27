@@ -21,7 +21,7 @@ body.no-scroll {
     padding: 0 15px;
     margin: 0 auto;
 }
-h1, h2, h3, h4, h5, h6, p, ul, li {
+h1, h2, h3, h4, h5, h6, p, ul, li, td {
     margin: 0;
     padding: 0;
     color: white;
@@ -493,13 +493,30 @@ button, input, label, form {
 /* ----------------------------------------HEADER-END--------------------------------------------| */
 
 /* ----------------------------------------MAIN--------------------------------------------| */
-
 .main__content {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     gap: 70px;
+    /* position: relative; */
+}
+.back-btn {
+    top: 20px;
+    left: 15px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: normal;
+    letter-spacing: 0;
+    text-align: center;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(rgba(0, 1, 5, 0.8) 0%, rgba(0, 18, 196, 0.9) 60%, rgba(48, 177, 236, 1) 100%);
 }
 /* ----------------------------------------QUOTE--------------------------------------------| */
 

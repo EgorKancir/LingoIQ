@@ -1,93 +1,155 @@
 // ============================================================================
-// 1. ІМПОРТИ МОДУЛІВ ТА БІБЛІОТЕК
+// 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ ТА МОДУЛІВ[cite: 3]
 // ============================================================================
+
 import { auth, db } from './firebase.js';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import { initHeader, loadHeaderUserData } from './header.js';
+import { initLanguagePicker } from './i18n.js';
 
-const defaultAvatar = './src/img/avatars/raccoon-1.jpeg';
-
-let userInfoPopup;
-let closePopupBtn;
-let userMenuTrigger;
-let logoutBtn;
-
+// Отримуємо код мови з URL (наприклад: languagepage.html?lang=de)[cite: 3]
 const urlParams = new URLSearchParams(window.location.search);
 const currentLangCode = urlParams.get('lang');
 
 // ============================================================================
-// 2. ГОЛОВНИЙ СЛУХАЧ ЗАВАНТАЖЕННЯ СТОРІНКИ
+// 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ[cite: 3]
 // ============================================================================
+
 document.addEventListener('DOMContentLoaded', () => {
     if (!currentLangCode) {
         window.location.href = './userpage.html';
         return;
     }
 
-    console.log('Відкрита сторінка для мови:', currentLangCode);
-
-    userInfoPopup = document.querySelector('.user-info');
-    closePopupBtn = document.querySelector('.user-info__button-close');
-    userMenuTrigger = document.querySelector('.header__username-settings') || document.querySelector('.header__username');
-    logoutBtn = document.getElementById('logout-btn');
-
-    initHeaderEventListeners();
+    initHeader();
+    initLanguagePicker();
     initLanguageDataUI(currentLangCode);
     updateNavigationLinks(currentLangCode);
 
-    // Додаткова перевірка ключів локального сховища Firebase, 
-    // щоб зрозуміти, чи користувач взагалі був залогінений
-    const firebaseLocalStorageKeys = Object.keys(localStorage).filter(key => key.startsWith('firebase:authUser:'));
-    const hasLocalSession = firebaseLocalStorageKeys.length > 0;
-
-    let isAuthorized = false;
-
-    // Слухач Firebase Auth
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            isAuthorized = true;
             await loadHeaderUserData(user);
+            await loadLanguageSpecificData(user.uid, currentLangCode);
         } else {
-            // Якщо локально сесії немає взагалі — тоді точно кидаємо на index.html
-            // Якщо ж сесія колись була, даємо трохи більше часу на відновлення
-            if (!hasLocalSession) {
-                setTimeout(() => {
-                    if (!auth.currentUser) {
-                        window.location.href = './index.html';
-                    }
-                }, 1000);
-            }
+            window.location.href = './index.html';
         }
     });
-
-    // Запобіжник: якщо за 2.5 секунди стейт не змінився і користувача немає
-    setTimeout(async () => {
-        if (!isAuthorized && !auth.currentUser) {
-            // Остання перевірка: можливо Firebase просто довго думає, 
-            // але в базі є кешований юзер
-            if (!hasLocalSession) {
-                console.warn('Користувач не авторизований, редирект на index.html');
-                window.location.href = './index.html';
-            }
-        }
-    }, 2500);
 });
 
 // ============================================================================
-// 3. ІНШІ ФУНКЦІЇ UI ТА ДАНИХ
+// 3. ЗАВАНТАЖЕННЯ ДАНИХ ДЛЯ КОНКРЕТНОЇ МОВИ З FIRESTORE[cite: 3]
 // ============================================================================
+
+async function loadLanguageSpecificData(userId, langCode) {
+    try {
+        const userDocRef = doc(db, 'users', userId);
+        const userSnap = await getDoc(userDocRef);
+
+        if (!userSnap.exists()) return;
+
+        const userData = userSnap.data();
+        const languages = userData.languages || [];
+
+        const currentLangObj = languages.find(
+            lang => lang.code.toLowerCase() === langCode.toLowerCase()
+        );
+
+        // Підрахунок кількості днів вивчення мови від дати `addedAt`[cite: 3]
+        let daysLearning = 0;
+        if (currentLangObj && currentLangObj.addedAt) {
+            const addedDate = new Date(currentLangObj.addedAt);
+            const today = new Date();
+            
+            const addedDay = new Date(addedDate.getFullYear(), addedDate.getMonth(), addedDate.getDate());
+            const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            
+            const diffTime = todayDay - addedDay;
+            daysLearning = Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
+        }
+
+        const daysElement = document.getElementById('languageDaysLearning');
+        if (daysElement) {
+            daysElement.textContent = daysLearning;
+        }
+
+        // Оновлення слів та графіків[cite: 3]
+        updateDictionaryStats(currentLangObj);
+
+    } catch (error) {
+        console.error('Помилка завантаження специфічних даних мови:', error);
+    }
+}
+
+// ============================================================================
+// 4. РОБОТА ЗІ СЛОВНИКОМ ТА ГРАФІКОМ ПРОГРЕСУ
+// ============================================================================
+
+function updateDictionaryStats(langObj) {
+    // Отримуємо масив словника для цієї мови (якщо його немає, то порожній масив)
+    const glossaryArray = langObj?.glossary || [];
+
+    // 1. Загальна кількість слів у словнику
+    const totalWordsCount = glossaryArray.length;
+    const wordsElement = document.getElementById('languageWordsCount');
+    if (wordsElement) {
+        wordsElement.textContent = totalWordsCount;
+    }
+
+    // 2. Рахуємо кількість слів зі статусом 'Studied' (вивчені)
+    const studiedWordsCount = glossaryArray.filter(item => item.status === 'Studied').length;
+
+    // 3. Рахуємо відсоток вивчених від загальної кількості (захист від ділення на нуль)
+    const progressPercent = totalWordsCount > 0 
+        ? Math.round((studiedWordsCount / totalWordsCount) * 100) 
+        : 0;
+
+    // Виводимо відсоток текстом
+    const progressPercentElement = document.getElementById('languageProgressPercent');
+    if (progressPercentElement) {
+        progressPercentElement.textContent = `${progressPercent}%`;
+    }
+
+    // 4. Оновлюємо ширину графіка-шкали
+    const graphBlock = document.querySelector('.progress__graph-block');
+    if (graphBlock) {
+        // Якщо прогрес дуже маленький або 0, ставимо мінімальну ширину (наприклад, 10% або 0%), 
+        // щоб шкала виглядала охайно, або чистий відсоток.
+        const displayWidth = progressPercent === 0 ? 0 : Math.max(progressPercent, 10);
+        graphBlock.style.width = `${displayWidth}%`;
+    }
+}
+
+// ============================================================================
+// 5. ДОПОМІЖНІ ФУНКЦІЇ (Векторні SVG прапори через flagcdn, Назва, Навігація)[cite: 3]
+// ============================================================================
+
 function initLanguageDataUI(langCode) {
     const lowerCode = langCode.toLowerCase();
     const upperCode = langCode.toUpperCase();
+    
+    // Словник виключень для мов, чиї коди відрізняються від кодів країн на FlagCDN
+    const flagMap = {
+        en: 'gb', // Англійська -> Велика Британія
+        uk: 'ua', // Українська -> Україна
+        ja: 'jp', // Японська -> Японія
+        da: 'dk', // Данська -> Данія
+        sv: 'se', // Шведська -> Швеція
+        el: 'gr', // Грецька -> Греція
+        cs: 'cz', // Чеська -> Чехія
+        et: 'ee'  // Естонська -> Естонія
+    };
 
-    const flagMap = { en: 'gb', uk: 'ua', pl: 'pl', de: 'de', es: 'es', fr: 'fr' };
-    const countryCode = flagMap[lowerCode] || lowerCode;
+    const countryCode = (flagMap[lowerCode] || lowerCode).toLowerCase();
+    
+    // Встановлюємо векторне SVG-зображення прапорця через flagcdn.com для ідеальної чіткості[cite: 3]
     const flagImg = document.querySelector('.languge-falg');
     if (flagImg) {
-        flagImg.src = `https://flagcdn.com/${countryCode.toLowerCase()}.svg`;
+        flagImg.src = `https://flagcdn.com/${countryCode}.svg`;
         flagImg.alt = `${upperCode} Flag`;
     }
 
+    // Локалізована повна назва мови[cite: 3]
     const displayNames = new Intl.DisplayNames(['en', 'uk', 'de'], { type: 'language' });
     const fullLangName = displayNames.of(lowerCode) || upperCode;
     
@@ -97,88 +159,15 @@ function initLanguageDataUI(langCode) {
     }
 }
 
+// Динамічне оновлення шляхів для всіх посилань у блоці навігації[cite: 3]
 function updateNavigationLinks(langCode) {
-    const glossaryLink = document.querySelector('.web-navigation__page-link[href*="glossary.html"]');
-    if (glossaryLink) {
-        glossaryLink.href = `./glossary.html?lang=${langCode}`;
-    }
-
-    const rulesLink = document.querySelector('.web-navigation__page-link[href*="rules.html"]');
-    if (rulesLink) {
-        rulesLink.href = `./rules.html?lang=${rulesLink.getAttribute('href')?.includes('lang=') ? '' : 'lang=' + langCode}`; // безпечне оновлення
-    }
-}
-
-function initHeaderEventListeners() {
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            try {
-                await signOut(auth);
-                window.location.href = './index.html';
-            } catch (error) {
-                console.error('Помилка виходу:', error);
-            }
-        });
-    }
-
-    if (userMenuTrigger) {
-        userMenuTrigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (userInfoPopup) userInfoPopup.classList.remove('disable');
-        });
-    }
-
-    if (closePopupBtn) {
-        closePopupBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (userInfoPopup) userInfoPopup.classList.add('disable');
-        });
-    }
-
-    document.addEventListener('click', (e) => {
-        if (userInfoPopup && !userInfoPopup.classList.contains('disable')) {
-            if (!userInfoPopup.contains(e.target) && !userMenuTrigger?.contains(e.target)) {
-                userInfoPopup.classList.add('disable');
-            }
+    const navLinks = document.querySelectorAll('.web-navigation__page-link');
+    
+    navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && href.includes('.html')) {
+            const cleanHref = href.split('?')[0];
+            link.href = `${cleanHref}?lang=${langCode}`;
         }
     });
-}
-
-async function loadHeaderUserData(user) {
-    try {
-        const userRef = doc(db, 'users', user.uid);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-            const data = userSnap.data();
-            const name = data.displayName || user.displayName || 'Learner';
-            const currentAvatar = data.photoURL || user.photoURL || defaultAvatar;
-            const nativeLang = data.nativeLang || 'uk';
-            
-            let days = 0;
-            if (data.createdAt) {
-                const regDate = new Date(data.createdAt);
-                const today = new Date();
-                const diffTime = new Date(today.getFullYear(), today.getMonth(), today.getDate()) - new Date(regDate.getFullYear(), regDate.getMonth(), regDate.getDate());
-                days = Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
-            }
-
-            const usernameElement = document.querySelector('.header__username');
-            const headerAvatar = document.querySelector('.header__username-avatar');
-            const popupUsername = document.querySelector('.user-info__username');
-            const popupAvatar = document.querySelector('.user-info__img');
-            const nativeLangSpan = document.getElementById('nativlang');
-            const daysLearningSpan = document.getElementById('daysLearning');
-
-            if (usernameElement) usernameElement.textContent = name;
-            if (headerAvatar) headerAvatar.src = currentAvatar;
-            if (popupUsername) popupUsername.textContent = name;
-            if (popupAvatar) popupAvatar.src = currentAvatar;
-            if (nativeLangSpan) nativeLangSpan.textContent = nativeLang;
-            if (daysLearningSpan) daysLearningSpan.textContent = days;
-        }
-    } catch (error) {
-        console.error('Помилка завантаження даних:', error);
-    }
 }

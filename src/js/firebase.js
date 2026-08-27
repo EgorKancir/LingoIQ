@@ -1,3 +1,7 @@
+// ============================================================================
+// 1. ІНІЦІАЛІЗАЦІЯ FIREBASE ТА СЕРВІСІВ
+// ============================================================================
+
 window.Buffer = window.Buffer || require('buffer/').Buffer;
 
 import { initializeApp } from "firebase/app";
@@ -15,19 +19,16 @@ const firebaseConfig = {
     measurementId: "G-JMET3NPKF4"
 };
 
-// Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
 
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
-// Додаємо підказку для вибору акаунта (уникає зациклення сесії)
 googleProvider.setCustomParameters({
     prompt: 'select_account'
 });
 
-// Замінюємо getFirestore на initializeFirestore з локальним кешем та оптимізацією з'єднання
 export const db = initializeFirestore(app, {
     localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
 });
