@@ -714,56 +714,59 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"6kb64":[function(require,module,exports,__globalThis) {
+// ============================================================================
+// 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ ТА БІБЛІОТЕК
+// ============================================================================
 var _buffer = require("buffer");
 var _authJs = require("./auth.js");
 var _i18NJs = require("./i18n.js");
-// Призначаємо Buffer та global для браузерного середовища Parcel
+var _firebaseJs = require("./firebase.js");
+var _auth = require("firebase/auth");
 window.global = window;
 window.Buffer = (0, _buffer.Buffer);
+// ============================================================================
+// 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ ТА ОБРОБНИКІВ ПОДІЙ
+// ============================================================================
 document.addEventListener('DOMContentLoaded', ()=>{
-    // 1. Ініціалізація вибору мови
     (0, _i18NJs.initLanguagePicker)();
     console.log("LingoIQ: i18n \u0443\u0441\u043F\u0456\u0448\u043D\u043E \u0456\u043D\u0456\u0446\u0456\u0430\u043B\u0456\u0437\u043E\u0432\u0430\u043D\u043E!");
-    // 2. Елементи попапів
+    (0, _auth.onAuthStateChanged)((0, _firebaseJs.auth), (user)=>{
+        const currentPath = window.location.pathname;
+        const isIndex = currentPath.endsWith('index.html') || currentPath === '/' || currentPath === '';
+        if (user && isIndex) window.location.href = 'userpage.html';
+    });
     const signupPopup = document.querySelector('.header-registration-signup-popup');
     const signinPopup = document.querySelector('.header-registration-signin-popup');
-    // Кнопки відкриття в хедері
     const openSigninBtn = document.getElementById('open-signin-btn');
     const openSignupBtn = document.getElementById('open-signup-btn');
-    // Відкрити вікно ВХОДУ (Sign In)
+    const openSignupHeroBtn = document.getElementById('open-signup-hero-btn');
     const openSignin = ()=>{
         if (signinPopup) signinPopup.classList.remove('disable');
         if (signupPopup) signupPopup.classList.add('disable');
         document.body.classList.add('no-scroll');
     };
-    // Відкрити вікно РЕЄСТРАЦІЇ (Sign Up / Start Learning)
     const openSignup = ()=>{
         if (signupPopup) signupPopup.classList.remove('disable');
         if (signinPopup) signinPopup.classList.add('disable');
         document.body.classList.add('no-scroll');
     };
-    // Прив'язка подій до кнопок у хедері
     if (openSigninBtn) openSigninBtn.addEventListener('click', openSignin);
     if (openSignupBtn) openSignupBtn.addEventListener('click', openSignup);
-    // Перемикачі всередині попапів
+    if (openSignupHeroBtn) openSignupHeroBtn.addEventListener('click', openSignup);
     const switchToSignin = document.getElementById('switch-to-signin');
     const switchToSignup = document.getElementById('switch-to-signup');
-    // Форми та кнопки авторизації
     const signupForm = document.getElementById('signup-form');
     const signinForm = document.getElementById('signin-form');
     const googleSignupBtn = document.getElementById('google-signup-btn');
     const googleSigninBtn = document.getElementById('google-signin-btn');
-    // Закрити всі попапи реєстрації/входу
     const closeModal = ()=>{
         if (signupPopup) signupPopup.classList.add('disable');
         if (signinPopup) signinPopup.classList.add('disable');
         document.body.classList.remove('no-scroll');
     };
-    // Закриття клавішею Escape
     document.addEventListener('keydown', (e)=>{
         if (e.key === 'Escape') closeModal();
     });
-    // Перемикання між Sign Up та Sign In
     if (switchToSignin && signupPopup && signinPopup) switchToSignin.addEventListener('click', (e)=>{
         e.preventDefault();
         signupPopup.classList.add('disable');
@@ -774,27 +777,19 @@ document.addEventListener('DOMContentLoaded', ()=>{
         signinPopup.classList.add('disable');
         signupPopup.classList.remove('disable');
     });
-    // Реєстрація через Email/Password
     if (signupForm) signupForm.addEventListener('submit', async (e)=>{
         e.preventDefault();
-        const usernameInput = document.getElementById('username-signup');
-        const emailInput = document.getElementById('email-signup');
-        const passwordInput = document.getElementById('password-signup');
-        const username = usernameInput ? usernameInput.value.trim() : '';
-        const email = emailInput ? emailInput.value.trim() : '';
-        const password = passwordInput ? passwordInput.value.trim() : '';
+        const username = document.getElementById('username-signup')?.value.trim() || '';
+        const email = document.getElementById('email-signup')?.value.trim() || '';
+        const password = document.getElementById('password-signup')?.value.trim() || '';
         if (email && password) await (0, _authJs.registerWithEmail)(email, password, username);
     });
-    // Вхід через Email/Password
     if (signinForm) signinForm.addEventListener('submit', async (e)=>{
         e.preventDefault();
-        const emailInput = document.getElementById('email-signin');
-        const passwordInput = document.getElementById('password-signin');
-        const email = emailInput ? emailInput.value.trim() : '';
-        const password = passwordInput ? passwordInput.value.trim() : '';
+        const email = document.getElementById('email-signin')?.value.trim() || '';
+        const password = document.getElementById('password-signin')?.value.trim() || '';
         if (email && password) await (0, _authJs.loginWithEmail)(email, password);
     });
-    // Вхід через Google (Pop-up)
     const handleGoogleLogin = async (e)=>{
         e.preventDefault();
         e.stopPropagation();
@@ -804,6 +799,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if (googleSigninBtn) googleSigninBtn.addEventListener('click', handleGoogleLogin);
 });
 
-},{"buffer":"bCaf4","./auth.js":"aTIl8","./i18n.js":"lQCzu"}]},["6DHTQ","6kb64"], "6kb64", "parcelRequiree231", {})
+},{"buffer":"bCaf4","./auth.js":"aTIl8","./i18n.js":"lQCzu","./firebase.js":"8uCPj","firebase/auth":"4ZBbi"}]},["6DHTQ","6kb64"], "6kb64", "parcelRequiree231", {})
 
 //# sourceMappingURL=LingoIQ.6528c13b.js.map

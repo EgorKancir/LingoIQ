@@ -715,54 +715,35 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 
 },{}],"1noC9":[function(require,module,exports,__globalThis) {
 // ============================================================================
-// 1. ІМПОРТИ МОДУЛІВ
+// 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ ТА БАЗОВИХ МОДУЛІВ
 // ============================================================================
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _firebaseJs = require("./firebase.js");
 var _auth = require("firebase/auth");
 var _firestore = require("firebase/firestore");
-// Для Parcel v2 обов'язково використовуємо префікс "url:" при імпорті статичних файлів
-var _raccoon1Jpeg = require("url:../img/avatars/raccoon-1.jpeg");
-var _raccoon1JpegDefault = parcelHelpers.interopDefault(_raccoon1Jpeg);
-// ============================================================================
-// 2. ГЛОБАЛЬНІ ЗМІННІ ТА СТАН
-// ============================================================================
+var _headerJs = require("./header.js");
+var _i18NJs = require("./i18n.js");
 let editForm;
 let userSection;
 let editToggleBtn;
-let userInfoPopup;
-let closePopupBtn;
-let userMenuTrigger;
-let logoutBtn;
 let cancelEditBtn;
 let selectedAvatarURL = '';
 let isRedirecting = false;
 let currentUserLanguages = [];
 // ============================================================================
-// 3. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ ТА АВТОРИЗАЦІЯ
+// 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ ТА ПЕРЕВІРКА СЕСІЇ
 // ============================================================================
 document.addEventListener('DOMContentLoaded', ()=>{
-    // Ініціалізація DOM елементів
     editForm = document.getElementById('edit-user-info-form');
     userSection = document.querySelector('.user-info__user-section');
     editToggleBtn = document.getElementById('edit-profile-toggle-btn');
-    userInfoPopup = document.querySelector('.user-info');
-    closePopupBtn = document.querySelector('.user-info__button-close');
-    userMenuTrigger = document.querySelector('.header__username-settings') || document.querySelector('.header__username');
-    logoutBtn = document.getElementById('logout-btn');
     cancelEditBtn = document.getElementById('cancel-edit-btn');
-    // Заповнюємо списки мов (datalists)
+    (0, _headerJs.initHeader)();
+    (0, _i18NJs.initLanguagePicker)();
     populateLanguageList();
     populateAddLanguageList();
     initEventListeners();
     initAvatarSelection();
     initYourLanguagesLogic();
-    // Виклик глобальної функції перекладу
-    if (typeof window.initLanguagePicker === 'function') {
-        window.initLanguagePicker();
-        console.log("LingoIQ: i18n \u0443\u0441\u043F\u0456\u0448\u043D\u043E \u0456\u043D\u0456\u0446\u0456\u0430\u043B\u0456\u0437\u043E\u0432\u0430\u043D\u043E!");
-    }
-    // Слухач авторизації
     (0, _auth.onAuthStateChanged)((0, _firebaseJs.auth), async (user)=>{
         if (!user) {
             if (!isRedirecting) {
@@ -771,82 +752,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
             }
             return;
         }
-        console.log("\u041A\u043E\u0440\u0438\u0441\u0442\u0443\u0432\u0430\u0447 \u0443\u0441\u043F\u0456\u0448\u043D\u043E \u0430\u0432\u0442\u043E\u0440\u0438\u0437\u043E\u0432\u0430\u043D\u0438\u0439:", user.uid);
-        window.debugGetData = async function() {
-            const userRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
-            const snap = await (0, _firestore.getDoc)(userRef);
-            if (snap.exists()) console.log("\u0410\u041D\u0410\u041B\u0406\u0417 \u0411\u0410\u0417\u0418 \u0414\u0410\u041D\u0418\u0425 \u0424\u0406\u0420\u0415\u0411\u0415\u0419\u0421:", snap.data());
-            else console.log("\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442 \u0434\u043B\u044F \u0446\u044C\u043E\u0433\u043E \u044E\u0437\u0435\u0440\u0430 \u0432\u0456\u0434\u0441\u0443\u0442\u043D\u0456\u0439 \u0443 Firestore!");
-        };
-        // Завантажуємо профіль та мови користувача
-        await loadUserData(user);
+        await (0, _headerJs.loadHeaderUserData)(user);
         currentUserLanguages = await loadUserLanguages(user.uid);
         renderUserLanguages(currentUserLanguages);
     });
 });
 // ============================================================================
-// 4. ФУНКЦІЯ ЗАВАНТАЖЕННЯ ДАНИХ ПРОФІЛЮ (loadUserData)
-// ============================================================================
-async function loadUserData(user) {
-    try {
-        const userRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
-        const userSnap = await (0, _firestore.getDoc)(userRef);
-        if (userSnap.exists()) {
-            console.log("=== \u0414\u0410\u041D\u0406 \u0417 \u0424\u0406\u0420\u0415\u0411\u0415\u0419\u0421\u0423 ===", userSnap.data());
-            renderUserData(userSnap.data(), user);
-        } else {
-            console.log("=== \u0414\u041E\u041A\u0423\u041C\u0415\u041D\u0422 \u041D\u0415 \u0417\u041D\u0410\u0419\u0414\u0415\u041D\u041E, \u0421\u0422\u0412\u041E\u0420\u042E\u042E \u041D\u041E\u0412\u0418\u0419 \u0412 \u0411\u0410\u0417\u0406 ===");
-            const newUserData = {
-                uid: user.uid,
-                email: user.email || '',
-                displayName: user.displayName || 'Learner',
-                photoURL: user.photoURL || '',
-                nativeLang: 'uk',
-                languages: [],
-                createdAt: new Date().toISOString()
-            };
-            await (0, _firestore.setDoc)(userRef, newUserData);
-            renderUserData(newUserData, user);
-        }
-    } catch (error) {
-        console.warn("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0430\u0431\u043E \u0441\u0442\u0432\u043E\u0440\u0435\u043D\u043D\u044F \u043F\u0440\u043E\u0444\u0456\u043B\u044E:", error);
-        renderUserData({
-            displayName: user.displayName || 'Learner',
-            photoURL: user.photoURL
-        }, user);
-    }
-}
-// ============================================================================
-// 5. ФУНКЦІЇ РЕНДЕРИНГУ ДАНИХ (UI)
-// ============================================================================
-function renderUserData(data, user) {
-    const usernameElement = document.querySelector('.header__username');
-    const popupNameElement = document.querySelector('.user-info__username');
-    const nativeLangElement = document.getElementById('nativlang');
-    const daysElement = document.getElementById('daysLearning');
-    const name = data.displayName || user.displayName || 'Learner';
-    if (usernameElement) usernameElement.textContent = name;
-    if (popupNameElement) popupNameElement.textContent = name;
-    if (nativeLangElement) nativeLangElement.textContent = data.nativeLang || 'uk';
-    const currentAvatar = data.photoURL || user.photoURL || (0, _raccoon1JpegDefault.default);
-    const headerAvatar = document.querySelector('.header__username-avatar');
-    const popupAvatar = document.querySelector('.user-info__img');
-    if (headerAvatar) headerAvatar.src = currentAvatar;
-    if (popupAvatar) popupAvatar.src = currentAvatar;
-    if (daysElement) {
-        if (data.createdAt) {
-            const registrationDate = new Date(data.createdAt);
-            const today = new Date();
-            const regDay = new Date(registrationDate.getFullYear(), registrationDate.getMonth(), registrationDate.getDate());
-            const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            const diffTime = todayDay - regDay;
-            const daysStudying = Math.floor(diffTime / 86400000);
-            daysElement.textContent = daysStudying >= 0 ? daysStudying : 0;
-        } else daysElement.textContent = '0';
-    }
-}
-// ============================================================================
-// 6. УПРАВЛІННЯ ПОПАПАМИ ТА ПОДІЯМИ
+// 3. ДОПОМІЖНІ ФУНКЦІЇ ТА ЛОГІКА ФОРМ
 // ============================================================================
 function showUserSection() {
     if (editForm) {
@@ -855,24 +767,7 @@ function showUserSection() {
     }
     if (userSection) userSection.classList.remove('disable');
 }
-const closeAllPopups = ()=>{
-    if (userInfoPopup) userInfoPopup.classList.add('disable');
-    showUserSection();
-};
 function initEventListeners() {
-    if (logoutBtn) logoutBtn.addEventListener('click', async (e)=>{
-        e.preventDefault();
-        try {
-            await (0, _auth.signOut)((0, _firebaseJs.auth));
-            window.location.href = './index.html';
-        } catch (error) {
-            console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043F\u0456\u0434 \u0447\u0430\u0441 \u0432\u0438\u0445\u043E\u0434\u0443:", error);
-        }
-    });
-    if (userMenuTrigger) userMenuTrigger.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        if (userInfoPopup) userInfoPopup.classList.remove('disable');
-    });
     if (editToggleBtn) editToggleBtn.addEventListener('click', (e)=>{
         e.stopPropagation();
         if (userSection) userSection.classList.add('disable');
@@ -882,23 +777,8 @@ function initEventListeners() {
         e.stopPropagation();
         showUserSection();
     });
-    if (closePopupBtn) closePopupBtn.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        closeAllPopups();
-    });
-    document.addEventListener('click', (e)=>{
-        if (userInfoPopup && !userInfoPopup.classList.contains('disable')) {
-            if (!userInfoPopup.contains(e.target) && !userMenuTrigger?.contains(e.target)) closeAllPopups();
-        }
-    });
-    document.addEventListener('keydown', (e)=>{
-        if (e.key === 'Escape') closeAllPopups();
-    });
     if (editForm) editForm.addEventListener('submit', handleFormSubmit);
 }
-// ============================================================================
-// 7. ВИБІР АВАТАРА
-// ============================================================================
 function initAvatarSelection() {
     const avatarOptions = document.querySelectorAll('.user-info__avatar-option');
     avatarOptions.forEach((avatarImg)=>{
@@ -909,9 +789,6 @@ function initAvatarSelection() {
         });
     });
 }
-// ============================================================================
-// 8. ЗБЕРЕЖЕННЯ ФОРМИ ПРОФІЛЮ
-// ============================================================================
 async function handleFormSubmit(e) {
     e.preventDefault();
     const user = (0, _firebaseJs.auth).currentUser;
@@ -931,16 +808,7 @@ async function handleFormSubmit(e) {
         if (Object.keys(firestoreUpdates).length > 0) await (0, _firestore.setDoc)((0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid), firestoreUpdates, {
             merge: true
         });
-        if (newUsername) document.querySelectorAll('.user-info__username, .header__username').forEach((el)=>{
-            el.textContent = newUsername;
-        });
-        if (selectedAvatarURL) document.querySelectorAll('.user-info__img, .header__username-avatar').forEach((img)=>{
-            img.src = selectedAvatarURL;
-        });
-        if (newNativeLang) {
-            const nativeLangSpan = document.getElementById('nativlang');
-            if (nativeLangSpan) nativeLangSpan.textContent = newNativeLang;
-        }
+        await (0, _headerJs.loadHeaderUserData)(user);
         showUserSection();
     } catch (error) {
         console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F:", error);
@@ -953,7 +821,7 @@ async function handleFormSubmit(e) {
     }
 }
 // ============================================================================
-// 9. СПИСКИ МОВ (DATALISTS)
+// 4. РОБОТА З БАЗОЮ ДАНИХ (FIRESTORE) ТА СПИСКАМИ
 // ============================================================================
 function populateLanguageList() {
     const datalist = document.getElementById('languages-list');
@@ -974,28 +842,9 @@ function populateLanguageList() {
         'ko',
         'ar',
         'hi',
-        'bn',
         'cs',
-        'sk',
-        'hu',
         'nl',
-        'sv',
-        'no',
-        'fi',
-        'da',
-        'el',
-        'he',
-        'id',
-        'ms',
-        'th',
-        'vi',
-        'bg',
-        'hr',
-        'sr',
-        'sl',
-        'lt',
-        'lv',
-        'et'
+        'sv'
     ];
     const displayNames = new Intl.DisplayNames([
         'uk',
@@ -1027,28 +876,9 @@ function populateAddLanguageList() {
         'ko',
         'ar',
         'hi',
-        'bn',
         'cs',
-        'sk',
-        'hu',
         'nl',
-        'sv',
-        'no',
-        'fi',
-        'da',
-        'el',
-        'he',
-        'id',
-        'ms',
-        'th',
-        'vi',
-        'bg',
-        'hr',
-        'sr',
-        'sl',
-        'lt',
-        'lv',
-        'et'
+        'sv'
     ];
     const displayNames = new Intl.DisplayNames([
         'uk',
@@ -1061,15 +891,54 @@ function populateAddLanguageList() {
         return `<option value="${langName} (${code.toUpperCase()})" data-code="${code}"></option>`;
     }).join('');
 }
-// ------------------------------------------------------------------------------------------------------------------
-// --------------------------------------- YOUR-LANGUAGES & FIRESTORE -----------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------
+function getSelectedLanguageCode() {
+    const input = document.getElementById('add-language-input');
+    const datalist = document.getElementById('add-languages-list');
+    if (!input || !datalist) return null;
+    const val = input.value.trim();
+    const options = datalist.querySelectorAll('option');
+    let code = null;
+    options.forEach((opt)=>{
+        if (opt.value === val) code = opt.getAttribute('data-code');
+    });
+    return code;
+}
+async function loadUserLanguages(userId) {
+    try {
+        const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), "users", userId);
+        const userSnap = await (0, _firestore.getDoc)(userDocRef);
+        return userSnap.exists() ? userSnap.data().languages || [] : [];
+    } catch (error) {
+        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u043C\u043E\u0432 \u0437 \u0431\u0430\u0437\u0438:", error);
+        return [];
+    }
+}
+async function saveLanguageToFirestore(userId, langCode) {
+    const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), "users", userId);
+    await (0, _firestore.updateDoc)(userDocRef, {
+        languages: (0, _firestore.arrayUnion)({
+            code: langCode,
+            addedAt: new Date().toISOString()
+        })
+    });
+}
+// ============================================================================
+// 5. ФУНКЦІЇ РЕНДЕРИНГУ ДАНИХ (UI)
+// ============================================================================
 function getFlagUrl(langCode) {
+    const lower = langCode.toLowerCase();
+    // Словник виключень для мов, коди яких відрізняються від кодів країн на FlagCDN
     const flagMap = {
         en: 'gb',
-        uk: 'ua'
+        uk: 'ua',
+        ja: 'jp',
+        da: 'dk',
+        sv: 'se',
+        el: 'gr',
+        cs: 'cz',
+        et: 'ee' // Естонська -> Естонія
     };
-    const countryCode = flagMap[langCode] || langCode;
+    const countryCode = flagMap[lower] || lower;
     return `https://flagcdn.com/${countryCode.toLowerCase()}.svg`;
 }
 function renderUserLanguages(userLanguages = []) {
@@ -1088,53 +957,12 @@ function renderUserLanguages(userLanguages = []) {
         listItem.className = 'your-languages__item';
         listItem.innerHTML = `
             <a href="./languagepage.html?lang=${langCode}" class="your-languages__item-link"> 
-                <img src="${flagSrc}" alt="${langUpper} Flag"
-                    class="your-languages__item-flag" onerror="this.src='./src/img/default-flag.svg'">
+                <img src="${flagSrc}" alt="${langUpper} Flag" class="your-languages__item-flag" onerror="this.src='./src/img/default-flag.svg'">
                 <span class="your-languages__item-title">${langUpper}</span>
             </a>
         `;
         languageListContainer.appendChild(listItem);
     });
-}
-function getSelectedLanguageCode() {
-    const input = document.getElementById('add-language-input');
-    const datalist = document.getElementById('add-languages-list');
-    if (!input || !datalist) return null;
-    const val = input.value.trim();
-    const options = datalist.querySelectorAll('option');
-    let code = null;
-    options.forEach((opt)=>{
-        if (opt.value === val) code = opt.getAttribute('data-code');
-    });
-    return code;
-}
-async function loadUserLanguages(userId) {
-    try {
-        const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), "users", userId);
-        const userSnap = await (0, _firestore.getDoc)(userDocRef);
-        if (userSnap.exists()) {
-            const userData = userSnap.data();
-            return userData.languages || [];
-        } else return [];
-    } catch (error) {
-        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u043C\u043E\u0432 \u0437 \u0431\u0430\u0437\u0438:", error);
-        return [];
-    }
-}
-async function saveLanguageToFirestore(userId, langCode) {
-    try {
-        const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), "users", userId);
-        await (0, _firestore.updateDoc)(userDocRef, {
-            languages: (0, _firestore.arrayUnion)({
-                code: langCode,
-                addedAt: new Date().toISOString()
-            })
-        });
-        console.log("\u041C\u043E\u0432\u0443 \u0443\u0441\u043F\u0456\u0448\u043D\u043E \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043E \u0432 Firestore!");
-    } catch (error) {
-        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F \u043C\u043E\u0432\u0438 \u0432 \u0431\u0430\u0437\u0443:", error);
-        throw error;
-    }
 }
 function initYourLanguagesLogic() {
     const addBtn = document.querySelector('.your-languages__language-addbutton');
@@ -1184,7 +1012,186 @@ function initYourLanguagesLogic() {
     });
 }
 
-},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","url:../img/avatars/raccoon-1.jpeg":"fhGo5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fhGo5":[function(require,module,exports,__globalThis) {
+},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","./header.js":"7clXR","./i18n.js":"lQCzu"}],"7clXR":[function(require,module,exports,__globalThis) {
+// ============================================================================
+// 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ
+// ============================================================================
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// ============================================================================
+// 2. ІНІЦІАЛІЗАЦІЯ ЕЛЕМЕНТІВ ІНТЕРФЕЙСУ ТА ПОПАПІВ ХЕДЕРА
+// ============================================================================
+parcelHelpers.export(exports, "initHeader", ()=>initHeader);
+// ============================================================================
+// 5. ФУНКЦІЇ РЕНДЕРИНГУ ДАНИХ (UI) ДЛЯ ХЕДЕРА
+// ============================================================================
+parcelHelpers.export(exports, "loadHeaderUserData", ()=>loadHeaderUserData);
+var _firebaseJs = require("./firebase.js");
+var _authJs = require("./auth.js");
+var _firestore = require("firebase/firestore");
+var _raccoon1Jpeg = require("url:../img/avatars/raccoon-1.jpeg");
+var _raccoon1JpegDefault = parcelHelpers.interopDefault(_raccoon1Jpeg);
+let selectedAvatarURL = '';
+function initHeader() {
+    const userInfoPopup = document.querySelector('.user-info');
+    const closePopupBtn = document.querySelector('.user-info__button-close');
+    const userMenuTrigger = document.querySelector('.header__username-settings') || document.querySelector('.header__username');
+    const logoutBtn = document.getElementById('logout-btn');
+    const editToggleBtn = document.getElementById('edit-profile-toggle-btn');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    const userSection = document.querySelector('.user-info__user-section');
+    const editForm = document.getElementById('edit-user-info-form');
+    const avatarOptions = document.querySelectorAll('.user-info__avatar-option');
+    if (logoutBtn) logoutBtn.addEventListener('click', async (e)=>{
+        e.preventDefault();
+        await (0, _authJs.logoutUser)();
+    });
+    if (userMenuTrigger && userInfoPopup) userMenuTrigger.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        userInfoPopup.classList.remove('disable');
+    });
+    if (closePopupBtn && userInfoPopup) closePopupBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        userInfoPopup.classList.add('disable');
+        if (userSection && editForm) {
+            userSection.classList.remove('disable');
+            editForm.classList.add('disable');
+            editForm.reset();
+        }
+    });
+    if (editToggleBtn && userSection && editForm) editToggleBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        userSection.classList.add('disable');
+        editForm.classList.remove('disable');
+        // Підставляємо поточні значення в інпути при відкритті
+        const currentNameEl = document.querySelector('.user-info__username');
+        const nameInput = document.getElementById('username-edit');
+        if (currentNameEl && nameInput && !nameInput.value) nameInput.value = currentNameEl.textContent;
+    });
+    if (cancelEditBtn && userSection && editForm) cancelEditBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        editForm.classList.add('disable');
+        editForm.reset();
+        userSection.classList.remove('disable');
+        selectedAvatarURL = '';
+        avatarOptions.forEach((img)=>img.classList.remove('active'));
+    });
+    // Вибір аватарки всередині хедера
+    avatarOptions.forEach((avatarImg)=>{
+        avatarImg.addEventListener('click', (e)=>{
+            avatarOptions.forEach((img)=>img.classList.remove('active'));
+            e.target.classList.add('active');
+            selectedAvatarURL = e.target.src;
+        });
+    });
+    // Обробник сабміту форми редагування профілю
+    if (editForm) {
+        // Уникаємо дублювання слухачів, якщо initHeader викликається повторно
+        editForm.removeEventListener('submit', handleHeaderFormSubmit);
+        editForm.addEventListener('submit', handleHeaderFormSubmit);
+    }
+    document.addEventListener('click', (e)=>{
+        if (userInfoPopup && !userInfoPopup.classList.contains('disable')) {
+            if (!userInfoPopup.contains(e.target) && !userMenuTrigger?.contains(e.target)) {
+                userInfoPopup.classList.add('disable');
+                if (userSection && editForm) {
+                    userSection.classList.remove('disable');
+                    editForm.classList.add('disable');
+                    editForm.reset();
+                }
+            }
+        }
+    });
+    document.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape' && userInfoPopup) {
+            userInfoPopup.classList.add('disable');
+            if (userSection && editForm) {
+                userSection.classList.remove('disable');
+                editForm.classList.add('disable');
+                editForm.reset();
+            }
+        }
+    });
+}
+// ============================================================================
+// 3. ДОПОМІЖНІ ФУНКЦІЇ ЗБЕРЕЖЕННЯ
+// ============================================================================
+async function handleHeaderFormSubmit(e) {
+    e.preventDefault();
+    const user = (0, _firebaseJs.auth).currentUser;
+    if (!user) return;
+    const editForm = document.getElementById('edit-user-info-form');
+    const userSection = document.querySelector('.user-info__user-section');
+    const submitBtn = document.getElementById('edit-user-info-btn');
+    const newUsername = document.getElementById('username-edit')?.value.trim();
+    const newNativeLang = document.getElementById('native-lang-input')?.value.trim();
+    try {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+        }
+        const firestoreUpdates = {};
+        if (newUsername) firestoreUpdates.displayName = newUsername;
+        if (newNativeLang) firestoreUpdates.nativeLang = newNativeLang;
+        if (selectedAvatarURL) firestoreUpdates.photoURL = selectedAvatarURL;
+        if (Object.keys(firestoreUpdates).length > 0) await (0, _firestore.setDoc)((0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid), firestoreUpdates, {
+            merge: true
+        });
+        // Оновлюємо інтерфейс хедера на поточній сторінці
+        await loadHeaderUserData(user);
+        // Повертаємося до режиму перегляду
+        if (editForm) {
+            editForm.classList.add('disable');
+            editForm.reset();
+        }
+        if (userSection) userSection.classList.remove('disable');
+        selectedAvatarURL = '';
+    } catch (error) {
+        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F:", error);
+        alert("\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u0437\u043C\u0456\u043D\u0438.");
+    } finally{
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Save';
+        }
+    }
+}
+async function loadHeaderUserData(user) {
+    if (!user) return;
+    try {
+        const userRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
+        const userSnap = await (0, _firestore.getDoc)(userRef);
+        let data = {};
+        if (userSnap.exists()) data = userSnap.data();
+        const name = data.displayName || user.displayName || 'Learner';
+        const currentAvatar = data.photoURL || user.photoURL || (0, _raccoon1JpegDefault.default);
+        const nativeLang = data.nativeLang || 'uk';
+        let days = 0;
+        if (data.createdAt) {
+            const regDate = new Date(data.createdAt);
+            const today = new Date();
+            const regDay = new Date(regDate.getFullYear(), regDate.getMonth(), regDate.getDate());
+            const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const diffTime = todayDay - regDay;
+            days = Math.max(0, Math.floor(diffTime / 86400000));
+        }
+        document.querySelectorAll('.header__username, .user-info__username').forEach((el)=>{
+            el.textContent = name;
+        });
+        document.querySelectorAll('.header__username-avatar, .user-info__img').forEach((img)=>{
+            img.src = currentAvatar;
+        });
+        const nativeLangSpan = document.getElementById('nativlang');
+        if (nativeLangSpan) nativeLangSpan.textContent = nativeLang;
+        const daysLearningSpan = document.getElementById('daysLearning');
+        if (daysLearningSpan) daysLearningSpan.textContent = days;
+        return data;
+    } catch (error) {
+        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445 \u0445\u0435\u0434\u0435\u0440\u0430:", error);
+    }
+}
+
+},{"./firebase.js":"8uCPj","./auth.js":"aTIl8","firebase/firestore":"3RBs1","url:../img/avatars/raccoon-1.jpeg":"fhGo5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fhGo5":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("raccoon-1.61f92196.jpeg") + "?" + Date.now();
 
 },{}]},["aNdOE","1noC9"], "1noC9", "parcelRequiree231", {}, "./", "/")

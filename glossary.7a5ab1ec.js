@@ -207,7 +207,7 @@
       });
     }
   }
-})({"lu94s":[function(require,module,exports,__globalThis) {
+})({"4c4Br":[function(require,module,exports,__globalThis) {
 var global = arguments[3];
 var HMR_HOST = null;
 var HMR_PORT = null;
@@ -215,7 +215,7 @@ var HMR_SERVER_PORT = 1234;
 var HMR_SECURE = false;
 var HMR_ENV_HASH = "439701173a9199ea";
 var HMR_USE_SSE = false;
-module.bundle.HMR_BUNDLE_ID = "423a9614666d0e7e";
+module.bundle.HMR_BUNDLE_ID = "77488da57a5ab1ec";
 "use strict";
 /* global HMR_HOST, HMR_PORT, HMR_SERVER_PORT, HMR_ENV_HASH, HMR_SECURE, HMR_USE_SSE, chrome, browser, __parcel__import__, __parcel__importScripts__, ServiceWorkerGlobalScope */ /*::
 import type {
@@ -713,20 +713,22 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
     }
 }
 
-},{}],"8WFLb":[function(require,module,exports,__globalThis) {
+},{}],"2dWgG":[function(require,module,exports,__globalThis) {
 // ============================================================================
-// 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ ТА МОДУЛІВ[cite: 3]
+// 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ ТА МОДУЛІВ
 // ============================================================================
 var _firebaseJs = require("./firebase.js");
 var _auth = require("firebase/auth");
 var _firestore = require("firebase/firestore");
 var _headerJs = require("./header.js");
 var _i18NJs = require("./i18n.js");
-// Отримуємо код мови з URL (наприклад: languagepage.html?lang=de)[cite: 3]
+// Отримуємо код мови з URL (наприклад: glossary.html?lang=de)
 const urlParams = new URLSearchParams(window.location.search);
 const currentLangCode = urlParams.get('lang');
+let currentGlossary = [];
+let editingWordId = null; // Змінна для відстеження, яке слово ми зараз редагуємо
 // ============================================================================
-// 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ[cite: 3]
+// 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
 // ============================================================================
 document.addEventListener('DOMContentLoaded', ()=>{
     if (!currentLangCode) {
@@ -735,19 +737,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
     (0, _headerJs.initHeader)();
     (0, _i18NJs.initLanguagePicker)();
-    initLanguageDataUI(currentLangCode);
-    updateNavigationLinks(currentLangCode);
+    initGlossaryUI();
     (0, _auth.onAuthStateChanged)((0, _firebaseJs.auth), async (user)=>{
         if (user) {
             await (0, _headerJs.loadHeaderUserData)(user);
-            await loadLanguageSpecificData(user.uid, currentLangCode);
+            await loadGlossaryData(user.uid, currentLangCode);
         } else window.location.href = './index.html';
     });
 });
 // ============================================================================
-// 3. ЗАВАНТАЖЕННЯ ДАНИХ ДЛЯ КОНКРЕТНОЇ МОВИ З FIRESTORE[cite: 3]
+// 3. ЗАВАНТАЖЕННЯ ТА ЗБЕРЕЖЕННЯ СЛОВНИКА У FIRESTORE
 // ============================================================================
-async function loadLanguageSpecificData(userId, langCode) {
+async function loadGlossaryData(userId, langCode) {
     try {
         const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', userId);
         const userSnap = await (0, _firestore.getDoc)(userDocRef);
@@ -755,96 +756,186 @@ async function loadLanguageSpecificData(userId, langCode) {
         const userData = userSnap.data();
         const languages = userData.languages || [];
         const currentLangObj = languages.find((lang)=>lang.code.toLowerCase() === langCode.toLowerCase());
-        // Підрахунок кількості днів вивчення мови від дати `addedAt`[cite: 3]
-        let daysLearning = 0;
-        if (currentLangObj && currentLangObj.addedAt) {
-            const addedDate = new Date(currentLangObj.addedAt);
-            const today = new Date();
-            const addedDay = new Date(addedDate.getFullYear(), addedDate.getMonth(), addedDate.getDate());
-            const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            const diffTime = todayDay - addedDay;
-            daysLearning = Math.max(0, Math.floor(diffTime / 86400000));
-        }
-        const daysElement = document.getElementById('languageDaysLearning');
-        if (daysElement) daysElement.textContent = daysLearning;
-        // Оновлення слів та графіків[cite: 3]
-        updateDictionaryStats(currentLangObj);
+        currentGlossary = currentLangObj?.glossary || [];
+        renderGlossaryTable(currentGlossary);
     } catch (error) {
-        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0441\u043F\u0435\u0446\u0438\u0444\u0456\u0447\u043D\u0438\u0445 \u0434\u0430\u043D\u0438\u0445 \u043C\u043E\u0432\u0438:", error);
+        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0441\u043B\u043E\u0432\u043D\u0438\u043A\u0430:", error);
+    }
+}
+async function saveGlossaryToFirestore(userId, langCode, newGlossary) {
+    try {
+        const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', userId);
+        const userSnap = await (0, _firestore.getDoc)(userDocRef);
+        if (!userSnap.exists()) return;
+        const userData = userSnap.data();
+        const languages = userData.languages || [];
+        const updatedLanguages = languages.map((lang)=>{
+            if (lang.code.toLowerCase() === langCode.toLowerCase()) return {
+                ...lang,
+                glossary: newGlossary
+            };
+            return lang;
+        });
+        await (0, _firestore.updateDoc)(userDocRef, {
+            languages: updatedLanguages
+        });
+    } catch (error) {
+        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F \u0441\u043B\u043E\u0432\u043D\u0438\u043A\u0430 \u0432 Firestore:", error);
+        alert("\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u0437\u043C\u0456\u043D\u0438.");
     }
 }
 // ============================================================================
-// 4. РОБОТА ЗІ СЛОВНИКОМ ТА ГРАФІКОМ ПРОГРЕСУ
+// 4. РЕНДЕРИНГ ТАБЛИЦІ СЛОВНИКА
 // ============================================================================
-function updateDictionaryStats(langObj) {
-    // Отримуємо масив словника для цієї мови (якщо його немає, то порожній масив)
-    const glossaryArray = langObj?.glossary || [];
-    // 1. Загальна кількість слів у словнику
-    const totalWordsCount = glossaryArray.length;
-    const wordsElement = document.getElementById('languageWordsCount');
-    if (wordsElement) wordsElement.textContent = totalWordsCount;
-    // 2. Рахуємо кількість слів зі статусом 'Studied' (вивчені)
-    const studiedWordsCount = glossaryArray.filter((item)=>item.status === 'Studied').length;
-    // 3. Рахуємо відсоток вивчених від загальної кількості (захист від ділення на нуль)
-    const progressPercent = totalWordsCount > 0 ? Math.round(studiedWordsCount / totalWordsCount * 100) : 0;
-    // Виводимо відсоток текстом
-    const progressPercentElement = document.getElementById('languageProgressPercent');
-    if (progressPercentElement) progressPercentElement.textContent = `${progressPercent}%`;
-    // 4. Оновлюємо ширину графіка-шкали
-    const graphBlock = document.querySelector('.progress__graph-block');
-    if (graphBlock) {
-        // Якщо прогрес дуже маленький або 0, ставимо мінімальну ширину (наприклад, 10% або 0%), 
-        // щоб шкала виглядала охайно, або чистий відсоток.
-        const displayWidth = progressPercent === 0 ? 0 : Math.max(progressPercent, 10);
-        graphBlock.style.width = `${displayWidth}%`;
+function renderGlossaryTable(glossaryArray) {
+    const tableBody = document.getElementById('glossary-table__body');
+    const template = document.getElementById('glossary-table__row-template');
+    if (!tableBody || !template) return;
+    tableBody.innerHTML = '';
+    if (!glossaryArray || glossaryArray.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; color: white; padding: 20px;">
+                    No words in the glossary yet. Add your first word!
+                </td>
+            </tr>
+        `;
+        return;
     }
-}
-// ============================================================================
-// 5. ДОПОМІЖНІ ФУНКЦІЇ (Векторні SVG прапори через flagcdn, Назва, Навігація)[cite: 3]
-// ============================================================================
-function initLanguageDataUI(langCode) {
-    const lowerCode = langCode.toLowerCase();
-    const upperCode = langCode.toUpperCase();
-    // Словник виключень для мов, чиї коди відрізняються від кодів країн на FlagCDN
-    const flagMap = {
-        en: 'gb',
-        uk: 'ua',
-        ja: 'jp',
-        da: 'dk',
-        sv: 'se',
-        el: 'gr',
-        cs: 'cz',
-        et: 'ee' // Естонська -> Естонія
-    };
-    const countryCode = (flagMap[lowerCode] || lowerCode).toLowerCase();
-    // Встановлюємо векторне SVG-зображення прапорця через flagcdn.com для ідеальної чіткості[cite: 3]
-    const flagImg = document.querySelector('.languge-falg');
-    if (flagImg) {
-        flagImg.src = `https://flagcdn.com/${countryCode}.svg`;
-        flagImg.alt = `${upperCode} Flag`;
-    }
-    // Локалізована повна назва мови[cite: 3]
-    const displayNames = new Intl.DisplayNames([
-        'en',
-        'uk',
-        'de'
-    ], {
-        type: 'language'
+    glossaryArray.forEach((item, index)=>{
+        const clone = template.content.cloneNode(true);
+        clone.querySelector('.glossary-table__body-td--number').textContent = index + 1;
+        clone.querySelectorAll('.glossary-table__body-td')[1].textContent = item.word;
+        clone.querySelectorAll('.glossary-table__body-td')[2].textContent = item.translation;
+        clone.querySelectorAll('.glossary-table__body-td')[3].textContent = item.typ;
+        const statusSpan = clone.querySelector('.glossary-table__status');
+        statusSpan.textContent = item.status;
+        let statusClass = 'not-studied';
+        if (item.status === 'Studied') statusClass = 'studied';
+        else if (item.status === 'Study') statusClass = 'study';
+        statusSpan.className = `glossary-table__status glossary-table__status--${statusClass}`;
+        const editBtn = clone.querySelector('.glossary-table__body-btn--edit');
+        const deleteBtn = clone.querySelector('.glossary-table__body-btn--delete');
+        editBtn.setAttribute('data-id', item.id);
+        deleteBtn.setAttribute('data-id', item.id);
+        // Підключаємо обробники подій
+        deleteBtn.addEventListener('click', ()=>handleDeleteWord(item.id));
+        editBtn.addEventListener('click', ()=>handleEditClick(item));
+        tableBody.appendChild(clone);
     });
-    const fullLangName = displayNames.of(lowerCode) || upperCode;
-    const titleElement = document.querySelector('.language-name');
-    if (titleElement) titleElement.textContent = fullLangName;
 }
-// Динамічне оновлення шляхів для всіх посилань у блоці навігації[cite: 3]
-function updateNavigationLinks(langCode) {
-    const navLinks = document.querySelectorAll('.web-navigation__page-link');
-    navLinks.forEach((link)=>{
-        const href = link.getAttribute('href');
-        if (href && href.includes('.html')) {
-            const cleanHref = href.split('?')[0];
-            link.href = `${cleanHref}?lang=${langCode}`;
+// ============================================================================
+// 5. ІТЕРАЦІЇ З ФОРМОЮ ТА КНОПКАМИ (Додавання, Редагування, Видалення)
+// ============================================================================
+function initGlossaryUI() {
+    const addBtn = document.getElementById('glossary-table__add-btn');
+    const formRow = document.querySelector('.glossary-form__tr');
+    const cancelBtn = document.querySelector('.glossary-form__btn-cencel');
+    const submitForm = document.getElementById('add-word-form');
+    const formNumberCell = document.querySelector('.glossary-form__number'); // Комірка з надписом New/Edit
+    if (addBtn && formRow) addBtn.addEventListener('click', ()=>{
+        editingWordId = null; // Скидаємо режим редагування
+        submitForm.reset();
+        // Повертаємо напис "New" для режиму додавання
+        if (formNumberCell) formNumberCell.textContent = 'New';
+        formRow.classList.remove('disable');
+        addBtn.parentElement.parentElement.style.display = 'none';
+    });
+    if (cancelBtn && formRow) cancelBtn.addEventListener('click', ()=>{
+        formRow.classList.add('disable');
+        editingWordId = null;
+        if (formNumberCell) formNumberCell.textContent = 'New'; // Повертаємо "New"
+        if (addBtn) addBtn.parentElement.parentElement.style.display = '';
+        submitForm.reset();
+    });
+    if (submitForm) submitForm.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const user = (0, _firebaseJs.auth).currentUser;
+        if (!user) return;
+        const wordInput = document.getElementById('new-word');
+        const translationInput = document.getElementById('new-translation');
+        const typSelect = document.getElementById('new-typ');
+        const statusSelect = document.getElementById('new-status');
+        const word = wordInput.value.trim();
+        const translation = translationInput.value.trim();
+        const typ = typSelect.value;
+        const status = statusSelect.value;
+        if (!word || !translation || !typ || !status) {
+            alert("\u0411\u0443\u0434\u044C \u043B\u0430\u0441\u043A\u0430, \u0437\u0430\u043F\u043E\u0432\u043D\u0456\u0442\u044C \u0443\u0441\u0456 \u043F\u043E\u043B\u044F!");
+            return;
         }
+        if (editingWordId) // РЕЖИМ РЕДАГУВАННЯ: оновлюємо існуюче слово, але ЗБЕРІГАЄМО стару `createdAt`
+        currentGlossary = currentGlossary.map((item)=>{
+            if (item.id === editingWordId) return {
+                ...item,
+                word,
+                translation,
+                typ,
+                status
+            };
+            return item;
+        });
+        else {
+            // РЕЖИМ ДОДАВАННЯ: створюємо нове слово разом із датою створення
+            const newItem = {
+                id: Date.now().toString(),
+                word,
+                translation,
+                typ,
+                status,
+                createdAt: new Date().toISOString() // Додаємо дату створення у форматі ISO
+            };
+            currentGlossary.push(newItem);
+        }
+        // Зберігаємо в базу
+        await saveGlossaryToFirestore(user.user?.uid || user.uid, currentLangCode, currentGlossary);
+        // Оновлюємо таблицю та скидаємо форму
+        renderGlossaryTable(currentGlossary);
+        submitForm.reset();
+        formRow.classList.add('disable');
+        editingWordId = null;
+        if (formNumberCell) formNumberCell.textContent = 'New'; // Повертаємо "New"
+        if (addBtn) addBtn.parentElement.parentElement.style.display = '';
     });
+}
+// Функція, яка спрацьовує при натисканні на кнопку редагування (олівець)
+function handleEditClick(item) {
+    const formRow = document.querySelector('.glossary-form__tr');
+    const addBtn = document.getElementById('glossary-table__add-btn');
+    const formNumberCell = document.querySelector('.glossary-form__number');
+    if (!formRow) return;
+    // Запам'ятовуємо ID слова, яке редагуємо
+    editingWordId = item.id;
+    // Змінюємо напис "New" на "Edit" у формі
+    if (formNumberCell) formNumberCell.textContent = 'Edit';
+    // Заповнюємо поля форми поточними даними вибраного слова
+    document.getElementById('new-word').value = item.word;
+    document.getElementById('new-translation').value = item.translation;
+    document.getElementById('new-typ').value = item.typ;
+    document.getElementById('new-status').value = item.status;
+    // Відкриваємо рядок форми та приховуємо кнопку загального додавання
+    formRow.classList.remove('disable');
+    if (addBtn) addBtn.parentElement.parentElement.style.display = 'none';
+}
+// Функція видалення слова (якщо вона знадобиться нижче)
+function handleDeleteWord(wordId) {
+// Реалізація видалення...
+}
+// ============================================================================
+// 6. ВИДАЛЕННЯ СЛОВА
+// ============================================================================
+async function handleDeleteWord(wordId) {
+    // Показуємо вікно підтвердження
+    const isConfirmed = confirm('Are you sure you want to delete this word?');
+    if (!isConfirmed) return; // Якщо користувач натиснув "Скасувати", нічого не робимо
+    const user = (0, _firebaseJs.auth).currentUser;
+    if (!user) return;
+    // Фільтруємо масив, залишаючи всі слова, окрім того, яке треба видалити
+    currentGlossary = currentGlossary.filter((item)=>item.id !== wordId);
+    // Зберігаємо оновлений масив у Firestore
+    await saveGlossaryToFirestore(user.user?.uid || user.uid, currentLangCode, currentGlossary);
+    // Перерендерюємо таблицю
+    renderGlossaryTable(currentGlossary);
 }
 
 },{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","./header.js":"7clXR","./i18n.js":"lQCzu"}],"7clXR":[function(require,module,exports,__globalThis) {
@@ -1029,6 +1120,6 @@ async function loadHeaderUserData(user) {
 },{"./firebase.js":"8uCPj","./auth.js":"aTIl8","firebase/firestore":"3RBs1","url:../img/avatars/raccoon-1.jpeg":"fhGo5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fhGo5":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("raccoon-1.61f92196.jpeg") + "?" + Date.now();
 
-},{}]},["lu94s","8WFLb"], "8WFLb", "parcelRequiree231", {}, "./", "/")
+},{}]},["4c4Br","2dWgG"], "2dWgG", "parcelRequiree231", {}, "./", "/")
 
-//# sourceMappingURL=languagepage.666d0e7e.js.map
+//# sourceMappingURL=glossary.7a5ab1ec.js.map
