@@ -12,6 +12,7 @@
     gap: 30px;
     padding-top: 30px;
     border-radius: 50px;
+    z-index: 100;
 }
 
 .user-info__img {

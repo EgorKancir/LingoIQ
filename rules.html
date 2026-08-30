@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +8,15 @@
     <link rel="shortcut icon" href="./src/img/favicon.svg" type="image/x-icon">
     <link rel="stylesheet" href="./src/css/main.css">
     <link rel="stylesheet" href="./src/css/home.css">
+    <link rel="stylesheet" href="./src/css/userpage.css">
     <link rel="stylesheet" href="./src/css/rules.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Karantina:wght@300;400;700&family=Squada+One&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Karantina:wght@300;400;700&family=Squada+One&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <header class="header container">
         <div class="header__content">
@@ -21,34 +26,41 @@
             <nav class="home-navigation">
                 <ul class="home-navigation__list">
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="#features-id">Home</a>
+                        <a class="home-navigation__link" href="./userpage.html">Home</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="#how-it-works-id">Calendar</a>
+                        <a class="home-navigation__link" href="#calendar">Calendar</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="#vwa-id">Languages</a>
+                        <a class="home-navigation__link" href="./userpage.html">Languages</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="#vwa-id">Websites</a>
+                        <a class="home-navigation__link" href="#websites">Websites</a>
                     </li>
                 </ul>
             </nav>
             <div class="header__language">
-                <button type="button" class="header__language-button">
+                <button type="button" class="header__language-button" id="language-toggle-btn">
                     <img src="./src/img/language-icon.svg" alt="Language-button">
                 </button>
                 <!-- POPUP -->
-                <div class="header-language-popup disable">
+                <div class="header-language-popup disable" id="language-popup">
                     <ul class="header-language-popup__list">
                         <li class="header-language-popup__item">
-                            <button class="header-language-popup__button header-language-popup__button--active" type="button" id="English">English</button>
+                            <button class="header-language-popup__button header-language-popup__button--active"
+                                type="button" data-lang="en">
+                                English
+                            </button>
                         </li>
                         <li class="header-language-popup__item">
-                            <button class="header-language-popup__button" type="button" id="German">German</button>
+                            <button class="header-language-popup__button" type="button" data-lang="de">
+                                Deutsch
+                            </button>
                         </li>
                         <li class="header-language-popup__item">
-                            <button class="header-language-popup__button" type="button" id="Ukrainian">Ukrainian</button>
+                            <button class="header-language-popup__button" type="button" data-lang="uk">
+                                Українська
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -60,14 +72,70 @@
                     <img src="./src/img/userpage/avatar.svg" alt="icon" class="header__username-avatar">
                 </button>
                 <!-- POPUP -->
-                <div class="header__user-info disable">
-                    <button class="header__user-info-button-close">
-                        <img class="header__user-info-button-close-icon" src="./src/img/close-icon.svg" alt="close">
+                <div class="user-info disable">
+                    <button type="button" class="user-info__button-close">
+                        <img class="user-info__button-close-icon" src="./src/img/close-icon.svg" alt="close">
                     </button>
-                    <img class="header__user-info-img" src="./src/img/home/author-img.jpg" alt="User">
-                    <div class="user-info-group">
-                        <h2 class="header__user-info-name">........</h2>
-                        <p class="eader__user-info-days">--------</p>
+                    <img class="user-info__img" src="./src/img/home/author-img.jpg" alt="User">
+                    <div class="user-info__group">
+                        <div class="user-info__user-section">
+                            <h2 class="user-info__username">Loading...</h2>
+                            <h2 class="user-info__language">Native language: <span id="nativlang"></span></h2>
+                            <h2 class="user-info__days-learning">Days: <span id="daysLearning"></span></h2>
+                            <button type="button" id="logout-btn" class="user-info__button-logout">Log Out</button>
+                            <button type="button" class="user-info__button-edit" id="edit-profile-toggle-btn">
+                                <img class="user-info__button-edit-icon" src="./src/img/userpage/edit-icon.svg"
+                                    alt="edit">
+                            </button>
+                        </div>
+                        <!-- Форма редагування профілю -->
+                        <form class="user-info__edit-section disable" id="edit-user-info-form">
+                            <label class="user-info__label" for="username-edit">
+                                <input class="user-info__input" type="text" id="username-edit"
+                                    placeholder="New Username">
+                            </label>
+
+                            <label class="user-info__label" for="native-lang-input">
+                                <input class="user-info__input" list="languages-list" id="native-lang-input"
+                                    placeholder="Search native language..." autocomplete="off">
+                                <datalist id="languages-list"></datalist>
+                            </label>
+
+                            <div class="user-info__avatars-section">
+                                <h2 class="user-info__avatars-title">Choose your avatar</h2>
+                                <div class="user-info__avatars-grid">
+                                    <img class="user-info__avatar-option active" src="./src/img/avatars/raccoon-1.jpeg"
+                                        alt="Raccoon 1">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-2.jpeg"
+                                        alt="Raccoon 2">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-3.jpeg"
+                                        alt="Raccoon 3">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-4.jpeg"
+                                        alt="Raccoon 4">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-5.jpeg"
+                                        alt="Raccoon 5">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-6.jpeg"
+                                        alt="Raccoon 6">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-7.jpeg"
+                                        alt="Raccoon 7">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-8.jpeg"
+                                        alt="Raccoon 8">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-9.jpeg"
+                                        alt="Raccoon 9">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-10.jpeg"
+                                        alt="Raccoon 10">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-11.jpeg"
+                                        alt="Raccoon 11">
+                                    <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-12.jpeg"
+                                        alt="Raccoon 12">
+                                </div>
+                            </div>
+                            <div class="user-info__buttons-group">
+                                <button class="user-info__submit" type="submit" id="edit-user-info-btn">Save</button>
+                                <button class="user-info__button-cancel" type="button"
+                                    id="cancel-edit-btn">Cancel</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <!-- POPUP -->
@@ -76,53 +144,128 @@
     </header>
     <main class="main">
         <div class="container main__content">
-            <img src="./src/img/languagepage/rules-icon.svg" alt="icon" class="rules__icon">
-            <h1 class="rules__title">Rules</h1>
+            <div class="rules__info-group">
+                <img src="./src/img/languagepage/rules-icon.svg" alt="icon" class="rules__icon">
+                <h1 class="rules__title">Rules</h1>
+            </div>
             <div class="rules-group">
                 <div class="rules-group__rules-box">
-                    <a href="#" class="rules-group__rules-element">
+                    <button type="button" id="rules-group-btn-grammar" class="rules-group__rules-element">
                         <img src="./src/img/rules/grammar-icon.png" alt="Grammar" class="rules-group__rules-icon">
                         <h2 class="rules-group__rules-title">Grammar</h2>
-                    </a>
-                    <a href="#" class="rules-group__rules-element">
+                    </button>
+                    <button type="button" id="rules-group-btn-tenses" class="rules-group__rules-element">
                         <img src="./src/img/rules/tenses-icon.png" alt="Tenses" class="rules-group__rules-icon">
                         <h2 class="rules-group__rules-title">Tenses</h2>
-                    </a>
-                    <a href="#" class="rules-group__rules-element">
+                    </button>
+                    <button type="button" id="rules-group-btn-articles" class="rules-group__rules-element">
                         <img src="./src/img/rules/articles-icon.png" alt="Articles" class="rules-group__rules-icon">
                         <h2 class="rules-group__rules-title">Articles</h2>
-                    </a>
-                    <a href="#" class="rules-group__rules-element">
-                        <img src="./src/img/rules/prepositions-icon.png" alt="Prepositions" class="rules-group__rules-icon">
+                    </button>
+                    <button type="button" id="rules-group-btn-prepositions" class="rules-group__rules-element">
+                        <img src="./src/img/rules/prepositions-icon.png" alt="Prepositions"
+                            class="rules-group__rules-icon">
                         <h2 class="rules-group__rules-title">Prepositions</h2>
-                    </a>
-                    <a href="#" class="rules-group__rules-element">
+                    </button>
+                    <button type="button" id="rules-group-btn-verbs" class="rules-group__rules-element">
                         <img src="./src/img/rules/verbs-icon.png" alt="Verbs" class="rules-group__rules-icon">
                         <h2 class="rules-group__rules-title">Verbs</h2>
-                    </a>
-                    <a href="#" class="rules-group__rules-element">
+                    </button>
+                    <button type="button" id="rules-group-btn-nouns" class="rules-group__rules-element">
                         <img src="./src/img/rules/nouns-icon.png" alt="Nouns" class="rules-group__rules-icon">
                         <h2 class="rules-group__rules-title">Nouns</h2>
-                    </a>
-                    <a href="#" class="rules-group__rules-element">
+                    </button>
+                    <button type="button" id="rules-group-btn-adjectives" class="rules-group__rules-element">
                         <img src="./src/img/rules/adjectives-icon.png" alt="Adjectives" class="rules-group__rules-icon">
                         <h2 class="rules-group__rules-title">Adjectives</h2>
-                    </a>
-                    <a href="#" class="rules-group__rules-element">
-                        <img src="./src/img/rules/pronunciation-icon.png" alt="Pronunciation" class="rules-group__rules-icon">
+                    </button>
+                    <button type="button" id="rules-group-btn-pronunciation" class="rules-group__rules-element">
+                        <img src="./src/img/rules/pronunciation-icon.png" alt="Pronunciation"
+                            class="rules-group__rules-icon">
                         <h2 class="rules-group__rules-title">Pronunciation</h2>
-                    </a>
-                    <a href="#" class="rules-group__rules-element">
-                        <img src="./src/img/rules/useful-phrases-icon.png" alt="Useful Phrases" class="rules-group__rules-icon">
+                    </button>
+                    <button type="button" id="rules-group-btn-useful-phrases" class="rules-group__rules-element">
+                        <img src="./src/img/rules/useful-phrases-icon.png" alt="Useful Phrases"
+                            class="rules-group__rules-icon">
                         <h2 class="rules-group__rules-title">Useful Phrases</h2>
-                    </a>
-                    <a href="#" class="rules-group__rules-element">
+                    </button>
+                    <button type="button" id="rules-group-btn-favorites" class="rules-group__rules-element">
                         <img src="./src/img/rules/favorites-icon.png" alt="Favorites" class="rules-group__rules-icon">
                         <h2 class="rules-group__rules-title">Favorites</h2>
-                    </a>
+                    </button>
                 </div>
             </div>
+
+            <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+            <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+            <div class="rule-section">
+                <button class="rule-section__btn-back">Back</button>
+                <div class="rule-section__title-group">
+                    <img class="rule-section__icon disable" src="./src/img/rules/grammar-icon.png" alt="Grammar">
+                    <img class="rule-section__icon disable" src="./src/img/rules/tenses-icon.png" alt="Tenses">
+                    <img class="rule-section__icon disable" src="./src/img/rules/articles-icon.png" alt="Articles">
+                    <img class="rule-section__icon disable" src="./src/img/rules/prepositions-icon.png"
+                        alt="Prepositions">
+                    <img class="rule-section__icon disable" src="./src/img/rules/verbs-icon.png" alt="Verbs">
+                    <img class="rule-section__icon disable" src="./src/img/rules/nouns-icon.png" alt="Nouns">
+                    <img class="rule-section__icon disable" src="./src/img/rules/adjectives-icon.png" alt="Adjectives">
+                    <img class="rule-section__icon disable" src="./src/img/rules/pronunciation-icon.png"
+                        alt="Pronunciation">
+                    <img class="rule-section__icon disable" src="./src/img/rules/useful-phrases-icon.png"
+                        alt="Useful Phrases">
+                    <img class="rule-section__icon disable" src="./src/img/rules/favorites-icon.png" alt="Favorites">
+                    <h1 class="rule-section__title">...</h1>
+                </div>
+
+                <div class="rule-search-box">
+                    <label for="search-rules" class="rule-search-box__label">
+                        <input type="text" id="search-rules" class="rule-search-box__input"
+                            placeholder="Search rules...">
+                    </label>
+                    <button type="submit" class="rule-search-box__button" aria-label="Submit search">
+                        <img src="./src/img/rules/search-icon.svg" alt="Search" class="rule-search-box__icon">
+                    </button>
+                </div>
+
+                <div class="rule-section__rules-container">
+
+                </div>
+                <button class="rule-section__add-btn" type="button">
+                    <img src="./src/img/rules/plus-icon.svg" alt="Plus icon">
+                </button>
+                <form class="rule-section__form disable" id="form-add-new-rule">
+                    <button class="rule-section__form-close-btn">
+                        <img class="rule-section__form-close-img" src="./src/img/rules/close-icon.svg" alt="Close">
+                    </button>
+                    <label for="add-new-rule-title" class="rule-section__form-label">
+                        <input type="text" name="rule-title" id="add-new-rule-title" class="rule-section__form-input"
+                            placeholder="Title" required>
+                    </label>
+                    <label for="add-new-rule-url" class="rule-section__form-label">
+                        <img class="rule-section__form-label-img" src="./src/img/rules/url-icon.svg" alt="Url icon">
+                        <input type="url" name="rule-url" id="add-new-rule-url" class="rule-section__form-input"
+                            placeholder="https://...">
+                    </label>
+                    <textarea class="rule-section__form-notes" name="paragraf" id="add-new-rule-paragraf"
+                        placeholder="Personal Notes"></textarea>
+                    <button class="rule-section__form-submit" type="submit">
+                        <img class="rule-section__form-submit-icon" src="./src/img/rules/ready-icon.svg" alt="Ready">
+                    </button>
+                </form>
+            </div>
+
+            <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+            <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
         </div>
+
+        <div class="rule-section__popup disable">
+            <img class="rule-section__popup-img" src="./src/img/brain1part.png" alt="IMG">
+            <button class="rule-section__popup-close-btn" type="button">
+                <img class="rule-section__popup-close-img" src="./src/img/rules/close-icon.svg" alt="Close Icon">
+            </button>
+        </div>
+
     </main>
     <footer class="footer">
         <a href="#" class="footer-panel__loo-link">
@@ -154,6 +297,26 @@
             </ul>
         </div>
     </footer>
-    <script type="module" src="./src/js/index.js"></script>
+    <template class="rule-item__template">
+        <div class="rule-item">
+            <h2 class="rule-item__title">{{title}}</h2>
+            <div class="rule-item__image-group">
+                <button class="rule-item__img">
+                    <img class="rule-item__img" src="./src/img/decor.png" alt="Rule img" data-src="{{url}}">
+                </button>
+            </div>
+            <p class="rule-item__paragrf">{{paragraf}}</p>
+            <div class="rule-item__btn-group">
+                <button class="rule-item__btn--edit" data-id="{{id}}" type="button">
+                    <img src="./src/img/glossary/pen-icon.svg" alt="Pen" class="rule-item__icon-pen">
+                </button>
+                <button class="rule-item__btn--delete" data-id="{{id}}" type="button">
+                    <img src="./src/img/glossary/basket-icon.svg" alt="Basket" class="rule-item__icon-basket">
+                </button>
+            </div>
+        </div>
+    </template>
+    <script type="module" src="./src/js/rules.js"></script>
 </body>
+
 </html>
