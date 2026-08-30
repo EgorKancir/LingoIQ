@@ -177,7 +177,7 @@
 
   // Only insert newRequire.load when it is actually used.
   // The code in this file is linted against ES5, so dynamic import is not allowed.
-  // INSERT_LOAD_HERE
+  function $parcel$resolve(url) {  url = importMap[url] || url;  return import.meta.resolve(distDir + url);}newRequire.resolve = $parcel$resolve;
 
   Object.defineProperty(newRequire, 'root', {
     get: function () {
@@ -207,7 +207,7 @@
       });
     }
   }
-})({"cSsrq":[function(require,module,exports,__globalThis) {
+})({"04heI":[function(require,module,exports,__globalThis) {
 var global = arguments[3];
 var HMR_HOST = null;
 var HMR_PORT = null;
@@ -215,7 +215,7 @@ var HMR_SERVER_PORT = 1234;
 var HMR_SECURE = false;
 var HMR_ENV_HASH = "439701173a9199ea";
 var HMR_USE_SSE = false;
-module.bundle.HMR_BUNDLE_ID = "19bb2d36e3d0ee89";
+module.bundle.HMR_BUNDLE_ID = "3267aedda55567a3";
 "use strict";
 /* global HMR_HOST, HMR_PORT, HMR_SERVER_PORT, HMR_ENV_HASH, HMR_SECURE, HMR_USE_SSE, chrome, browser, __parcel__import__, __parcel__importScripts__, ServiceWorkerGlobalScope */ /*::
 import type {
@@ -713,84 +713,427 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
     }
 }
 
-},{}],"lQCzu":[function(require,module,exports,__globalThis) {
+},{}],"gZigM":[function(require,module,exports,__globalThis) {
 // ============================================================================
-// 1. ІМПОРТ МОВНИХ СЛОВНИКІВ
+// 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ ТА МОДУЛІВ
 // ============================================================================
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "setLanguage", ()=>setLanguage);
-parcelHelpers.export(exports, "initLanguagePicker", ()=>initLanguagePicker);
-var _enJson = require("../i18n/en.json");
-var _enJsonDefault = parcelHelpers.interopDefault(_enJson);
-var _deJson = require("../i18n/de.json");
-var _deJsonDefault = parcelHelpers.interopDefault(_deJson);
-var _ukJson = require("../i18n/uk.json");
-var _ukJsonDefault = parcelHelpers.interopDefault(_ukJson);
-const translations = {
-    en: (0, _enJsonDefault.default),
-    de: (0, _deJsonDefault.default),
-    uk: (0, _ukJsonDefault.default)
-};
-let currentLang = localStorage.getItem('lingoiq_lang') || 'en';
+var _firebaseJs = require("./firebase.js");
+var _auth = require("firebase/auth");
+var _firestore = require("firebase/firestore");
+var _headerJs = require("./header.js");
+var _i18NJs = require("./i18n.js");
+// Отримуємо код мови з URL (наприклад: rules.html?lang=de)
+const urlParams = new URLSearchParams(window.location.search);
+const currentLangCode = urlParams.get('lang') || 'en';
+// Поточна відкрита категорія та ID правила, що редагується
+let currentCategory = '';
+let editingRuleId = null;
 // ============================================================================
-// 2. ФУНКЦІЇ РЕНДЕРИНГУ ДАНИХ (UI) ТА ПЕРЕКЛАДУ
+// 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
 // ============================================================================
-function applyTranslations(lang) {
-    const currentTranslation = translations[lang] || translations.en;
-    document.querySelectorAll('[data-i18n]').forEach((el)=>{
-        const keyPath = el.getAttribute('data-i18n').split('.');
-        let text = currentTranslation;
-        keyPath.forEach((key)=>{
-            if (text) text = text[key];
+document.addEventListener('DOMContentLoaded', ()=>{
+    (0, _headerJs.initHeader)();
+    (0, _i18NJs.initLanguagePicker)();
+    initRulesNavigation();
+    initAddRuleForm();
+    initImagePopup();
+    (0, _auth.onAuthStateChanged)((0, _firebaseJs.auth), async (user)=>{
+        if (user) await (0, _headerJs.loadHeaderUserData)(user);
+        else window.location.href = './index.html';
+    });
+});
+// ============================================================================
+// 3. НАВІГАЦІЯ ТА ПЕРЕМИКАННЯ МІЖ КАТЕГОРІЯМИ І РОЗДІЛАМИ
+// ============================================================================
+function initRulesNavigation() {
+    const rulesInfoGroup = document.querySelector('.rules__info-group');
+    const rulesListBox = document.querySelector('.rules-group');
+    const ruleSection = document.querySelector('.rule-section');
+    const backBtn = document.querySelector('.rule-section__btn-back');
+    const ruleTitle = document.querySelector('.rule-section__title');
+    const icons = document.querySelectorAll('.rule-section__icon');
+    const categoryButtons = document.querySelectorAll('.rules-group__rules-element');
+    categoryButtons.forEach((button)=>{
+        button.addEventListener('click', async ()=>{
+            const categoryTitle = button.querySelector('.rules-group__rules-title').textContent;
+            currentCategory = categoryTitle.toLowerCase().trim().replace(/\s+/g, '-');
+            if (rulesInfoGroup) rulesInfoGroup.classList.add('disable');
+            rulesListBox.classList.add('disable');
+            ruleSection.classList.remove('disable');
+            if (ruleTitle) ruleTitle.textContent = categoryTitle;
+            icons.forEach((icon)=>{
+                icon.classList.add('disable');
+                if (icon.alt.toLowerCase() === categoryTitle.toLowerCase()) icon.classList.remove('disable');
+            });
+            // Завантажуємо правила для користувача, категорії ТА поточної мови
+            await loadRulesFromFirestore(currentCategory);
         });
-        if (text) {
-            if (el.tagName === 'INPUT' && el.placeholder) el.placeholder = text;
-            else el.innerHTML = text;
+    });
+    if (backBtn) backBtn.addEventListener('click', ()=>{
+        ruleSection.classList.add('disable');
+        rulesListBox.classList.remove('disable');
+        if (rulesInfoGroup) rulesInfoGroup.classList.remove('disable');
+        currentCategory = '';
+        resetFormState();
+    });
+}
+// ============================================================================
+// 4. РОБОТА З БАЗОЮ ДАНИХ (FIRESTORE) ТА ФОРМОЮ
+// ============================================================================
+function initAddRuleForm() {
+    const addBtn = document.querySelector('.rule-section__add-btn');
+    const form = document.getElementById('form-add-new-rule');
+    const closeBtn = document.querySelector('.rule-section__form-close-btn');
+    if (addBtn && form) addBtn.addEventListener('click', ()=>{
+        resetFormState();
+        addBtn.classList.add('disable');
+        form.classList.remove('disable');
+    });
+    if (closeBtn && form && addBtn) closeBtn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        resetFormState();
+    });
+    if (form) form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const user = (0, _firebaseJs.auth).currentUser;
+        if (!user) {
+            alert('Please log in again.');
+            return;
+        }
+        const title = document.getElementById('add-new-rule-title').value.trim();
+        const url = document.getElementById('add-new-rule-url').value.trim();
+        const paragraf = document.getElementById('add-new-rule-paragraf').value.trim();
+        try {
+            if (editingRuleId) {
+                const ruleRef = (0, _firestore.doc)((0, _firebaseJs.db), 'rules', editingRuleId);
+                await (0, _firestore.updateDoc)(ruleRef, {
+                    title,
+                    url,
+                    paragraf,
+                    updatedAt: new Date()
+                });
+            } else {
+                const newRuleData = {
+                    userId: user.uid,
+                    category: currentCategory,
+                    lang: currentLangCode,
+                    title,
+                    url,
+                    paragraf,
+                    createdAt: new Date()
+                };
+                await (0, _firestore.addDoc)((0, _firestore.collection)((0, _firebaseJs.db), 'rules'), newRuleData);
+            }
+            await loadRulesFromFirestore(currentCategory);
+            resetFormState();
+        } catch (error) {
+            console.error('Error saving rule:', error);
+            alert(`Error saving rule: ${error.message}`);
         }
     });
 }
-function setLanguage(lang) {
-    if (!translations[lang]) return;
-    currentLang = lang;
-    localStorage.setItem('lingoiq_lang', lang);
-    document.querySelectorAll('.header-language-popup__button').forEach((btn)=>{
-        if (btn.getAttribute('data-lang') === lang) btn.classList.add('header-language-popup__button--active');
-        else btn.classList.remove('header-language-popup__button--active');
-    });
-    applyTranslations(lang);
+function resetFormState() {
+    const form = document.getElementById('form-add-new-rule');
+    const addBtn = document.querySelector('.rule-section__add-btn');
+    if (form) {
+        form.classList.add('disable');
+        form.reset();
+    }
+    if (addBtn) addBtn.classList.remove('disable');
+    editingRuleId = null;
 }
-function initLanguagePicker() {
-    const toggleBtn = document.getElementById('language-toggle-btn');
-    const popup = document.getElementById('language-popup');
-    if (toggleBtn && popup) {
-        toggleBtn.addEventListener('click', (e)=>{
-            e.stopPropagation();
-            popup.classList.toggle('disable');
+// Завантаження правил з урахуванням користувача, категорії та мови
+async function loadRulesFromFirestore(category) {
+    const container = document.querySelector('.rule-section__rules-container');
+    if (!container) return;
+    container.innerHTML = '<p class="loading-text" style="color: white; text-align: center;">Loading...</p>';
+    try {
+        const user = (0, _firebaseJs.auth).currentUser;
+        if (!user) return;
+        // Додано фільтрацію за lang разом з userId та category
+        const q = (0, _firestore.query)((0, _firestore.collection)((0, _firebaseJs.db), 'rules'), (0, _firestore.where)('userId', '==', user.uid), (0, _firestore.where)('category', '==', category), (0, _firestore.where)('lang', '==', currentLangCode));
+        const querySnapshot = await (0, _firestore.getDocs)(q);
+        container.innerHTML = '';
+        if (querySnapshot.empty) {
+            container.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No rules added for this language yet.</p>';
+            return;
+        }
+        querySnapshot.forEach((docSnap)=>{
+            const ruleData = {
+                id: docSnap.id,
+                ...docSnap.data()
+            };
+            renderRuleItem(ruleData);
         });
-        document.addEventListener('click', (e)=>{
-            if (!popup.contains(e.target) && !toggleBtn.contains(e.target)) popup.classList.add('disable');
+    } catch (error) {
+        console.error('Error loading rules:', error);
+        container.innerHTML = `<p class="error-text" style="color: red; text-align: center;">Failed to load rules: ${error.message}</p>`;
+    }
+}
+// ============================================================================
+// 5. РЕНДЕРИНГ КАРТОК ПРАВИЛ ЧЕРЕЗ TEMPLATE
+// ============================================================================
+function renderRuleItem(ruleData) {
+    const container = document.querySelector('.rule-section__rules-container');
+    const template = document.querySelector('.rule-item__template');
+    if (!container || !template) return;
+    const clone = template.content.cloneNode(true);
+    const titleEl = clone.querySelector('.rule-item__title');
+    const imgEl = clone.querySelector('img.rule-item__img');
+    const textEl = clone.querySelector('.rule-item__paragrf');
+    const imgButton = clone.querySelector('.rule-item__img');
+    const editBtn = clone.querySelector('.rule-item__btn--edit');
+    const deleteBtn = clone.querySelector('.rule-item__btn--delete');
+    if (titleEl) titleEl.textContent = ruleData.title;
+    if (textEl) textEl.textContent = ruleData.paragraf;
+    if (imgEl) {
+        if (ruleData.url) {
+            imgEl.src = ruleData.url;
+            imgEl.setAttribute('data-src', ruleData.url);
+        } else {
+            const imgGroup = clone.querySelector('.rule-item__image-group');
+            if (imgGroup) imgGroup.style.display = 'none';
+        }
+    }
+    if (imgButton && imgEl) imgButton.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const imageUrl = imgEl.src;
+        if (imageUrl) openImagePopup(imageUrl);
+    });
+    if (editBtn) {
+        editBtn.setAttribute('data-id', ruleData.id);
+        editBtn.addEventListener('click', ()=>{
+            editingRuleId = ruleData.id;
+            document.getElementById('add-new-rule-title').value = ruleData.title || '';
+            document.getElementById('add-new-rule-url').value = ruleData.url || '';
+            document.getElementById('add-new-rule-paragraf').value = ruleData.paragraf || '';
+            const addBtn = document.querySelector('.rule-section__add-btn');
+            const form = document.getElementById('form-add-new-rule');
+            if (addBtn) addBtn.classList.add('disable');
+            if (form) form.classList.remove('disable');
+            form.scrollIntoView({
+                behavior: 'smooth'
+            });
         });
     }
-    document.querySelectorAll('.header-language-popup__button').forEach((btn)=>{
-        btn.addEventListener('click', ()=>{
-            const selectedLang = btn.getAttribute('data-lang');
-            setLanguage(selectedLang);
-            if (popup) popup.classList.add('disable');
+    if (deleteBtn) {
+        deleteBtn.setAttribute('data-id', ruleData.id);
+        deleteBtn.addEventListener('click', async ()=>{
+            try {
+                await (0, _firestore.deleteDoc)((0, _firestore.doc)((0, _firebaseJs.db), 'rules', ruleData.id));
+                await loadRulesFromFirestore(currentCategory);
+            } catch (error) {
+                console.error('Error deleting rule:', error);
+            }
         });
+    }
+    container.appendChild(clone);
+}
+// ============================================================================
+// 6. ПОПАП ПЕРЕГЛЯДУ ЗОБРАЖЕННЯ НА ВЕСЬ ЕКРАН
+// ============================================================================
+function initImagePopup() {
+    const popup = document.querySelector('.rule-section__popup');
+    const closeBtn = document.querySelector('.rule-section__popup-close-btn');
+    if (!popup) return;
+    if (closeBtn) closeBtn.addEventListener('click', ()=>{
+        popup.classList.add('disable');
     });
-    setLanguage(currentLang);
+    popup.addEventListener('click', (e)=>{
+        if (e.target === popup) popup.classList.add('disable');
+    });
+}
+function openImagePopup(url) {
+    const popup = document.querySelector('.rule-section__popup');
+    const popupImg = document.querySelector('.rule-section__popup-img');
+    if (popup && popupImg) {
+        popupImg.src = url;
+        popup.classList.remove('disable');
+    }
 }
 
-},{"../i18n/en.json":"2pzcp","../i18n/de.json":"eqN3J","../i18n/uk.json":"dyQ7v","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"2pzcp":[function(require,module,exports,__globalThis) {
-module.exports = JSON.parse('{"header":{"features":"Features","howItWorks":"How it works","signIn":"Sign In","startLearning":"Start Learning","hello":"Hello!","craeteYourAccount":"Create your Account","username":"Username","email":"Email","password":"Password","signUp":"Sign Up","alreadyHaveAnAccount":"Already have an account?","dontHaveAnAccount":"Don\'t have an account?"},"hero":{"learnLanguages":"Learn languages","rememberForever":"Remember forever","untertitle":"A platform that turns words into knowledge \u2014 powered by the science of memory","startNow":"Start Now"},"main":{"quote":"Less memorizing More understanding"},"features":{"features":"Features","basedOn":"Based on the Ebbinghaus method","onePlace":"All in one place","madeBy":"Made by a learner, for learners"},"how-it-works":{"howItWorks":"How it works","add":"Add","learn":"Learn","repeat":"Repeat","remember":"Remember"},"vwa":{"creator":"(Creator of LingoIQ)","pharagrph":"Hi! I\u2019m Yehor, and LingoIQ is my VWA project.<br><br>I created this site to make language learning <b>simpler and more structured.</b><br>Here, you can find words, grammar rules, and learning tools <b>all in one place.</b><br><br>The site includes a program I developed using <b>Hermann Ebbinghaus\u2019 spaced repetition method</b> to help you remember words efficiently. It\u2019s designed for students, migrants, and anyone eager to learn languages, offering <b>clear structures and easy navigation.</b><br><br>With LingoIQ, I want to give everyone the same opportunity I had: a clear path to mastering a new language."},"footer":{"privacy":"Privacy","terms":"Terms","cookies":"Cookies"}}');
+},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","./header.js":"7clXR","./i18n.js":"lQCzu"}],"7clXR":[function(require,module,exports,__globalThis) {
+// ============================================================================
+// 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ
+// ============================================================================
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// ============================================================================
+// 2. ІНІЦІАЛІЗАЦІЯ ЕЛЕМЕНТІВ ІНТЕРФЕЙСУ ТА ПОПАПІВ ХЕДЕРА
+// ============================================================================
+parcelHelpers.export(exports, "initHeader", ()=>initHeader);
+// ============================================================================
+// 5. ФУНКЦІЇ РЕНДЕРИНГУ ДАНИХ (UI) ДЛЯ ХЕДЕРА
+// ============================================================================
+parcelHelpers.export(exports, "loadHeaderUserData", ()=>loadHeaderUserData);
+var _firebaseJs = require("./firebase.js");
+var _authJs = require("./auth.js");
+var _firestore = require("firebase/firestore");
+var _raccoon1Jpeg = require("url:../img/avatars/raccoon-1.jpeg");
+var _raccoon1JpegDefault = parcelHelpers.interopDefault(_raccoon1Jpeg);
+let selectedAvatarURL = '';
+function initHeader() {
+    const userInfoPopup = document.querySelector('.user-info');
+    const closePopupBtn = document.querySelector('.user-info__button-close');
+    const userMenuTrigger = document.querySelector('.header__username-settings') || document.querySelector('.header__username');
+    const logoutBtn = document.getElementById('logout-btn');
+    const editToggleBtn = document.getElementById('edit-profile-toggle-btn');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    const userSection = document.querySelector('.user-info__user-section');
+    const editForm = document.getElementById('edit-user-info-form');
+    const avatarOptions = document.querySelectorAll('.user-info__avatar-option');
+    if (logoutBtn) logoutBtn.addEventListener('click', async (e)=>{
+        e.preventDefault();
+        await (0, _authJs.logoutUser)();
+    });
+    if (userMenuTrigger && userInfoPopup) userMenuTrigger.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        userInfoPopup.classList.remove('disable');
+    });
+    if (closePopupBtn && userInfoPopup) closePopupBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        userInfoPopup.classList.add('disable');
+        if (userSection && editForm) {
+            userSection.classList.remove('disable');
+            editForm.classList.add('disable');
+            editForm.reset();
+        }
+    });
+    if (editToggleBtn && userSection && editForm) editToggleBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        userSection.classList.add('disable');
+        editForm.classList.remove('disable');
+        // Підставляємо поточні значення в інпути при відкритті
+        const currentNameEl = document.querySelector('.user-info__username');
+        const nameInput = document.getElementById('username-edit');
+        if (currentNameEl && nameInput && !nameInput.value) nameInput.value = currentNameEl.textContent;
+    });
+    if (cancelEditBtn && userSection && editForm) cancelEditBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        editForm.classList.add('disable');
+        editForm.reset();
+        userSection.classList.remove('disable');
+        selectedAvatarURL = '';
+        avatarOptions.forEach((img)=>img.classList.remove('active'));
+    });
+    // Вибір аватарки всередині хедера
+    avatarOptions.forEach((avatarImg)=>{
+        avatarImg.addEventListener('click', (e)=>{
+            avatarOptions.forEach((img)=>img.classList.remove('active'));
+            e.target.classList.add('active');
+            selectedAvatarURL = e.target.src;
+        });
+    });
+    // Обробник сабміту форми редагування профілю
+    if (editForm) {
+        // Уникаємо дублювання слухачів, якщо initHeader викликається повторно
+        editForm.removeEventListener('submit', handleHeaderFormSubmit);
+        editForm.addEventListener('submit', handleHeaderFormSubmit);
+    }
+    document.addEventListener('click', (e)=>{
+        if (userInfoPopup && !userInfoPopup.classList.contains('disable')) {
+            if (!userInfoPopup.contains(e.target) && !userMenuTrigger?.contains(e.target)) {
+                userInfoPopup.classList.add('disable');
+                if (userSection && editForm) {
+                    userSection.classList.remove('disable');
+                    editForm.classList.add('disable');
+                    editForm.reset();
+                }
+            }
+        }
+    });
+    document.addEventListener('keydown', (e)=>{
+        if (e.key === 'Escape' && userInfoPopup) {
+            userInfoPopup.classList.add('disable');
+            if (userSection && editForm) {
+                userSection.classList.remove('disable');
+                editForm.classList.add('disable');
+                editForm.reset();
+            }
+        }
+    });
+}
+// ============================================================================
+// 3. ДОПОМІЖНІ ФУНКЦІЇ ЗБЕРЕЖЕННЯ
+// ============================================================================
+async function handleHeaderFormSubmit(e) {
+    e.preventDefault();
+    const user = (0, _firebaseJs.auth).currentUser;
+    if (!user) return;
+    const editForm = document.getElementById('edit-user-info-form');
+    const userSection = document.querySelector('.user-info__user-section');
+    const submitBtn = document.getElementById('edit-user-info-btn');
+    const newUsername = document.getElementById('username-edit')?.value.trim();
+    const newNativeLang = document.getElementById('native-lang-input')?.value.trim();
+    try {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+        }
+        const firestoreUpdates = {};
+        if (newUsername) firestoreUpdates.displayName = newUsername;
+        if (newNativeLang) firestoreUpdates.nativeLang = newNativeLang;
+        if (selectedAvatarURL) firestoreUpdates.photoURL = selectedAvatarURL;
+        if (Object.keys(firestoreUpdates).length > 0) await (0, _firestore.setDoc)((0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid), firestoreUpdates, {
+            merge: true
+        });
+        // Оновлюємо інтерфейс хедера на поточній сторінці
+        await loadHeaderUserData(user);
+        // Повертаємося до режиму перегляду
+        if (editForm) {
+            editForm.classList.add('disable');
+            editForm.reset();
+        }
+        if (userSection) userSection.classList.remove('disable');
+        selectedAvatarURL = '';
+    } catch (error) {
+        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F:", error);
+        alert("\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u0437\u043C\u0456\u043D\u0438.");
+    } finally{
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Save';
+        }
+    }
+}
+async function loadHeaderUserData(user) {
+    if (!user) return;
+    try {
+        const userRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
+        const userSnap = await (0, _firestore.getDoc)(userRef);
+        let data = {};
+        if (userSnap.exists()) data = userSnap.data();
+        const name = data.displayName || user.displayName || 'Learner';
+        const currentAvatar = data.photoURL || user.photoURL || (0, _raccoon1JpegDefault.default);
+        const nativeLang = data.nativeLang || 'uk';
+        let days = 0;
+        if (data.createdAt) {
+            const regDate = new Date(data.createdAt);
+            const today = new Date();
+            const regDay = new Date(regDate.getFullYear(), regDate.getMonth(), regDate.getDate());
+            const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const diffTime = todayDay - regDay;
+            days = Math.max(0, Math.floor(diffTime / 86400000));
+        }
+        document.querySelectorAll('.header__username, .user-info__username').forEach((el)=>{
+            el.textContent = name;
+        });
+        document.querySelectorAll('.header__username-avatar, .user-info__img').forEach((img)=>{
+            img.src = currentAvatar;
+        });
+        const nativeLangSpan = document.getElementById('nativlang');
+        if (nativeLangSpan) nativeLangSpan.textContent = nativeLang;
+        const daysLearningSpan = document.getElementById('daysLearning');
+        if (daysLearningSpan) daysLearningSpan.textContent = days;
+        return data;
+    } catch (error) {
+        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445 \u0445\u0435\u0434\u0435\u0440\u0430:", error);
+    }
+}
 
-},{}],"eqN3J":[function(require,module,exports,__globalThis) {
-module.exports = JSON.parse('{"header":{"features":"Funktionen","howItWorks":"Wie es funktioniert","signIn":"Anmelden","startLearning":"Lernen starten","hello":"Hallo!","craeteYourAccount":"Erstelle dein Konto","username":"Benutzername","email":"E-Mail","password":"Passwort","signUp":"Registrieren","alreadyHaveAnAccount":"Hast du bereits ein Konto?","dontHaveAnAccount":"Noch kein Konto?"},"hero":{"learnLanguages":"Sprachen lernen","rememberForever":"F\xfcr immer erinnern","untertitle":"Eine Plattform, die W\xf6rter in Wissen verwandelt \u2014 angetrieben von der Ged\xe4chtniswissenschaft","startNow":"Jetzt starten"},"main":{"quote":"Weniger Auswendiglernen Mehr Verstehen"},"features":{"features":"Funktionen","basedOn":"Basiert auf der Ebbinghaus-Methode","onePlace":"Alles an einem Ort","madeBy":"Von einem Lernenden f\xfcr Lernende gemacht"},"how-it-works":{"howItWorks":"Wie es funktioniert","add":"Hinzuf\xfcgen","learn":"Lernen","repeat":"Wiederholen","remember":"Behalten"},"vwa":{"creator":"(Ersteller von LingoIQ)","pharagrph":"Hallo! Ich bin Yehor und LingoIQ ist mein VWA-Projekt.<br><br>Ich habe diese Website erstellt, um das Sprachenlernen <b>einfacher und strukturierter</b> zu machen.<br>Hier findest du W\xf6rter, Grammatikregeln und Lernwerkzeuge <b>alles an einem Ort.</b><br><br>Die Website enth\xe4lt ein von mir entwickeltes Programm, das die <b>Spaced-Repetition-Methode von Hermann Ebbinghaus</b> nutzt, um dir zu helfen, W\xf6rter effizient zu behalten. Es wurde f\xfcr Sch\xfcler, Migranten und alle entwickelt, die motiviert sind, Sprachen zu lernen, und bietet <b>klare Strukturen und einfache Navigation.</b><br><br>Mit LingoIQ m\xf6chte ich jedem dieselbe M\xf6glichkeit geben, die ich hatte: einen klaren Weg zur Erlernung einer neuen Sprache."},"footer":{"privacy":"Datenschutz","terms":"Nutzungsbedingungen","cookies":"Cookies"}}');
+},{"./firebase.js":"8uCPj","./auth.js":"aTIl8","firebase/firestore":"3RBs1","url:../img/avatars/raccoon-1.jpeg":"fhGo5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fhGo5":[function(require,module,exports,__globalThis) {
+module.exports = module.bundle.resolve("raccoon-1.61f92196.jpeg") + "?" + Date.now();
 
-},{}],"dyQ7v":[function(require,module,exports,__globalThis) {
-module.exports = JSON.parse('{"header":{"features":"\u041C\u043E\u0436\u043B\u0438\u0432\u043E\u0441\u0442\u0456","howItWorks":"\u042F\u043A \u0446\u0435 \u043F\u0440\u0430\u0446\u044E\u0454","signIn":"\u0423\u0432\u0456\u0439\u0442\u0438","startLearning":"\u0420\u043E\u0437\u043F\u043E\u0447\u0430\u0442\u0438 \u043D\u0430\u0432\u0447\u0430\u043D\u043D\u044F","hello":"\u041F\u0440\u0438\u0432\u0456\u0442!","craeteYourAccount":"\u0421\u0442\u0432\u043E\u0440\u0438 \u0441\u0432\u0456\u0439 \u0430\u043A\u0430\u0443\u043D\u0442","username":"\u0406\u043C\'\u044F \u043A\u043E\u0440\u0438\u0441\u0442\u0443\u0432\u0430\u0447\u0430","email":"\u0415\u043B\u0435\u043A\u0442\u0440\u043E\u043D\u043D\u0430 \u043F\u043E\u0448\u0442\u0430","password":"\u041F\u0430\u0440\u043E\u043B\u044C","signUp":"\u0417\u0430\u0440\u0435\u0454\u0441\u0442\u0440\u0443\u0432\u0430\u0442\u0438\u0441\u044F","alreadyHaveAnAccount":"\u0412\u0436\u0435 \u0454 \u0430\u043A\u0430\u0443\u043D\u0442?","dontHaveAnAccount":"\u041D\u0435\u043C\u0430\u0454 \u0430\u043A\u0430\u0443\u043D\u0442\u0443?"},"hero":{"learnLanguages":"\u0412\u0438\u0432\u0447\u0430\u0439\u0442\u0435 \u043C\u043E\u0432\u0438","rememberForever":"\u041F\u0430\u043C\'\u044F\u0442\u0430\u0439\u0442\u0435 \u043D\u0430\u0437\u0430\u0432\u0436\u0434\u0438","untertitle":"\u041F\u043B\u0430\u0442\u0444\u043E\u0440\u043C\u0430, \u044F\u043A\u0430 \u043F\u0435\u0440\u0435\u0442\u0432\u043E\u0440\u044E\u0454 \u0441\u043B\u043E\u0432\u0430 \u043D\u0430 \u0437\u043D\u0430\u043D\u043D\u044F \u2014 \u043D\u0430 \u043E\u0441\u043D\u043E\u0432\u0456 \u043D\u0430\u0443\u043A\u0438 \u043F\u0440\u043E \u043F\u0430\u043C\'\u044F\u0442\u044C","startNow":"\u041F\u043E\u0447\u0430\u0442\u0438 \u0437\u0430\u0440\u0430\u0437"},"main":{"quote":"\u041C\u0435\u043D\u0448\u0435 \u0437\u0430\u0443\u0447\u0443\u0432\u0430\u043D\u043D\u044F \u0411\u0456\u043B\u044C\u0448\u0435 \u0440\u043E\u0437\u0443\u043C\u0456\u043D\u043D\u044F"},"features":{"features":"\u041C\u043E\u0436\u043B\u0438\u0432\u043E\u0441\u0442\u0456","basedOn":"\u041D\u0430 \u043E\u0441\u043D\u043E\u0432\u0456 \u043C\u0435\u0442\u043E\u0434\u0443 \u0415\u0431\u0431\u0456\u043D\u0433\u0430\u0443\u0437\u0430","onePlace":"\u0412\u0441\u0435 \u0432 \u043E\u0434\u043D\u043E\u043C\u0443 \u043C\u0456\u0441\u0446\u0456","madeBy":"\u0421\u0442\u0432\u043E\u0440\u0435\u043D\u043E \u0437\u0434\u043E\u0431\u0443\u0432\u0430\u0447\u0435\u043C \u0437\u043D\u0430\u043D\u044C \u0434\u043B\u044F \u0437\u0434\u043E\u0431\u0443\u0432\u0430\u0447\u0456\u0432 \u0437\u043D\u0430\u043D\u044C"},"how-it-works":{"howItWorks":"\u042F\u043A \u0446\u0435 \u043F\u0440\u0430\u0446\u044E\u0454","add":"\u0414\u043E\u0434\u0430\u0439","learn":"\u0412\u0438\u0432\u0447\u0438","repeat":"\u041F\u043E\u0432\u0442\u043E\u0440\u0438","remember":"\u0417\u0430\u043F\u0430\u043C\'\u044F\u0442\u0430\u0439"},"vwa":{"creator":"(\u0422\u0432\u043E\u0440\u0435\u0446\u044C LingoIQ)","pharagrph":"\u041F\u0440\u0438\u0432\u0456\u0442! \u042F \u0404\u0433\u043E\u0440, \u0456 LingoIQ \u2014 \u0446\u0435 \u043C\u0456\u0439 VWA-\u043F\u0440\u043E\u0454\u043A\u0442.<br><br>\u042F \u0441\u0442\u0432\u043E\u0440\u0438\u0432 \u0446\u0435\u0439 \u0441\u0430\u0439\u0442, \u0449\u043E\u0431 \u0437\u0440\u043E\u0431\u0438\u0442\u0438 \u0432\u0438\u0432\u0447\u0435\u043D\u043D\u044F \u043C\u043E\u0432 <b>\u043F\u0440\u043E\u0441\u0442\u0456\u0448\u0438\u043C \u0442\u0430 \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u043E\u0432\u0430\u043D\u0456\u0448\u0438\u043C.</b><br>\u0422\u0443\u0442 \u0432\u0438 \u043C\u043E\u0436\u0435\u0442\u0435 \u0437\u043D\u0430\u0439\u0442\u0438 \u0441\u043B\u043E\u0432\u0430, \u0433\u0440\u0430\u043C\u0430\u0442\u0438\u0447\u043D\u0456 \u043F\u0440\u0430\u0432\u0438\u043B\u0430 \u0442\u0430 \u0456\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0438 \u0434\u043B\u044F \u043D\u0430\u0432\u0447\u0430\u043D\u043D\u044F <b>\u0432\u0441\u0435 \u0432 \u043E\u0434\u043D\u043E\u043C\u0443 \u043C\u0456\u0441\u0446\u0456.</b><br><br>\u0421\u0430\u0439\u0442 \u043C\u0456\u0441\u0442\u0438\u0442\u044C \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u0443, \u044F\u043A\u0443 \u044F \u0440\u043E\u0437\u0440\u043E\u0431\u0438\u0432 \u0437\u0430 \u0434\u043E\u043F\u043E\u043C\u043E\u0433\u043E\u044E <b>\u043C\u0435\u0442\u043E\u0434\u0443 \u0456\u043D\u0442\u0435\u0440\u0432\u0430\u043B\u044C\u043D\u0438\u0445 \u043F\u043E\u0432\u0442\u043E\u0440\u0435\u043D\u044C \u0413\u0435\u0440\u043C\u0430\u043D\u043D\u0430 \u0415\u0431\u0431\u0456\u043D\u0433\u0430\u0443\u0437\u0430</b>, \u0449\u043E\u0431 \u0434\u043E\u043F\u043E\u043C\u043E\u0433\u0442\u0438 \u0432\u0430\u043C \u0435\u0444\u0435\u043A\u0442\u0438\u0432\u043D\u043E \u0437\u0430\u043F\u0430\u043C\'\u044F\u0442\u043E\u0432\u0443\u0432\u0430\u0442\u0438 \u0441\u043B\u043E\u0432\u0430. \u0412\u043E\u043D\u0430 \u0440\u043E\u0437\u0440\u043E\u0431\u043B\u0435\u043D\u0430 \u0434\u043B\u044F \u0448\u043A\u043E\u043B\u044F\u0440\u0456\u0432, \u043C\u0456\u0433\u0440\u0430\u043D\u0442\u0456\u0432 \u0442\u0430 \u0432\u0441\u0456\u0445, \u0445\u0442\u043E \u043F\u0440\u0430\u0433\u043D\u0435 \u0432\u0438\u0432\u0447\u0430\u0442\u0438 \u043C\u043E\u0432\u0438, \u043F\u0440\u043E\u043F\u043E\u043D\u0443\u044E\u0447\u0438 <b>\u0447\u0456\u0442\u043A\u0443 \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0443 \u0442\u0430 \u043B\u0435\u0433\u043A\u0443 \u043D\u0430\u0432\u0456\u0433\u0430\u0446\u0456\u044E.</b><br><br>\u0417\u0430 \u0434\u043E\u043F\u043E\u043C\u043E\u0433\u043E\u044E LingoIQ \u044F \u0445\u043E\u0447\u0443 \u0434\u0430\u0442\u0438 \u043A\u043E\u0436\u043D\u043E\u043C\u0443 \u0442\u0430\u043A\u0443 \u0436 \u043C\u043E\u0436\u043B\u0438\u0432\u0456\u0441\u0442\u044C, \u044F\u043A\u0430 \u0431\u0443\u043B\u0430 \u0432 \u043C\u0435\u043D\u0435: \u0447\u0456\u0442\u043A\u0438\u0439 \u0448\u043B\u044F\u0445 \u0434\u043E \u043E\u043F\u0430\u043D\u0443\u0432\u0430\u043D\u043D\u044F \u043D\u043E\u0432\u043E\u0457 \u043C\u043E\u0432\u0438."},"footer":{"privacy":"\u041A\u043E\u043D\u0444\u0456\u0434\u0435\u043D\u0446\u0456\u0439\u043D\u0456\u0441\u0442\u044C","terms":"\u0423\u043C\u043E\u0432\u0438 \u0432\u0438\u043A\u043E\u0440\u0438\u0441\u0442\u0430\u043D\u043D\u044F","cookies":"\u0424\u0430\u0439\u043B\u0438 cookie"}}');
+},{}]},["04heI","gZigM"], "gZigM", "parcelRequiree231", {}, "./", "/")
 
-},{}]},["cSsrq","lQCzu"], "lQCzu", "parcelRequiree231", {})
-
-//# sourceMappingURL=userpage.e3d0ee89.js.map
+//# sourceMappingURL=rules.a55567a3.js.map

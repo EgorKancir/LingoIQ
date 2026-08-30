@@ -790,12 +790,10 @@ function updateDictionaryStats(langObj) {
     // Виводимо відсоток текстом
     const progressPercentElement = document.getElementById('languageProgressPercent');
     if (progressPercentElement) progressPercentElement.textContent = `${progressPercent}%`;
-    // 4. Оновлюємо ширину графіка-шкали
+    // 4. Оновлюємо ширину графіка-шкали (мінімум 10%, навіть якщо прогрес 0%)
     const graphBlock = document.querySelector('.progress__graph-block');
     if (graphBlock) {
-        // Якщо прогрес дуже маленький або 0, ставимо мінімальну ширину (наприклад, 10% або 0%), 
-        // щоб шкала виглядала охайно, або чистий відсоток.
-        const displayWidth = progressPercent === 0 ? 0 : Math.max(progressPercent, 10);
+        const displayWidth = Math.max(progressPercent, 10);
         graphBlock.style.width = `${displayWidth}%`;
     }
 }

@@ -1,4 +1,5 @@
 .user-info {
+  z-index: 100;
   background: linear-gradient(#000105 0%, #0012c4 60%, #30b1ec 100%);
   border-radius: 50px;
   flex-direction: column;
