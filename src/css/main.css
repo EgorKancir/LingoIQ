@@ -66,8 +66,8 @@ button, input, label, form {
     padding: 0 40px;
     margin-top: 40px;
     margin-bottom: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
-
 .logo__image {
     display: flex;
     justify-content: center;
@@ -75,14 +75,19 @@ button, input, label, form {
     width: 190px;
     height: 65px;
 }
-
+.header__lang-flag {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+}
 .home-navigation__list {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 20px;
 }
-
 .home-navigation__item {
     font-family: "Inter", sans-serif;
     font-size: 14px;
@@ -466,8 +471,9 @@ button, input, label, form {
     font-size: 14px;
     letter-spacing: 0px;
     line-height: normal;
-    text-align: center;
+    text-align: end;
     vertical-align: middle;
+    width: 200px;
 }
 
 .header__username-settings {
@@ -490,6 +496,12 @@ button, input, label, form {
     height: 50px;
     border-radius: 50%;
 }
+.active-site {
+    transform: scale(1.05);
+    font-weight: 900;
+    color: black;
+    transition: all 0.3s;
+}
 /* ----------------------------------------HEADER-END--------------------------------------------| */
 
 /* ----------------------------------------MAIN--------------------------------------------| */
@@ -498,8 +510,7 @@ button, input, label, form {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    gap: 70px;
-    /* position: relative; */
+    gap: 50px;
 }
 .back-btn {
     top: 20px;
@@ -545,6 +556,7 @@ button, input, label, form {
     border: rgba(255, 255, 255, 0.05) 1px solid;
     border-radius: 50px;
     margin: 50px auto 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 .footer-panel__logo-img {
     width: 209px;
@@ -569,7 +581,7 @@ button, input, label, form {
     width: 100%;
     border-top: white 2px solid;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding-top: 20px;
 }

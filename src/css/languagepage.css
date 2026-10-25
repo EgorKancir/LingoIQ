@@ -4,6 +4,7 @@
     border-radius: 50%;
     object-fit: cover;
     object-position: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 .language-name {
     font-family: 'Squada One', sans-serif;
@@ -26,6 +27,7 @@
     gap: 20px;
     background: linear-gradient(rgba(0, 1, 5, 0.4) 0%, rgba(0, 18, 196, 1) 60%, rgba(48, 177, 236, 1) 100%);
     border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 .progress__title {
     font-family: 'Inter', sans-serif;
@@ -116,6 +118,7 @@
     gap: 20px;
     background: linear-gradient(rgba(0, 1, 5, 0.4) 0%, rgba(0, 18, 196, 1) 60%, rgba(48, 177, 236, 1) 100%);
     border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 .web-navigation__title {
     font-family: 'Inter', sans-serif;
@@ -142,6 +145,7 @@
     gap: 10px;
     border-radius: 20px;
     background: linear-gradient(135deg, #7E8AF4 22%, #0012C4 85%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 .web-navigation__page-icon {
     width: 100px;

@@ -6,6 +6,7 @@ import { auth, db } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { initHeader, loadHeaderUserData } from './header.js';
+import { updateFlagAndLinksByUrl } from './utils.js';
 import { initLanguagePicker } from './i18n.js';
 
 // Отримуємо код мови з URL (наприклад: glossary.html?lang=de)
@@ -14,6 +15,15 @@ const currentLangCode = urlParams.get('lang');
 
 let currentGlossary = [];
 let editingWordId = null; // Змінна для відстеження, яке слово ми зараз редагуємо
+
+// Допоміжна функція для отримання сьогоднішньої дати YYYY-MM-DD
+function getTodayString() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
 // ============================================================================
 // 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
@@ -28,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeader();
     initLanguagePicker();
     initGlossaryUI();
+    updateFlagAndLinksByUrl();
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -57,7 +68,8 @@ async function loadGlossaryData(userId, langCode) {
             lang => lang.code.toLowerCase() === langCode.toLowerCase()
         );
 
-        currentGlossary = currentLangObj?.glossary || [];
+        // Читаємо слова з масиву `words` (або `glossary` для зворотної сумісності)
+        currentGlossary = currentLangObj?.words || currentLangObj?.glossary || [];
         renderGlossaryTable(currentGlossary);
 
     } catch (error) {
@@ -76,7 +88,12 @@ async function saveGlossaryToFirestore(userId, langCode, newGlossary) {
 
         const updatedLanguages = languages.map(lang => {
             if (lang.code.toLowerCase() === langCode.toLowerCase()) {
-                return { ...lang, glossary: newGlossary };
+                // Зберігаємо та оновлюємо масив `words` для Training Center
+                return { 
+                    ...lang, 
+                    words: newGlossary,
+                    glossary: newGlossary // також дублюємо для глосарія
+                };
             }
             return lang;
         });
@@ -115,28 +132,29 @@ function renderGlossaryTable(glossaryArray) {
         const clone = template.content.cloneNode(true);
 
         clone.querySelector('.glossary-table__body-td--number').textContent = index + 1;
-        clone.querySelectorAll('.glossary-table__body-td')[1].textContent = item.word;
-        clone.querySelectorAll('.glossary-table__body-td')[2].textContent = item.translation;
-        clone.querySelectorAll('.glossary-table__body-td')[3].textContent = item.typ;
+        clone.querySelectorAll('.glossary-table__body-td')[1].textContent = item.word || '';
+        clone.querySelectorAll('.glossary-table__body-td')[2].textContent = item.translation || '';
+        clone.querySelectorAll('.glossary-table__body-td')[3].textContent = item.typ || '';
 
         const statusSpan = clone.querySelector('.glossary-table__status');
-        statusSpan.textContent = item.status;
+        statusSpan.textContent = item.status || 'notlearned';
         
         let statusClass = 'not-studied';
-        if (item.status === 'Studied') statusClass = 'studied';
-        else if (item.status === 'Study') statusClass = 'study';
+        const st = (item.status || '').toLowerCase();
+        if (st === 'studied' || st === 'learned') statusClass = 'studied';
+        else if (st === 'study') statusClass = 'study';
         
         statusSpan.className = `glossary-table__status glossary-table__status--${statusClass}`;
 
         const editBtn = clone.querySelector('.glossary-table__body-btn--edit');
         const deleteBtn = clone.querySelector('.glossary-table__body-btn--delete');
         
-        editBtn.setAttribute('data-id', item.id);
-        deleteBtn.setAttribute('data-id', item.id);
+        if (editBtn) editBtn.setAttribute('data-id', item.id);
+        if (deleteBtn) deleteBtn.setAttribute('data-id', item.id);
 
         // Підключаємо обробники подій
-        deleteBtn.addEventListener('click', () => handleDeleteWord(item.id));
-        editBtn.addEventListener('click', () => handleEditClick(item));
+        if (deleteBtn) deleteBtn.addEventListener('click', () => handleDeleteWord(item.id));
+        if (editBtn) editBtn.addEventListener('click', () => handleEditClick(item));
 
         tableBody.appendChild(clone);
     });
@@ -151,14 +169,13 @@ function initGlossaryUI() {
     const formRow = document.querySelector('.glossary-form__tr');
     const cancelBtn = document.querySelector('.glossary-form__btn-cencel');
     const submitForm = document.getElementById('add-word-form');
-    const formNumberCell = document.querySelector('.glossary-form__number'); // Комірка з надписом New/Edit
+    const formNumberCell = document.querySelector('.glossary-form__number');
 
     if (addBtn && formRow) {
         addBtn.addEventListener('click', () => {
-            editingWordId = null; // Скидаємо режим редагування
+            editingWordId = null;
             submitForm.reset();
             
-            // Повертаємо напис "New" для режиму додавання
             if (formNumberCell) formNumberCell.textContent = 'New';
 
             formRow.classList.remove('disable');
@@ -170,7 +187,7 @@ function initGlossaryUI() {
         cancelBtn.addEventListener('click', () => {
             formRow.classList.add('disable');
             editingWordId = null;
-            if (formNumberCell) formNumberCell.textContent = 'New'; // Повертаємо "New"
+            if (formNumberCell) formNumberCell.textContent = 'New';
             if (addBtn) {
                 addBtn.parentElement.parentElement.style.display = '';
             }
@@ -200,7 +217,7 @@ function initGlossaryUI() {
             }
 
             if (editingWordId) {
-                // РЕЖИМ РЕДАГУВАННЯ: оновлюємо існуюче слово, але ЗБЕРІГАЄМО стару `createdAt`
+                // РЕЖИМ РЕДАГУВАННЯ: оновлюємо значення, зберігаючи параметри тренажера (stage, nextReviewDate, createdAt)
                 currentGlossary = currentGlossary.map(item => {
                     if (item.id === editingWordId) {
                         return { 
@@ -208,34 +225,37 @@ function initGlossaryUI() {
                             word, 
                             translation, 
                             typ, 
-                            status 
-                            // Поле createdAt залишається незмінним (воно вже є всередині ...item)
+                            status,
+                            stage: item.stage || 1,
+                            nextReviewDate: item.nextReviewDate || getTodayString()
                         };
                     }
                     return item;
                 });
             } else {
-                // РЕЖИМ ДОДАВАННЯ: створюємо нове слово разом із датою створення
+                // РЕЖИМ ДОДАВАННЯ: додаємо обов'язкові поля для Training Center
                 const newItem = {
                     id: Date.now().toString(),
                     word,
                     translation,
                     typ,
                     status,
-                    createdAt: new Date().toISOString() // Додаємо дату створення у форматі ISO
+                    stage: 1,                       // Початковий етап повторення
+                    nextReviewDate: getTodayString(),// З'являється в тренажері на "Today"
+                    createdAt: new Date().toISOString()
                 };
                 currentGlossary.push(newItem);
             }
 
-            // Зберігаємо в базу
-            await saveGlossaryToFirestore(user.user?.uid || user.uid, currentLangCode, currentGlossary);
+            // Зберігаємо в базу Firestore
+            await saveGlossaryToFirestore(user.uid, currentLangCode, currentGlossary);
 
             // Оновлюємо таблицю та скидаємо форму
             renderGlossaryTable(currentGlossary);
             submitForm.reset();
             formRow.classList.add('disable');
             editingWordId = null;
-            if (formNumberCell) formNumberCell.textContent = 'New'; // Повертаємо "New"
+            if (formNumberCell) formNumberCell.textContent = 'New';
             if (addBtn) {
                 addBtn.parentElement.parentElement.style.display = '';
             }
@@ -243,7 +263,7 @@ function initGlossaryUI() {
     }
 }
 
-// Функція, яка спрацьовує при натисканні на кнопку редагування (олівець)
+// Функція редагування слова
 function handleEditClick(item) {
     const formRow = document.querySelector('.glossary-form__tr');
     const addBtn = document.getElementById('glossary-table__add-btn');
@@ -251,47 +271,34 @@ function handleEditClick(item) {
 
     if (!formRow) return;
 
-    // Запам'ятовуємо ID слова, яке редагуємо
     editingWordId = item.id;
 
-    // Змінюємо напис "New" на "Edit" у формі
     if (formNumberCell) formNumberCell.textContent = 'Edit';
 
-    // Заповнюємо поля форми поточними даними вибраного слова
-    document.getElementById('new-word').value = item.word;
-    document.getElementById('new-translation').value = item.translation;
-    document.getElementById('new-typ').value = item.typ;
-    document.getElementById('new-status').value = item.status;
+    document.getElementById('new-word').value = item.word || '';
+    document.getElementById('new-translation').value = item.translation || '';
+    document.getElementById('new-typ').value = item.typ || '';
+    document.getElementById('new-status').value = item.status || '';
 
-    // Відкриваємо рядок форми та приховуємо кнопку загального додавання
     formRow.classList.remove('disable');
     if (addBtn) {
         addBtn.parentElement.parentElement.style.display = 'none';
     }
 }
 
-// Функція видалення слова (якщо вона знадобиться нижче)
-function handleDeleteWord(wordId) {
-    // Реалізація видалення...
-}
 // ============================================================================
 // 6. ВИДАЛЕННЯ СЛОВА
 // ============================================================================
 
 async function handleDeleteWord(wordId) {
-    // Показуємо вікно підтвердження
     const isConfirmed = confirm('Are you sure you want to delete this word?');
-    if (!isConfirmed) return; // Якщо користувач натиснув "Скасувати", нічого не робимо
+    if (!isConfirmed) return;
 
     const user = auth.currentUser;
     if (!user) return;
 
-    // Фільтруємо масив, залишаючи всі слова, окрім того, яке треба видалити
     currentGlossary = currentGlossary.filter(item => item.id !== wordId);
 
-    // Зберігаємо оновлений масив у Firestore
-    await saveGlossaryToFirestore(user.user?.uid || user.uid, currentLangCode, currentGlossary);
-
-    // Перерендерюємо таблицю
+    await saveGlossaryToFirestore(user.uid, currentLangCode, currentGlossary);
     renderGlossaryTable(currentGlossary);
 }

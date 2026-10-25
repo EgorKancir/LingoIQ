@@ -1,0 +1,106 @@
+/* ============================================================================
+PRIVACY SECTION STYLES (privacy.css)
+============================================================================ */
+
+.privacy {
+    max-width: 800px;
+    margin: 40px auto 80px auto;
+    padding: 20px;
+    color: #c5c9db;
+    font-family: 'Inter', sans-serif;
+    line-height: 28px;
+}
+
+/* Шапка */
+.privacy__header {
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+}
+
+.privacy__title {
+    font-family: 'Audiowide', cursive, sans-serif;
+    font-size: 32px;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+.privacy__date {
+    font-size: 14px;
+    color: #8f95b2;
+}
+
+/* Вступ */
+.privacy__intro {
+    margin-bottom: 30px;
+}
+
+.privacy__text {
+    font-size: 16px;
+    color: #c5c9db;
+    margin-bottom: 14px;
+}
+
+.privacy__text strong {
+    color: #ffffff;
+}
+
+/* Контент та секції */
+.privacy__content {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.privacy__section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+/* Списки */
+.privacy__list {
+    list-style: disc;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.privacy__list-item {
+    color: #c5c9db;
+    font-size: 15px;
+}
+
+.privacy__list-item strong {
+    color: #ffffff;
+}
+
+/* Контакти */
+.privacy__contact-link {
+    display: inline-block;
+    margin-top: 6px;
+    color: #60a5fa;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.privacy__contact-link:hover {
+    color: #93c5fd;
+    text-decoration: underline;
+}
+
+/* Мобільна адаптивність */
+@media (max-width: 768px) {
+    .privacy {
+        margin: 20px 16px;
+        padding: 10px;
+    }
+
+    .privacy__title {
+        font-size: 26px;
+    }
+}

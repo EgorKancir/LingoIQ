@@ -24,7 +24,7 @@
     padding: 30px 0;
     background: linear-gradient(rgba(0, 1, 5, 0.4) 0%, rgba(0, 18, 196, 1) 60%, rgba(48, 177, 236, 1) 100%);
     border-radius: 50px;
-
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .rules-group__rules-box {
@@ -46,6 +46,7 @@
     align-items: center;
     flex-direction: column;
     gap: 9px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .rules-group__rules-element:hover {
@@ -191,7 +192,7 @@
     flex-wrap: wrap;
     font-family: 'Squada One', sans-serif;
     font-weight: 400;
-    font-size: 50px;
+    font-size: 30px;
     letter-spacing: 0px;
     line-height: normal;
     text-align: center;
@@ -335,6 +336,10 @@
     gap: 20px;
     width: 420px;
 }
+.rule-item__img-btn:hover {
+    transform: scale(1.02);
+    opacity: 0.8;
+}
 .rule-item__img {
     width: 200px;
     height: 200px;
@@ -406,8 +411,8 @@
     z-index: 100;
 }
 .rule-section__popup-img {
-    width: 600px;
-    height: 600px;
+    width: 800px;
+    height: 800px;
     object-fit: cover;
     object-position: center;
     border-radius: 20px;

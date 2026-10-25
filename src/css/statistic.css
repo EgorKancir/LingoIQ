@@ -1,0 +1,57 @@
+.statistic__icon {
+    width: 120px;
+    height: 120px;
+}
+.statistic__title {
+    font-family: 'Squada One', sans-serif;
+    font-weight: 400;
+    font-size: 100px;
+    letter-spacing: 0px;
+    line-height: normal;
+    text-align: center;
+}
+.statistic-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 50px;
+    padding: 50px;
+    border-radius: 50px;
+    background: linear-gradient(rgba(0, 1, 5, 0.4) 0%, rgba(0, 18, 196, 1) 60%, rgba(48, 177, 236, 1) 100%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.statistic-group__element {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    background: linear-gradient(rgba(48, 177, 236, 1) 0%, rgba(0, 18, 196, 1) 60%, rgba(0, 1, 5, 0.4) 100%);
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.statistic-group__element-title {
+    width: 134px;
+    height: 72px;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800; 
+    font-size: 30px;
+    letter-spacing: 0px;
+    line-height: normal; 
+}
+.statistic-group__data-backround {
+    padding: 10px;
+    background: rgba(48, 177, 236, 1);
+    border-radius: 20px;
+}
+.statistic-group__data {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700; 
+    font-size: 25px;
+    letter-spacing: 0px;
+    line-height: normal; 
+}

@@ -122,7 +122,7 @@ function updateDictionaryStats(langObj) {
 // 5. ДОПОМІЖНІ ФУНКЦІЇ (Векторні SVG прапори через flagcdn, Назва, Навігація)[cite: 3]
 // ============================================================================
 
-function initLanguageDataUI(langCode) {
+export function initLanguageDataUI(langCode) {
     const lowerCode = langCode.toLowerCase();
     const upperCode = langCode.toUpperCase();
     

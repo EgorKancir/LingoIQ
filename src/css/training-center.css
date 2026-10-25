@@ -1,0 +1,207 @@
+.training-center__icon {
+    width: 120px;
+    height: 120px;
+}
+.training-center__title {
+    font-family: 'Squada One', sans-serif;
+    font-weight: 400;
+    font-size: 100px;
+    letter-spacing: 0px;
+    line-height: normal;
+    text-align: center;
+}
+.training-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 50px;
+    padding: 50px;
+    border-radius: 50px;
+    background: linear-gradient(rgba(0, 1, 5, 0.4) 0%, rgba(0, 18, 196, 1) 60%, rgba(48, 177, 236, 1) 100%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.training-block {
+    width: 210px;
+    height: 210px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    background: linear-gradient(135deg, #7E8AF4 22%, #0012C4 85%);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.training-block__icon {
+    width: 70px;
+    height: 70px;
+}
+.training-block__date {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900; /* Black */
+    font-size: 20px;
+    letter-spacing: 0px;
+    line-height: normal; /* Auto */
+    text-align: center;
+}
+.training-block__button {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900; /* Black */
+    font-size: 25px;
+    letter-spacing: 0px;
+    line-height: normal; /* Auto */
+    text-align: center;
+    background: linear-gradient(90deg, #00E659 0%, #30B385 45%, #4A8FD2 100%);
+    color: white;
+    width: 170px;
+    height: 50px;
+    border-radius: 20px;
+}
+.training-block__button:hover {
+    transform: scale(1.03);
+    opacity: 0.7;
+}
+/* POPUP */
+.training-console {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:url("../img/brain1part.png"),
+    url("../img/brain2part.png"), 
+    linear-gradient(rgba(0, 1, 5, 1) 0%, rgba(0, 18, 196, 1) 60%, rgba(48, 177, 236, 1) 100%);
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-size: 755px 712px, 755px 712px, cover;
+    background-position: left -340px bottom 50%, right -300px bottom 70%, center;  
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+}
+.training-console__info {
+    width: 1200px;
+    padding: 0 15px;
+    margin: 50px auto 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 40px;
+    position: relative;
+}
+.training-console__back-btn {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800; /* Extra Bold */
+    font-size: 25px;
+    color: white;
+}
+.training-console__back-btn:hover {
+    transform: scale(1.03);
+    opacity: 0.7;
+}
+.training-console__counter {
+    display: block;
+    border-radius: 50px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800; /* Extra Bold */
+    font-size: 36px;
+    letter-spacing: 0px;
+    line-height: normal; /* Auto */
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgb(255 255 255 / 5%);
+    padding: 5px 30px;
+}
+.training-console__main-word {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600; /* Semi Bold */
+    font-size: 70px;
+    letter-spacing: 0px;
+    line-height: normal; /* Auto */
+    text-align: center;
+    padding: 15px 30px;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgb(255 255 255 / 5%);
+    border-radius: 50px;
+}
+.training-console__repeating-icon {
+    width: 50px;
+    height: 50px;
+}
+.training-console__translation-element {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 30px;
+    border-radius: 50px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+}
+.training-console__translation-element:hover {
+    transform: scale(1.03);
+    opacity: 0.7;
+}
+.training-console__translation-cover-img {
+    width: 60px;
+    height: 60px;
+}
+.training-console__translation-word {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800; 
+    font-size: 25px;
+    letter-spacing: 0px;
+    line-height: normal;
+}
+.training-console__buttons-group {
+    width: 100%;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgb(255 255 255 / 5%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 40px;
+    margin-top: 20px;
+}
+.training-console__btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400; 
+    font-size: 30px;
+    letter-spacing: 0px;
+    color: white;
+    line-height: normal;
+    border-radius: 50px;
+    border: 1px solid rgb(255 255 255 / 5%);
+}
+.training-console__btn:hover {
+    transform: scale(1.03);
+    opacity: 0.7;
+}
+.training-console__btn--known {
+    background: rgba(0, 197, 26, 0.5);
+}
+.training-console__input-icon {
+    width: 30px;
+    height: 30px;
+}
+.training-console__btn--practice {
+    background: rgba(215, 204, 42, 0.5);
+}
+.training-console__btn--unknown {
+    background: rgba(197, 0, 0, 0.5);
+}

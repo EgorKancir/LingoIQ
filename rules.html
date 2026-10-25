@@ -20,22 +20,26 @@
 <body>
     <header class="header container">
         <div class="header__content">
-            <a class="logo__link" href="./index.html">
+            <a class="logo__link" href="./userpage.html">
                 <img src="./src/img/lingoiq_logo.svg" alt="logo" class="logo__image">
             </a>
+            <img class="header__lang-flag" src="./src/img/planet-earth.png" alt="Flag">
             <nav class="home-navigation">
                 <ul class="home-navigation__list">
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="./userpage.html">Home</a>
+                        <a class="home-navigation__link" href="./languagepage.html">Console</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="#calendar">Calendar</a>
+                        <a class="home-navigation__link" href="./glossary.html">Glossary</a>
+                    </li>
+                    <li class="home-navigation__item active-site">
+                        <a class="home-navigation__link" href="./rules.html">Rules</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="./userpage.html">Languages</a>
+                        <a class="home-navigation__link" href="./training-center.html">Training Center</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="#websites">Websites</a>
+                        <a class="home-navigation__link" href="./statistic.html">Statistic</a>
                     </li>
                 </ul>
             </nav>
@@ -196,10 +200,7 @@
                 </div>
             </div>
 
-            <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
-            <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
-
-            <div class="rule-section">
+            <div class="rule-section disable">
                 <button class="rule-section__btn-back">Back</button>
                 <div class="rule-section__title-group">
                     <img class="rule-section__icon disable" src="./src/img/rules/grammar-icon.png" alt="Grammar">
@@ -284,24 +285,13 @@
         </div>
         <div class="footer__politics-group">
             <p class="footer__copyrighting">© 2026 LingoIQ</p>
-            <ul class="footer__rules-list">
-                <li class="footer__rules-item">
-                    <a href="#" class="footer__rules-link">Privacy</a>
-                </li>
-                <li class="footer__rules-item">
-                    <a href="#" class="footer__rules-link">Terms</a>
-                </li>
-                <li class="footer__rules-item">
-                    <a href="#" class="footer__rules-link">Cookies</a>
-                </li>
-            </ul>
         </div>
     </footer>
     <template class="rule-item__template">
         <div class="rule-item">
             <h2 class="rule-item__title">{{title}}</h2>
             <div class="rule-item__image-group">
-                <button class="rule-item__img">
+                <button class="rule-item__img-btn">
                     <img class="rule-item__img" src="./src/img/decor.png" alt="Rule img" data-src="{{url}}">
                 </button>
             </div>

@@ -6,6 +6,7 @@ import { auth, db } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { initHeader, loadHeaderUserData } from './header.js';
+import { initCalendar } from './calendar.js';
 import { initLanguagePicker } from './i18n.js';
 
 let editForm;
@@ -48,6 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadHeaderUserData(user);
         currentUserLanguages = await loadUserLanguages(user.uid);
         renderUserLanguages(currentUserLanguages);
+
+        await initCalendar(user);
     });
 });
 

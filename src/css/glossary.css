@@ -17,6 +17,7 @@
     overflow: hidden;
     color: #ffffff;
     border-collapse: collapse;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 .glossary-table__header-tr {
     height: 60px;
@@ -53,7 +54,7 @@
     background: rgba(255, 255, 255, 0.05);
 }
 .glossary-table__footer-tr {
-    height: 64px;
+    height: 52px;
 }
 .glossary-table__footer-td {
     text-align: center;

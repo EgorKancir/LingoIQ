@@ -16,22 +16,26 @@
 <body>
     <header class="header container">
         <div class="header__content">
-            <a class="logo__link" href="./index.html">
+            <a class="logo__link" href="./userpage.html">
                 <img src="./src/img/lingoiq_logo.svg" alt="logo" class="logo__image">
             </a>
+            <img class="header__lang-flag" src="./src/img/planet-earth.png" alt="Flag">
             <nav class="home-navigation">
                 <ul class="home-navigation__list">
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="./userpage.html">Home</a>
+                        <a class="home-navigation__link" href="./languagepage.html">Console</a>
+                    </li>
+                    <li class="home-navigation__item active-site">
+                        <a class="home-navigation__link" href="./glossary.html">Glossary</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="#calendar">Calendar</a>
+                        <a class="home-navigation__link" href="./rules.html">Rules</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="./userpage.html">Languages</a>
+                        <a class="home-navigation__link" href="./training-center.html">Training Center</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="#websites">Websites</a>
+                        <a class="home-navigation__link" href="./statistic.html">Statistic</a>
                     </li>
                 </ul>
             </nav>
@@ -142,48 +146,7 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody class="glossary-table__body" id="glossary-table__body">
-                                    <!-- Динамічні рядки будуть вставлятися сюди через JS -->
-                    <tr class="glossary-table__body-tr">
-                        <td class="glossary-table__body-td glossary-table__body-td--number">1</td>
-                        <td class="glossary-table__body-td">der Hund</td>
-                        <td class="glossary-table__body-td">the dog</td>
-                        <td class="glossary-table__body-td">Substantiv</td>
-                        <td class="glossary-table__body-td">
-                            <span class="glossary-table__status glossary-table__status--studied">Studied</span>
-                        </td>
-                        <td class="glossary-table__body-td glossary-table__body-td-center">
-                            <div class="glossary-table__body-btn-group">
-                                <button class="glossary-table__body-btn--edit" data-id="1" type="button">
-                                    <img src="./src/img/glossary/pen-icon.svg" alt="Pen" class="icon-pen">
-                                </button>
-                                <button class="glossary-table__body-btn--delete" data-id="1" type="button">
-                                    <img src="./src/img/glossary/basket-icon.svg" alt="Basket" class="glossary-table__icon-basket">
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                                        <!-- Тестова статична строка 2 -->
-                    <tr class="glossary-table__body-tr">
-                        <td class="glossary-table__body-td glossary-table__body-td--number">2</td>
-                        <td class="glossary-table__body-td">die Katze</td>
-                        <td class="glossary-table__body-td">the cat</td>
-                        <td class="glossary-table__body-td">Substantiv</td>
-                        <td class="glossary-table__body-td">
-                            <span class="glossary-table__status glossary-table__status--study">Study</span>
-                        </td>
-                        <td class="glossary-table__body-td glossary-table__body-td-center">
-                            <div class="glossary-table__body-btn-group">
-                                <button class="glossary-table__body-btn--edit" data-id="2" type="button">
-                                    <img src="./src/img/glossary/pen-icon.svg" alt="Pen" class="icon-pen">
-                                </button>
-                                <button class="glossary-table__body-btn--delete" data-id="2" type="button">
-                                    <img src="./src/img/glossary/basket-icon.svg" alt="Basket" class="glossary-table__icon-basket">
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
+                <tbody class="glossary-table__body" id="glossary-table__body"></tbody>
                 <tfoot class="glossary-table__footer">
                     <tr class="glossary-table__footer-tr">
                         <td class="glossary-table__footer-td" colspan="6">
@@ -252,17 +215,6 @@
         </div>
         <div class="footer__politics-group">
             <p class="footer__copyrighting">© 2026 LingoIQ</p>
-            <ul class="footer__rules-list">
-                <li class="footer__rules-item">
-                    <a href="#" class="footer__rules-link">Privacy</a>
-                </li>
-                <li class="footer__rules-item">
-                    <a href="#" class="footer__rules-link">Terms</a>
-                </li>
-                <li class="footer__rules-item">
-                    <a href="#" class="footer__rules-link">Cookies</a>
-                </li>
-            </ul>
         </div>
     </footer>
 
