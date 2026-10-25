@@ -721,13 +721,14 @@ var _firebaseJs = require("./firebase.js");
 var _auth = require("firebase/auth");
 var _firestore = require("firebase/firestore");
 var _headerJs = require("./header.js");
+var _utilsJs = require("./utils.js");
 var _i18NJs = require("./i18n.js");
 // Отримуємо код мови з URL (наприклад: rules.html?lang=de)
 const urlParams = new URLSearchParams(window.location.search);
 const currentLangCode = urlParams.get('lang') || 'en';
-// Поточна відкрита категорія та ID правила, що редагується
 let currentCategory = '';
-let editingRuleId = null;
+let editingRuleIndex = null;
+let allCategoryRules = []; // Зберігаємо всі правила поточної категорії для пошуку
 // ============================================================================
 // 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
 // ============================================================================
@@ -737,6 +738,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     initRulesNavigation();
     initAddRuleForm();
     initImagePopup();
+    initSearchBox();
+    (0, _utilsJs.updateFlagAndLinksByUrl)();
     (0, _auth.onAuthStateChanged)((0, _firebaseJs.auth), async (user)=>{
         if (user) await (0, _headerJs.loadHeaderUserData)(user);
         else window.location.href = './index.html';
@@ -765,8 +768,10 @@ function initRulesNavigation() {
                 icon.classList.add('disable');
                 if (icon.alt.toLowerCase() === categoryTitle.toLowerCase()) icon.classList.remove('disable');
             });
-            // Завантажуємо правила для користувача, категорії ТА поточної мови
-            await loadRulesFromFirestore(currentCategory);
+            // Очищуємо поле пошуку при переході в іншу категорію
+            const searchInput = document.getElementById('search-rules');
+            if (searchInput) searchInput.value = '';
+            await loadRulesFromArray(currentCategory);
         });
     });
     if (backBtn) backBtn.addEventListener('click', ()=>{
@@ -778,7 +783,7 @@ function initRulesNavigation() {
     });
 }
 // ============================================================================
-// 4. РОБОТА З БАЗОЮ ДАНИХ (FIRESTORE) ТА ФОРМОЮ
+// 4. РОБОТА З МАСИВОМ LANGUAGES ТА ОБ'ЄКТОМ RULES У ДОКУМЕНТІ КОРИСТУВАЧА
 // ============================================================================
 function initAddRuleForm() {
     const addBtn = document.querySelector('.rule-section__add-btn');
@@ -804,27 +809,43 @@ function initAddRuleForm() {
         const url = document.getElementById('add-new-rule-url').value.trim();
         const paragraf = document.getElementById('add-new-rule-paragraf').value.trim();
         try {
-            if (editingRuleId) {
-                const ruleRef = (0, _firestore.doc)((0, _firebaseJs.db), 'rules', editingRuleId);
-                await (0, _firestore.updateDoc)(ruleRef, {
-                    title,
-                    url,
-                    paragraf,
-                    updatedAt: new Date()
+            const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
+            const docSnap = await (0, _firestore.getDoc)(userDocRef);
+            if (!docSnap.exists()) return;
+            let userData = docSnap.data();
+            let languagesArray = userData.languages || [];
+            let langObjIndex = languagesArray.findIndex((l)=>l.code === currentLangCode);
+            if (langObjIndex === -1) {
+                languagesArray.push({
+                    code: currentLangCode,
+                    addedAt: new Date().toISOString(),
+                    rules: {}
                 });
-            } else {
-                const newRuleData = {
-                    userId: user.uid,
-                    category: currentCategory,
-                    lang: currentLangCode,
-                    title,
-                    url,
-                    paragraf,
-                    createdAt: new Date()
-                };
-                await (0, _firestore.addDoc)((0, _firestore.collection)((0, _firebaseJs.db), 'rules'), newRuleData);
+                langObjIndex = languagesArray.length - 1;
             }
-            await loadRulesFromFirestore(currentCategory);
+            if (!languagesArray[langObjIndex].rules) languagesArray[langObjIndex].rules = {};
+            let rulesMap = languagesArray[langObjIndex].rules;
+            let currentCategoryRules = rulesMap[currentCategory] || [];
+            const ruleObj = {
+                id: Date.now().toString(),
+                title,
+                url,
+                paragraf,
+                createdAt: new Date().toISOString()
+            };
+            if (editingRuleIndex !== null) {
+                ruleObj.id = currentCategoryRules[editingRuleIndex].id;
+                currentCategoryRules[editingRuleIndex] = ruleObj;
+            } else currentCategoryRules.push(ruleObj);
+            rulesMap[currentCategory] = currentCategoryRules;
+            languagesArray[langObjIndex].rules = rulesMap;
+            userData.languages = languagesArray;
+            await (0, _firestore.setDoc)(userDocRef, userData, {
+                merge: true
+            });
+            const searchInput = document.getElementById('search-rules');
+            if (searchInput) searchInput.value = '';
+            await loadRulesFromArray(currentCategory);
             resetFormState();
         } catch (error) {
             console.error('Error saving rule:', error);
@@ -840,40 +861,88 @@ function resetFormState() {
         form.reset();
     }
     if (addBtn) addBtn.classList.remove('disable');
-    editingRuleId = null;
+    editingRuleIndex = null;
 }
-// Завантаження правил з урахуванням користувача, категорії та мови
-async function loadRulesFromFirestore(category) {
+// Завантаження правил із масиву languages за кодом поточної мови та об'єктом rules
+async function loadRulesFromArray(category) {
     const container = document.querySelector('.rule-section__rules-container');
     if (!container) return;
     container.innerHTML = '<p class="loading-text" style="color: white; text-align: center;">Loading...</p>';
     try {
         const user = (0, _firebaseJs.auth).currentUser;
         if (!user) return;
-        // Додано фільтрацію за lang разом з userId та category
-        const q = (0, _firestore.query)((0, _firestore.collection)((0, _firebaseJs.db), 'rules'), (0, _firestore.where)('userId', '==', user.uid), (0, _firestore.where)('category', '==', category), (0, _firestore.where)('lang', '==', currentLangCode));
-        const querySnapshot = await (0, _firestore.getDocs)(q);
-        container.innerHTML = '';
-        if (querySnapshot.empty) {
-            container.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No rules added for this language yet.</p>';
+        const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
+        const docSnap = await (0, _firestore.getDoc)(userDocRef);
+        if (!docSnap.exists()) {
+            container.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No rules added yet.</p>';
+            allCategoryRules = [];
             return;
         }
-        querySnapshot.forEach((docSnap)=>{
-            const ruleData = {
-                id: docSnap.id,
-                ...docSnap.data()
-            };
-            renderRuleItem(ruleData);
-        });
+        const data = docSnap.data();
+        const languagesArray = data.languages || [];
+        const langObj = languagesArray.find((l)=>l.code === currentLangCode);
+        if (!langObj || !langObj.rules) {
+            container.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No rules for this language yet.</p>';
+            allCategoryRules = [];
+            return;
+        }
+        allCategoryRules = langObj.rules[category] || [];
+        renderRulesList(allCategoryRules);
     } catch (error) {
         console.error('Error loading rules:', error);
         container.innerHTML = `<p class="error-text" style="color: red; text-align: center;">Failed to load rules: ${error.message}</p>`;
     }
 }
+// Рендеринг списку правил
+function renderRulesList(rulesArray) {
+    const container = document.querySelector('.rule-section__rules-container');
+    if (!container) return;
+    container.innerHTML = '';
+    if (rulesArray.length === 0) {
+        container.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No rules found.</p>';
+        return;
+    }
+    rulesArray.forEach((ruleData)=>{
+        // Знаходимо реальний індекс правила в повному масиві категорії (потрібно для редагування та видалення)
+        const originalIndex = allCategoryRules.findIndex((r)=>r.id === ruleData.id);
+        renderRuleItem(ruleData, originalIndex);
+    });
+}
 // ============================================================================
-// 5. РЕНДЕРИНГ КАРТОК ПРАВИЛ ЧЕРЕЗ TEMPLATE
+// 5. ПОШУК ТА ФІЛЬТРАЦІЯ ПРАВИЛ
 // ============================================================================
-function renderRuleItem(ruleData) {
+function initSearchBox() {
+    const searchInput = document.getElementById('search-rules');
+    const searchButton = document.querySelector('.rule-search-box__button');
+    if (!searchInput) return;
+    // Фільтрація в реальному часі при введенні тексту
+    searchInput.addEventListener('input', (e)=>{
+        filterRules(e.target.value);
+    });
+    // Обробка кліку на кнопку пошуку
+    if (searchButton) searchButton.addEventListener('click', (e)=>{
+        e.preventDefault();
+        filterRules(searchInput.value);
+    });
+}
+function filterRules(queryText) {
+    const query = queryText.toLowerCase().trim();
+    if (!query) {
+        renderRulesList(allCategoryRules);
+        return;
+    }
+    // Шукаємо збіги за назвою (title) або текстом параграфа (paragraf)
+    const filteredRules = allCategoryRules.filter((rule)=>{
+        const title = (rule.title || '').toLowerCase();
+        const paragraf = (rule.paragraf || '').toLowerCase();
+        return title.includes(query) || paragraf.includes(query);
+    });
+    renderRulesList(filteredRules);
+}
+// ============================================================================
+// 6. РЕНДЕРИНГ ОКРЕМОЇ КАРТКИ ПРАВИЛА ЧЕРЕЗ TEMPLATE
+// ============================================================================
+function renderRuleItem(ruleData, index) {
     const container = document.querySelector('.rule-section__rules-container');
     const template = document.querySelector('.rule-item__template');
     if (!container || !template) return;
@@ -900,37 +969,53 @@ function renderRuleItem(ruleData) {
         const imageUrl = imgEl.src;
         if (imageUrl) openImagePopup(imageUrl);
     });
-    if (editBtn) {
-        editBtn.setAttribute('data-id', ruleData.id);
-        editBtn.addEventListener('click', ()=>{
-            editingRuleId = ruleData.id;
-            document.getElementById('add-new-rule-title').value = ruleData.title || '';
-            document.getElementById('add-new-rule-url').value = ruleData.url || '';
-            document.getElementById('add-new-rule-paragraf').value = ruleData.paragraf || '';
-            const addBtn = document.querySelector('.rule-section__add-btn');
-            const form = document.getElementById('form-add-new-rule');
-            if (addBtn) addBtn.classList.add('disable');
-            if (form) form.classList.remove('disable');
-            form.scrollIntoView({
-                behavior: 'smooth'
-            });
+    if (editBtn) editBtn.addEventListener('click', ()=>{
+        editingRuleIndex = index;
+        document.getElementById('add-new-rule-title').value = ruleData.title || '';
+        document.getElementById('add-new-rule-url').value = ruleData.url || '';
+        document.getElementById('add-new-rule-paragraf').value = ruleData.paragraf || '';
+        const addBtn = document.querySelector('.rule-section__add-btn');
+        const form = document.getElementById('form-add-new-rule');
+        if (addBtn) addBtn.classList.add('disable');
+        if (form) form.classList.remove('disable');
+        form.scrollIntoView({
+            behavior: 'smooth'
         });
-    }
-    if (deleteBtn) {
-        deleteBtn.setAttribute('data-id', ruleData.id);
-        deleteBtn.addEventListener('click', async ()=>{
-            try {
-                await (0, _firestore.deleteDoc)((0, _firestore.doc)((0, _firebaseJs.db), 'rules', ruleData.id));
-                await loadRulesFromFirestore(currentCategory);
-            } catch (error) {
-                console.error('Error deleting rule:', error);
+    });
+    if (deleteBtn) deleteBtn.addEventListener('click', async ()=>{
+        try {
+            const user = (0, _firebaseJs.auth).currentUser;
+            if (!user) return;
+            const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
+            const docSnap = await (0, _firestore.getDoc)(userDocRef);
+            if (docSnap.exists()) {
+                let userData = docSnap.data();
+                let languagesArray = userData.languages || [];
+                let langObjIndex = languagesArray.findIndex((l)=>l.code === currentLangCode);
+                if (langObjIndex !== -1 && languagesArray[langObjIndex].rules) {
+                    let rulesMap = languagesArray[langObjIndex].rules;
+                    if (rulesMap[currentCategory]) {
+                        rulesMap[currentCategory].splice(index, 1);
+                        userData.languages = languagesArray;
+                        await (0, _firestore.setDoc)(userDocRef, userData, {
+                            merge: true
+                        });
+                        // Оновлюємо локальний масив та перерисовуємо список з урахуванням пошуку
+                        const searchInput = document.getElementById('search-rules');
+                        const currentQuery = searchInput ? searchInput.value : '';
+                        allCategoryRules = rulesMap[currentCategory];
+                        filterRules(currentQuery);
+                    }
+                }
             }
-        });
-    }
+        } catch (error) {
+            console.error('Error deleting rule:', error);
+        }
+    });
     container.appendChild(clone);
 }
 // ============================================================================
-// 6. ПОПАП ПЕРЕГЛЯДУ ЗОБРАЖЕННЯ НА ВЕСЬ ЕКРАН
+// 7. ПОПАП ПЕРЕГЛЯДУ ЗОБРАЖЕННЯ НА ВЕСЬ ЕКРАН
 // ============================================================================
 function initImagePopup() {
     const popup = document.querySelector('.rule-section__popup');
@@ -952,7 +1037,7 @@ function openImagePopup(url) {
     }
 }
 
-},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","./header.js":"7clXR","./i18n.js":"lQCzu"}],"7clXR":[function(require,module,exports,__globalThis) {
+},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","./header.js":"7clXR","./i18n.js":"lQCzu","./utils.js":"bMpAD"}],"7clXR":[function(require,module,exports,__globalThis) {
 // ============================================================================
 // 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ
 // ============================================================================
@@ -1134,6 +1219,49 @@ async function loadHeaderUserData(user) {
 },{"./firebase.js":"8uCPj","./auth.js":"aTIl8","firebase/firestore":"3RBs1","url:../img/avatars/raccoon-1.jpeg":"fhGo5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fhGo5":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("raccoon-1.61f92196.jpeg") + "?" + Date.now();
 
-},{}]},["04heI","gZigM"], "gZigM", "parcelRequiree231", {}, "./", "/")
+},{}],"bMpAD":[function(require,module,exports,__globalThis) {
+// ============================================================================
+// ДОПОМІЖНІ ФУНКЦІЇ (UTILS.JS)
+// ============================================================================
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "updateFlagAndLinksByUrl", ()=>updateFlagAndLinksByUrl);
+function updateFlagAndLinksByUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const langCode = (urlParams.get('lang') || 'en').toLowerCase();
+    const upperCode = langCode.toUpperCase();
+    const flagMap = {
+        en: 'gb',
+        uk: 'ua',
+        ja: 'jp',
+        da: 'dk',
+        sv: 'se',
+        el: 'gr',
+        cs: 'cz',
+        et: 'ee'
+    };
+    const countryCode = flagMap[langCode] || langCode;
+    const flagUrl = `https://flagcdn.com/${countryCode}.svg`;
+    const flagHeader = document.querySelector('.header__lang-flag');
+    const flagImg = document.querySelector('.languge-falg');
+    if (flagHeader) {
+        flagHeader.src = flagUrl;
+        flagHeader.alt = `${upperCode} Flag`;
+    }
+    if (flagImg) {
+        flagImg.src = flagUrl;
+        flagImg.alt = `${upperCode} Flag`;
+    }
+    const navLinks = document.querySelectorAll('.home-navigation__link');
+    navLinks.forEach((link)=>{
+        const currentHref = link.getAttribute('href');
+        if (currentHref && !currentHref.startsWith('#') && !currentHref.startsWith('http')) {
+            const baseUrl = currentHref.split('?')[0];
+            link.setAttribute('href', `${baseUrl}?lang=${langCode}`);
+        }
+    });
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["04heI","gZigM"], "gZigM", "parcelRequiree231", {}, "./", "/")
 
 //# sourceMappingURL=rules.a55567a3.js.map

@@ -1,0 +1,97 @@
+.privacy {
+  color: #c5c9db;
+  max-width: 800px;
+  margin: 40px auto 80px;
+  padding: 20px;
+  font-family: Inter, sans-serif;
+  line-height: 28px;
+}
+
+.privacy__header {
+  border-bottom: 1px solid #ffffff1a;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+}
+
+.privacy__title {
+  color: #fff;
+  margin-bottom: 8px;
+  font-family: Audiowide, cursive, sans-serif;
+  font-size: 32px;
+}
+
+.privacy__date {
+  color: #8f95b2;
+  font-size: 14px;
+}
+
+.privacy__intro {
+  margin-bottom: 30px;
+}
+
+.privacy__text {
+  color: #c5c9db;
+  margin-bottom: 14px;
+  font-size: 16px;
+}
+
+.privacy__text strong {
+  color: #fff;
+}
+
+.privacy__content {
+  flex-direction: column;
+  gap: 28px;
+  display: flex;
+}
+
+.privacy__section-title {
+  color: #fff;
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.privacy__list {
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding-left: 20px;
+  list-style: outside;
+  display: flex;
+}
+
+.privacy__list-item {
+  color: #c5c9db;
+  font-size: 15px;
+}
+
+.privacy__list-item strong {
+  color: #fff;
+}
+
+.privacy__contact-link {
+  color: #60a5fa;
+  margin-top: 6px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color .2s;
+  display: inline-block;
+}
+
+.privacy__contact-link:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+@media (width <= 768px) {
+  .privacy {
+    margin: 20px 16px;
+    padding: 10px;
+  }
+
+  .privacy__title {
+    font-size: 26px;
+  }
+}
+/*# sourceMappingURL=privacy.3beab39d.css.map */

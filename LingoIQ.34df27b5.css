@@ -69,6 +69,7 @@ button, input, label, form {
   margin-bottom: 50px;
   padding: 0 40px;
   display: flex;
+  box-shadow: 0 10px 30px #0000004d;
 }
 
 .logo__image {
@@ -77,6 +78,14 @@ button, input, label, form {
   width: 190px;
   height: 65px;
   display: flex;
+}
+
+.header__lang-flag {
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
 }
 
 .home-navigation__list {
@@ -444,8 +453,9 @@ button, input, label, form {
 
 .header__username {
   letter-spacing: 0;
-  text-align: center;
+  text-align: end;
   vertical-align: middle;
+  width: 200px;
   font-family: Inter, sans-serif;
   font-size: 14px;
   font-weight: 800;
@@ -473,11 +483,18 @@ button, input, label, form {
   height: 50px;
 }
 
+.active-site {
+  color: #000;
+  font-weight: 900;
+  transition: all .3s;
+  transform: scale(1.05);
+}
+
 .main__content {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 70px;
+  gap: 50px;
   display: flex;
 }
 
@@ -522,6 +539,7 @@ button, input, label, form {
   margin: 50px auto 0;
   padding: 20px;
   display: flex;
+  box-shadow: 0 10px 30px #0000004d;
 }
 
 .footer-panel__logo-img {
@@ -549,7 +567,7 @@ button, input, label, form {
 
 .footer__politics-group {
   border-top: 2px solid #fff;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
   padding-top: 20px;

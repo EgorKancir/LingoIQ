@@ -240,6 +240,7 @@
   width: 100%;
   padding: 30px 0;
   display: flex;
+  box-shadow: 0 10px 30px #0000004d;
 }
 
 .clendar__title {
@@ -325,8 +326,16 @@
 }
 
 .calendar__element-repeat:hover {
-  opacity: .7;
+  background-color: #0012c4;
   transform: scale(1.03);
+}
+
+.calendar__element-date-number--today {
+  color: #4cd964 !important;
+}
+
+.calendar__element-date-number--overdue {
+  color: #ff4d4d !important;
 }
 
 .your-languages {
@@ -339,6 +348,7 @@
   width: 100%;
   padding: 30px 0;
   display: flex;
+  box-shadow: 0 10px 30px #0000004d;
 }
 
 .your-languages__title {
@@ -362,6 +372,7 @@
   padding: 30px 20px;
   display: flex;
   position: relative;
+  box-shadow: 0 10px 30px #0000004d;
 }
 
 .your-languages__language-list {
@@ -511,6 +522,7 @@
   padding: 30px;
   display: flex;
   position: relative;
+  box-shadow: 0 10px 30px #0000004d;
 }
 
 .websites__title {

@@ -721,6 +721,7 @@ var _firebaseJs = require("./firebase.js");
 var _auth = require("firebase/auth");
 var _firestore = require("firebase/firestore");
 var _headerJs = require("./header.js");
+var _calendarJs = require("./calendar.js");
 var _i18NJs = require("./i18n.js");
 let editForm;
 let userSection;
@@ -755,6 +756,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         await (0, _headerJs.loadHeaderUserData)(user);
         currentUserLanguages = await loadUserLanguages(user.uid);
         renderUserLanguages(currentUserLanguages);
+        await (0, _calendarJs.initCalendar)(user);
     });
 });
 // ============================================================================
@@ -1012,7 +1014,7 @@ function initYourLanguagesLogic() {
     });
 }
 
-},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","./header.js":"7clXR","./i18n.js":"lQCzu"}],"7clXR":[function(require,module,exports,__globalThis) {
+},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","./header.js":"7clXR","./calendar.js":"5Lz3E","./i18n.js":"lQCzu"}],"7clXR":[function(require,module,exports,__globalThis) {
 // ============================================================================
 // 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ
 // ============================================================================
@@ -1194,6 +1196,157 @@ async function loadHeaderUserData(user) {
 },{"./firebase.js":"8uCPj","./auth.js":"aTIl8","firebase/firestore":"3RBs1","url:../img/avatars/raccoon-1.jpeg":"fhGo5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fhGo5":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("raccoon-1.61f92196.jpeg") + "?" + Date.now();
 
-},{}]},["aNdOE","1noC9"], "1noC9", "parcelRequiree231", {}, "./", "/")
+},{}],"5Lz3E":[function(require,module,exports,__globalThis) {
+// ============================================================================
+// МОДУЛЬ КАЛЕНДАРЯ (CALENDAR.JS)
+// ============================================================================
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// Головна функція ініціалізації календаря
+parcelHelpers.export(exports, "initCalendar", ()=>initCalendar);
+var _firebaseJs = require("./firebase.js");
+var _firestore = require("firebase/firestore");
+// Допоміжна функція для отримання посилань на прапори з FlagCDN
+function getFlagUrl(langCode) {
+    const lower = (langCode || 'en').toLowerCase();
+    // Словник виключень мова -> країна
+    const flagMap = {
+        en: 'gb',
+        uk: 'ua',
+        ja: 'jp',
+        da: 'dk',
+        sv: 'se',
+        el: 'gr',
+        cs: 'cz',
+        et: 'ee' // Естонська -> Естонія
+    };
+    const countryCode = flagMap[lower] || lower;
+    return `https://flagcdn.com/${countryCode}.svg`;
+}
+// Назви мов для всіх зазначених кодів
+const LANGUAGE_NAMES = {
+    uk: "\u0423\u043A\u0440\u0430\u0457\u043D\u0441\u044C\u043A\u0430",
+    de: 'Deutsch',
+    en: 'English',
+    es: "Espa\xf1ol",
+    fr: "Fran\xe7ais",
+    it: 'Italiano',
+    pl: 'Polski',
+    pt: "Portugu\xeas",
+    ro: "Rom\xe2n\u0103",
+    tr: "T\xfcrk\xe7e",
+    zh: "\u4E2D\u6587",
+    ja: "\u65E5\u672C\u8A9E",
+    ko: "\uD55C\uAD6D\uC5B4",
+    ar: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629",
+    hi: "\u0939\u093F\u0928\u094D\u0926\u0940",
+    cs: "\u010Ce\u0161tina",
+    nl: 'Nederlands',
+    sv: 'Svenska'
+};
+// Отримати сьогоднішню дату у форматі 'YYYY-MM-DD'
+function getTodayString() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+// Очищення дати від потенційного часу (якщо збереглася в форматі ISO)
+function cleanDateStr(dateStr) {
+    if (!dateStr) return '';
+    return dateStr.split('T')[0];
+}
+// Форматування дати: якщо сьогодні — "Today", інакше 'DD.MM.YYYY'
+function formatDate(dateStr, todayStr) {
+    if (!dateStr) return '';
+    if (dateStr === todayStr) return 'Today';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}.${month}.${year}`;
+}
+// Визначення CSS-класу для дати залежно від умов (минула, сьогодні, майбутня)
+function getDateClass(dateStr, todayStr) {
+    if (dateStr < todayStr) return 'calendar__element-date-number--overdue'; // Червоний (прострочено)
+    else if (dateStr === todayStr) return 'calendar__element-date-number--today'; // Зелений (сьогодні)
+    return ''; // Стандартний для майбутніх
+}
+async function initCalendar(user) {
+    const calendarContainer = document.querySelector('.calendar__date-group');
+    if (!calendarContainer) return;
+    calendarContainer.innerHTML = '<p class="loading-text" style="color: white; text-align: center; width: 100%;">Loading calendar schedule...</p>';
+    try {
+        if (!user) return;
+        const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
+        const docSnap = await (0, _firestore.getDoc)(userDocRef);
+        if (!docSnap.exists()) {
+            calendarContainer.innerHTML = '<p class="empty-text" style="color: white; text-align: center; width: 100%;">No data found.</p>';
+            return;
+        }
+        const userData = docSnap.data();
+        const languagesArray = userData.languages || [];
+        let calendarItems = [];
+        const todayStr = getTodayString();
+        // Групуємо слова за датами повторення
+        languagesArray.forEach((langObj)=>{
+            const langCode = (langObj.code || 'en').toLowerCase();
+            const words = langObj.words || langObj.glossary || [];
+            // Фільтруємо невивчені слова
+            const activeWords = words.filter((word)=>{
+                const st = (word.status || '').toLowerCase();
+                return st !== 'studied' && st !== 'learned';
+            });
+            // Групуємо за датами
+            const groupedByDate = {};
+            activeWords.forEach((wordObj)=>{
+                const rawDate = wordObj.nextReviewDate || todayStr;
+                const dateKey = cleanDateStr(rawDate);
+                if (!groupedByDate[dateKey]) groupedByDate[dateKey] = [];
+                groupedByDate[dateKey].push(wordObj);
+            });
+            // Формуємо об'єкти карток
+            for (const [dateKey, dateWords] of Object.entries(groupedByDate))calendarItems.push({
+                date: dateKey,
+                formattedDate: formatDate(dateKey, todayStr),
+                dateClass: getDateClass(dateKey, todayStr),
+                langCode: langCode,
+                langName: LANGUAGE_NAMES[langCode] || langCode.toUpperCase(),
+                flagSrc: getFlagUrl(langCode),
+                wordsCount: dateWords.length
+            });
+        });
+        // Сортуємо картки за датою від найранішої до найпізнішої
+        calendarItems.sort((a, b)=>new Date(a.date) - new Date(b.date));
+        // Рендеримо картки
+        renderCalendarCards(calendarItems);
+    } catch (error) {
+        console.error('Error loading calendar data:', error);
+        calendarContainer.innerHTML = `<p class="error-text" style="color: red; text-align: center; width: 100%;">Failed to load calendar: ${error.message}</p>`;
+    }
+}
+function renderCalendarCards(items) {
+    const calendarContainer = document.querySelector('.calendar__date-group');
+    if (!calendarContainer) return;
+    calendarContainer.innerHTML = '';
+    if (items.length === 0) {
+        calendarContainer.innerHTML = '<p class="empty-text" style="color: white; text-align: center; width: 100%;">No active repetition tasks found!</p>';
+        return;
+    }
+    items.forEach((item)=>{
+        const elementDiv = document.createElement('div');
+        elementDiv.className = 'calendar__element';
+        elementDiv.innerHTML = `
+            <p class="calendar__element-date">Date: <span class="calendar__element-date-number ${item.dateClass}">${item.formattedDate}</span></p>
+            <div class="calendar__element-language-block">
+                <img src="${item.flagSrc}" alt="${item.langName} Flag" class="calendar__element-language-icon">
+                <p class="calendar__element-language-name">${item.langName}</p>
+            </div>
+            <p class="calendar__element-words">Number of words: <span class="calendar__element-number">${item.wordsCount}</span></p>
+            <a href="./training-center.html?lang=${item.langCode}" class="calendar__element-repeat">Repeat</a>
+        `;
+        calendarContainer.appendChild(elementDiv);
+    });
+}
+
+},{"./firebase.js":"8uCPj","firebase/firestore":"3RBs1","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["aNdOE","1noC9"], "1noC9", "parcelRequiree231", {}, "./", "/")
 
 //# sourceMappingURL=userpage.9a0f6411.js.map

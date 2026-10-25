@@ -717,6 +717,12 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 // ============================================================================
 // 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ ТА МОДУЛІВ[cite: 3]
 // ============================================================================
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// ============================================================================
+// 5. ДОПОМІЖНІ ФУНКЦІЇ (Векторні SVG прапори через flagcdn, Назва, Навігація)[cite: 3]
+// ============================================================================
+parcelHelpers.export(exports, "initLanguageDataUI", ()=>initLanguageDataUI);
 var _firebaseJs = require("./firebase.js");
 var _auth = require("firebase/auth");
 var _firestore = require("firebase/firestore");
@@ -797,9 +803,6 @@ function updateDictionaryStats(langObj) {
         graphBlock.style.width = `${displayWidth}%`;
     }
 }
-// ============================================================================
-// 5. ДОПОМІЖНІ ФУНКЦІЇ (Векторні SVG прапори через flagcdn, Назва, Навігація)[cite: 3]
-// ============================================================================
 function initLanguageDataUI(langCode) {
     const lowerCode = langCode.toLowerCase();
     const upperCode = langCode.toUpperCase();
@@ -845,7 +848,7 @@ function updateNavigationLinks(langCode) {
     });
 }
 
-},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","./header.js":"7clXR","./i18n.js":"lQCzu"}],"7clXR":[function(require,module,exports,__globalThis) {
+},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","./header.js":"7clXR","./i18n.js":"lQCzu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"7clXR":[function(require,module,exports,__globalThis) {
 // ============================================================================
 // 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ
 // ============================================================================
