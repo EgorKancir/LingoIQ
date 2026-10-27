@@ -23,19 +23,19 @@
             <nav class="home-navigation">
                 <ul class="home-navigation__list">
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="./languagepage.html">Console</a>
+                        <a class="home-navigation__link" href="./languagepage.html" data-i18n="header.console">Console</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="./glossary.html">Glossary</a>
+                        <a class="home-navigation__link" href="./glossary.html" data-i18n="header.glossary">Glossary</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="./rules.html">Rules</a>
-                    </li>
-                    <li class="home-navigation__item active-site">
-                        <a class="home-navigation__link" href="./training-center.html">Training Center</a>
+                        <a class="home-navigation__link" href="./rules.html" data-i18n="header.rules">Rules</a>
                     </li>
                     <li class="home-navigation__item">
-                        <a class="home-navigation__link" href="./statistic.html">Statistic</a>
+                        <a class="home-navigation__link active-site" href="./training-center.html" data-i18n="header.training-center">Training Center</a>
+                    </li>
+                    <li class="home-navigation__item">
+                        <a class="home-navigation__link" href="./statistic.html" data-i18n="header.statistic">Statistic</a>
                     </li>
                 </ul>
             </nav>
@@ -80,9 +80,9 @@
                     <div class="user-info__group">
                         <div class="user-info__user-section">
                             <h2 class="user-info__username">Loading...</h2>
-                            <h2 class="user-info__language">Native language: <span id="nativlang"></span></h2>
-                            <h2 class="user-info__days-learning">Days: <span id="daysLearning"></span></h2>
-                            <button type="button" id="logout-btn" class="user-info__button-logout">Log Out</button>
+                            <h2 class="user-info__language"><span data-i18n="header.nativlang">Native language:</span> <span id="nativlang"></span></h2>
+                            <h2 class="user-info__days-learning"><span data-i18n="header.days">Days:</span> <span id="daysLearning"></span></h2>
+                            <button type="button" id="logout-btn" class="user-info__button-logout" data-i18n="header.log-out">Log Out</button>
                             <button type="button" class="user-info__button-edit" id="edit-profile-toggle-btn">
                                 <img class="user-info__button-edit-icon" src="./src/img/userpage/edit-icon.svg"
                                     alt="edit">
@@ -92,17 +92,17 @@
                         <form class="user-info__edit-section disable" id="edit-user-info-form">
                             <label class="user-info__label" for="username-edit">
                                 <input class="user-info__input" type="text" id="username-edit"
-                                    placeholder="New Username">
+                                    placeholder="New Username"  data-i18n-placeholder="header.new-username">
                             </label>
 
                             <label class="user-info__label" for="native-lang-input">
                                 <input class="user-info__input" list="languages-list" id="native-lang-input"
-                                    placeholder="Search native language..." autocomplete="off">
+                                    placeholder="Search native language..." data-i18n-placeholder="header.search-native-lang" autocomplete="off">
                                 <datalist id="languages-list"></datalist>
                             </label>
 
                             <div class="user-info__avatars-section">
-                                <h2 class="user-info__avatars-title">Choose your avatar</h2>
+                                <h2 class="user-info__avatars-title" data-i18n="header.choose-your-avatar">Choose your avatar</h2>
                                 <div class="user-info__avatars-grid">
                                     <img class="user-info__avatar-option active" src="./src/img/avatars/raccoon-1.jpeg" alt="Raccoon 1">
                                     <img class="user-info__avatar-option" src="./src/img/avatars/raccoon-2.jpeg" alt="Raccoon 2">
@@ -119,8 +119,8 @@
                                 </div>
                             </div>
                             <div class="user-info__buttons-group">
-                                <button class="user-info__submit" type="submit" id="edit-user-info-btn">Save</button>
-                                <button class="user-info__button-cancel" type="button" id="cancel-edit-btn">Cancel</button>
+                                <button class="user-info__submit" type="submit" id="edit-user-info-btn" data-i18n="header.save">Save</button>
+                                <button class="user-info__button-cancel" type="button" id="cancel-edit-btn" data-i18n="header.cancel">Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -132,13 +132,13 @@
     <main class="main">
         <div class="container main__content">
             <img src="./src/img/languagepage/training-center-icon.svg" alt="icon" class="training-center__icon">
-            <h1 class="training-center__title">Training Center</h1>
+            <h1 class="training-center__title" data-i18n="training-center.training-center">Training Center</h1>
             <div class="training-group"></div>
 
         <!-- POPUP -->
             <div class="training-console disable">
                 <div class="training-console__info">
-                    <button class="training-console__back-btn">← Back</button>
+                    <button class="training-console__back-btn" data-i18n="training-center.back">← Back</button>
                     <h1 class="training-console__counter"><span id="training-console-number"></span>/<span id="training-console-total-number"></span></h1>
                     <h2 class="training-console__main-word"></h2>
                     <img class="training-console__repeating-icon" src="./src/img/training-center/cycle-icon.svg" alt="Cycle icon">
@@ -151,15 +151,15 @@
                 <div class="training-console__buttons-group">
                     <button type="button" class="training-console__btn training-console__btn--known">
                         <img class="training-console__input-icon" src="./src/img/training-center/tick-icon-btn.svg" alt="tick">
-                        <span>I know it</span>
+                        <span data-i18n="training-center.i-know-it">I know it</span>
                     </button>
                     <button type="button" class="training-console__btn training-console__btn--practice">
                         <img class="training-console__input-icon" src="./src/img/training-center/repeating-icon-btn.svg" alt="repeating">
-                        <span>I need more practice</span>
+                        <span data-i18n="training-center.i-need-more-practice">I need more practice</span>
                     </button>
                     <button type="button" class="training-console__btn training-console__btn--unknown">
                         <img class="training-console__input-icon" src="./src/img/training-center/cencel-icon-btn.svg" alt="cencel">
-                        <span>I don't know it</span>
+                        <span data-i18n="training-center.i-do-not-know-it">I don't know it</span>
                     </button>
                 </div>
             </div>

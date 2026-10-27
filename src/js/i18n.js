@@ -9,6 +9,11 @@ import uk from '../i18n/uk.json';
 const translations = { en, de, uk };
 let currentLang = localStorage.getItem('lingoiq_lang') || 'en';
 
+// Допоміжна функція для безпечного отримання вкладених ключів із JSON
+function getNestedValue(obj, keyPath) {
+    return keyPath.split('.').reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : null), obj);
+}
+
 // ============================================================================
 // 2. ФУНКЦІЇ РЕНДЕРИНГУ ДАНИХ (UI) ТА ПЕРЕКЛАДУ
 // ============================================================================
@@ -16,20 +21,23 @@ let currentLang = localStorage.getItem('lingoiq_lang') || 'en';
 function applyTranslations(lang) {
     const currentTranslation = translations[lang] || translations.en;
 
+    // 1. Переклад звичайного тексту (для елементів з data-i18n)
     document.querySelectorAll('[data-i18n]').forEach(el => {
-        const keyPath = el.getAttribute('data-i18n').split('.');
-        let text = currentTranslation;
-
-        keyPath.forEach(key => {
-            if (text) text = text[key];
-        });
+        const key = el.getAttribute('data-i18n');
+        const text = getNestedValue(currentTranslation, key);
 
         if (text) {
-            if (el.tagName === 'INPUT' && el.placeholder) {
-                el.placeholder = text;
-            } else {
-                el.innerHTML = text;
-            }
+            el.innerHTML = text;
+        }
+    });
+
+    // 2. Окремий переклад для плейсхолдерів (для інпутів з data-i18n-placeholder)
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(input => {
+        const key = input.getAttribute('data-i18n-placeholder');
+        const text = getNestedValue(currentTranslation, key);
+
+        if (text) {
+            input.placeholder = text;
         }
     });
 }

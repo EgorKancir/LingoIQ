@@ -4,7 +4,7 @@
 
 import { auth, db } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { initHeader, loadHeaderUserData } from './header.js';
 import { initCalendar } from './calendar.js';
 import { initLanguagePicker } from './i18n.js';
@@ -13,7 +13,6 @@ let editForm;
 let userSection;
 let editToggleBtn;
 let cancelEditBtn;
-let selectedAvatarURL = '';
 let isRedirecting = false;
 let currentUserLanguages = [];
 
@@ -29,9 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initHeader();
     initLanguagePicker();
-
-    populateLanguageList();
-    populateAddLanguageList();
 
     initEventListeners();
     initAvatarSelection();
@@ -55,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================================
-// 3. ДОПОМІЖНІ ФУНКЦІЇ ТА ЛОГІКА ФОРМ
+// 3. ДОПОМІЖНІ ФУНКЦІЇ ТА ЛОГІКА ФОРМ (ТІЛЬКИ ДЛЯ USERPAGE)
 // ============================================================================
 
 function showUserSection() {
@@ -83,10 +79,6 @@ function initEventListeners() {
             showUserSection();
         });
     }
-
-    if (editForm) {
-        editForm.addEventListener('submit', handleFormSubmit);
-    }
 }
 
 function initAvatarSelection() {
@@ -95,78 +87,13 @@ function initAvatarSelection() {
         avatarImg.addEventListener('click', (e) => {
             avatarOptions.forEach(img => img.classList.remove('active'));
             e.target.classList.add('active');
-            selectedAvatarURL = e.target.src;
         });
     });
 }
 
-async function handleFormSubmit(e) {
-    e.preventDefault();
-    const user = auth.currentUser;
-    if (!user) return;
-
-    const submitBtn = document.getElementById('edit-user-info-btn');
-    const newUsername = document.getElementById('username-edit')?.value.trim();
-    const newNativeLang = document.getElementById('native-lang-input')?.value.trim();
-
-    try {
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Saving...';
-        }
-
-        const firestoreUpdates = {};
-        if (newUsername) firestoreUpdates.displayName = newUsername;
-        if (newNativeLang) firestoreUpdates.nativeLang = newNativeLang;
-        if (selectedAvatarURL) firestoreUpdates.photoURL = selectedAvatarURL;
-
-        if (Object.keys(firestoreUpdates).length > 0) {
-            await setDoc(doc(db, 'users', user.uid), firestoreUpdates, { merge: true });
-        }
-
-        await loadHeaderUserData(user);
-        showUserSection();
-
-    } catch (error) {
-        console.error('Помилка збереження:', error);
-        alert('Не вдалося зберегти зміни.');
-    } finally {
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Save';
-        }
-    }
-}
-
 // ============================================================================
-// 4. РОБОТА З БАЗОЮ ДАНИХ (FIRESTORE) ТА СПИСКАМИ
+// 4. РОБОТА З БАЗОЮ ДАНИХ (FIRESTORE) ТА СПИСКАМИ ВИВЧЕННЯ МОВ
 // ============================================================================
-
-function populateLanguageList() {
-    const datalist = document.getElementById('languages-list');
-    if (!datalist) return;
-
-    const langCodes = ['uk', 'de', 'en', 'es', 'fr', 'it', 'pl', 'pt', 'ro', 'tr', 'zh', 'ja', 'ko', 'ar', 'hi', 'cs', 'nl', 'sv'];
-    const displayNames = new Intl.DisplayNames(['uk', 'en'], { type: 'language' });
-
-    datalist.innerHTML = langCodes.map(code => {
-        const langName = displayNames.of(code);
-        return `<option value="${langName} (${code.toUpperCase()})">${langName}</option>`;
-    }).join('');
-}
-
-function populateAddLanguageList() {
-    const datalist = document.getElementById('add-languages-list');
-    if (!datalist) return;
-
-    const langCodes = ['uk', 'de', 'en', 'es', 'fr', 'it', 'pl', 'pt', 'ro', 'tr', 'zh', 'ja', 'ko', 'ar', 'hi', 'cs', 'nl', 'sv'];
-    const displayNames = new Intl.DisplayNames(['uk', 'en'], { type: 'language' });
-
-    datalist.innerHTML = langCodes.map(code => {
-        const langName = displayNames.of(code);
-        return `<option value="${langName} (${code.toUpperCase()})" data-code="${code}"></option>`;
-    }).join('');
-}
 
 function getSelectedLanguageCode() {
     const input = document.getElementById('add-language-input');
@@ -210,16 +137,15 @@ async function saveLanguageToFirestore(userId, langCode) {
 function getFlagUrl(langCode) {
     const lower = langCode.toLowerCase();
     
-    // Словник виключень для мов, коди яких відрізняються від кодів країн на FlagCDN
     const flagMap = {
-        en: 'gb', // Англійська -> Велика Британія
-        uk: 'ua', // Українська -> Україна
-        ja: 'jp', // Японська -> Японія
-        da: 'dk', // Данська -> Данія
-        sv: 'se', // Шведська -> Швеція
-        el: 'gr', // Грецька -> Греція
-        cs: 'cz', // Чеська -> Чехія
-        et: 'ee'  // Естонська -> Естонія
+        en: 'gb',
+        uk: 'ua',
+        ja: 'jp',
+        da: 'dk',
+        sv: 'se',
+        el: 'gr',
+        cs: 'cz',
+        et: 'ee'
     };
 
     const countryCode = flagMap[lower] || lower;
