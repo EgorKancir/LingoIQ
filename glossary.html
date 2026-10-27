@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang=en><script type=importmap>{"imports":{"4OWXH":"/LingoIQ/raccoon-1.5dce9519.jpeg"}}</script><script type=module src=/LingoIQ/LingoIQ.e1ebc38b.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.9a95f2df.css><link rel=stylesheet href=/LingoIQ/LingoIQ.1af9db9d.css><link rel=stylesheet href=/LingoIQ/userpage.2283d73b.css><link rel=stylesheet href=/LingoIQ/glossary.f104488c.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
+<!DOCTYPE html><html lang=en><script type=importmap>{"imports":{"4OWXH":"/LingoIQ/raccoon-1.5dce9519.jpeg"}}</script><script type=module src=/LingoIQ/LingoIQ.f0d3e34f.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.9a95f2df.css><link rel=stylesheet href=/LingoIQ/LingoIQ.1af9db9d.css><link rel=stylesheet href=/LingoIQ/userpage.2283d73b.css><link rel=stylesheet href=/LingoIQ/glossary.f104488c.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
     <header class="container header">
         <div class=header__content>
             <a class=logo__link href=/LingoIQ/userpage.html>
@@ -8,19 +8,19 @@
             <nav class=home-navigation>
                 <ul class=home-navigation__list>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/languagepage.html>Console</a>
+                        <a class=home-navigation__link href=/LingoIQ/languagepage.html data-i18n=header.console>Console</a>
                     </li>
                     <li class="active-site home-navigation__item">
-                        <a class=home-navigation__link href=/LingoIQ/glossary.html>Glossary</a>
+                        <a class=home-navigation__link href=/LingoIQ/glossary.html data-i18n=header.glossary>Glossary</a>
                     </li>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/rules.html>Rules</a>
+                        <a class=home-navigation__link href=/LingoIQ/rules.html data-i18n=header.rules>Rules</a>
                     </li>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/training-center.html>Training Center</a>
+                        <a class=home-navigation__link href=/LingoIQ/training-center.html data-i18n=header.training-center>Training Center</a>
                     </li>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/statistic.html>Statistic</a>
+                        <a class=home-navigation__link href=/LingoIQ/statistic.html data-i18n=header.statistic>Statistic</a>
                     </li>
                 </ul>
             </nav>
@@ -64,9 +64,9 @@
                     <div class=user-info__group>
                         <div class=user-info__user-section>
                             <h2 class=user-info__username>Loading...</h2>
-                            <h2 class=user-info__language>Native language: <span id=nativlang></span></h2>
-                            <h2 class=user-info__days-learning>Days: <span id=daysLearning></span></h2>
-                            <button type=button id=logout-btn class=user-info__button-logout>Log Out</button>
+                            <h2 class=user-info__language><span data-i18n=header.nativlang>Native language:</span> <span id=nativlang></span></h2>
+                            <h2 class=user-info__days-learning><span data-i18n=header.days>Days:</span> <span id=daysLearning></span></h2>
+                            <button type=button id=logout-btn class=user-info__button-logout data-i18n=header.log-out>Log Out</button>
                             <button type=button class=user-info__button-edit id=edit-profile-toggle-btn>
                                 <img class=user-info__button-edit-icon src=/LingoIQ/edit-icon.fdc68859.svg alt=edit>
                             </button>
@@ -74,16 +74,16 @@
                         
                         <form class="disable user-info__edit-section" id=edit-user-info-form>
                             <label class=user-info__label for=username-edit>
-                                <input class=user-info__input id=username-edit placeholder="New Username">
+                                <input class=user-info__input id=username-edit placeholder="New Username" data-i18n-placeholder=header.new-username>
                             </label>
 
                             <label class=user-info__label for=native-lang-input>
-                                <input class=user-info__input list=languages-list id=native-lang-input placeholder="Search native language..." autocomplete=off>
+                                <input class=user-info__input list=languages-list id=native-lang-input placeholder="Search native language..." data-i18n-placeholder=header.search-native-lang autocomplete=off>
                                 <datalist id=languages-list></datalist>
                             </label>
 
                             <div class=user-info__avatars-section>
-                                <h2 class=user-info__avatars-title>Choose your avatar</h2>
+                                <h2 class=user-info__avatars-title data-i18n=header.choose-your-avatar>Choose your avatar</h2>
                                 <div class=user-info__avatars-grid>
                                     <img class="active user-info__avatar-option" src=/LingoIQ/raccoon-1.5dce9519.jpeg alt="Raccoon 1">
                                     <img class=user-info__avatar-option src=/LingoIQ/raccoon-2.128b8f44.jpeg alt="Raccoon 2">
@@ -100,8 +100,8 @@
                                 </div>
                             </div>
                             <div class=user-info__buttons-group>
-                                <button class=user-info__submit id=edit-user-info-btn>Save</button>
-                                <button class=user-info__button-cancel type=button id=cancel-edit-btn>Cancel</button>
+                                <button class=user-info__submit id=edit-user-info-btn data-i18n=header.save>Save</button>
+                                <button class=user-info__button-cancel type=button id=cancel-edit-btn data-i18n=header.cancel>Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -113,15 +113,15 @@
     <main class=main>
         <div class="container main__content">
             <img src=/LingoIQ/glossary-icon.b9f23709.svg alt=icon class=glossary__icon>
-            <h1 class=glossary__title>Glossary</h1>
+            <h1 class=glossary__title data-i18n=glossary.glossary>Glossary</h1>
             <table class=glossary-table>
                 <thead class=glossary-table__header>
                     <tr class=glossary-table__header-tr>
                         <th class="glossary-table__header-th glossary-table__header-th--number">№</th>
-                        <th class=glossary-table__header-th>Word</th>
-                        <th class=glossary-table__header-th>Translation</th>
-                        <th class=glossary-table__header-th>Typ</th>
-                        <th class=glossary-table__header-th>Status</th>
+                        <th class=glossary-table__header-th data-i18n=glossary.word>Word</th>
+                        <th class=glossary-table__header-th data-i18n=glossary.translation>Translation</th>
+                        <th class=glossary-table__header-th data-i18n=glossary.typ>Typ</th>
+                        <th class=glossary-table__header-th data-i18n=glossary.status>Status</th>
                         <th class=glossary-table__header-th-center>
                             <img src=/LingoIQ/setting-icon.6a457192.svg alt=Setting class=glossary-table__icon-setting>
                         </th>
@@ -137,33 +137,33 @@
                         </td>
                     </tr>
                     <tr class="disable glossary-form__tr">
-                        <td class="glossary-form__number glossary-table__body-td">New</td>
+                        <td class="glossary-form__number glossary-table__body-td" data-i18n=glossary.new>New</td>
                         <td class=glossary-table__body-td>
-                            <input class=glossary-form__input form=add-word-form name=word id=new-word placeholder=Word>
+                            <input class=glossary-form__input form=add-word-form name=word id=new-word placeholder=Word data-i18n-placeholder=glossary.word>
                         </td>
                         <td class=glossary-table__body-td>
-                            <input class=glossary-form__input form=add-word-form name=translation id=new-translation placeholder=Translation>
+                            <input class=glossary-form__input form=add-word-form name=translation id=new-translation placeholder=Translation data-i18n-placeholder=glossary.translation>
                         </td>
                         <td class=glossary-table__body-td>
                             <select class=glossary-form__select form=add-word-form name=typ id=new-typ>
-                                <option class=glossary-form__option disabled selected hidden>Typ</option>
-                                <option class=glossary-form__option value=Noun>Noun</option>
-                                <option class=glossary-form__option value=Verb>Verb</option>
-                                <option class=glossary-form__option value=Adjective>Adjective</option>
-                                <option class=glossary-form__option value=Adverb>Adverb</option>
-                                <option class=glossary-form__option value=Pronoun>Pronoun</option>
-                                <option class=glossary-form__option value=Preposition>Preposition</option>
-                                <option class=glossary-form__option value=Conjunction>Conjunction</option>
-                                <option class=glossary-form__option value=Numeral>Numeral</option>
-                                <option class=glossary-form__option value=Interjection>Interjection</option>
+                                <option class=glossary-form__option disabled selected hidden data-i18n=glossary.typ>Typ</option>
+                                <option class=glossary-form__option value=Noun data-i18n=glossary.noun>Noun</option>
+                                <option class=glossary-form__option value=Verb data-i18n=glossary.verb>Verb</option>
+                                <option class=glossary-form__option value=Adjective data-i18n=glossary.adjective>Adjective</option>
+                                <option class=glossary-form__option value=Adverb data-i18n=glossary.adverb>Adverb</option>
+                                <option class=glossary-form__option value=Pronoun data-i18n=glossary.pronoun>Pronoun</option>
+                                <option class=glossary-form__option value=Preposition data-i18n=glossary.preposition>Preposition</option>
+                                <option class=glossary-form__option value=Conjunction data-i18n=glossary.conjunction>Conjunction</option>
+                                <option class=glossary-form__option value=Numeral data-i18n=glossary.numeral>Numeral</option>
+                                <option class=glossary-form__option value=Interjection data-i18n=glossary.interjection>Interjection</option>
                             </select>
                         </td>
                         <td class=glossary-table__body-td>
                             <select class=glossary-form__select form=add-word-form name=status id=new-status>
-                                <option class=glossary-form__option disabled selected hidden>Status</option>
-                                <option class="glossary-form__option glossary-select__option--studied" value=Studied>Studied</option>
-                                <option class="glossary-form__option glossary-select__option--study" value=Study>Study</option>
-                                <option class="glossary-form__option glossary-select__option--not-studied" value="Not Studied">Not Studied</option>
+                                <option class=glossary-form__option disabled selected hidden data-i18n=glossary.status>Status</option>
+                                <option class="glossary-form__option glossary-select__option--studied" value=Studied data-i18n=glossary.studied>Studied</option>
+                                <option class="glossary-form__option glossary-select__option--study" value=Study data-i18n=glossary.study>Study</option>
+                                <option class="glossary-form__option glossary-select__option--not-studied" value="Not Studied" data-i18n=glossary.not-studied>Not Studied</option>
                             </select>
                         </td>
                         <td class="glossary-table__body-td glossary-table__body-td-center">
@@ -171,7 +171,7 @@
                                 <button class=glossary-form__btn-submit>
                                     <img class=glossary-form__btn-icon src=/LingoIQ/plus.814d1a33.svg alt=plus>
                                 </button>
-                                <button class=glossary-form__btn-cencel type=button>Cencel</button>
+                                <button class=glossary-form__btn-cencel type=button data-i18n=glossary.cancel>Cancel</button>
                             </form>
                         </td>
                     </tr>
@@ -222,5 +222,5 @@
             </td>
         </tr>
     </template>
-    <script type=module src=/LingoIQ/glossary.c57d82e4.js></script>
+    <script type=module src=/LingoIQ/glossary.2cd75343.js></script>
 

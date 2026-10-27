@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang=en><script type=importmap>{"imports":{"4OWXH":"/LingoIQ/raccoon-1.5dce9519.jpeg"}}</script><script type=module src=/LingoIQ/LingoIQ.e1ebc38b.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.9a95f2df.css><link rel=stylesheet href=/LingoIQ/LingoIQ.1af9db9d.css><link rel=stylesheet href=/LingoIQ/userpage.2283d73b.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
+<!DOCTYPE html><html lang=en><script type=importmap>{"imports":{"4OWXH":"/LingoIQ/raccoon-1.5dce9519.jpeg"}}</script><script type=module src=/LingoIQ/LingoIQ.f0d3e34f.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.9a95f2df.css><link rel=stylesheet href=/LingoIQ/LingoIQ.1af9db9d.css><link rel=stylesheet href=/LingoIQ/userpage.2283d73b.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
     <header class="container header">
         <div class=header__content>
             <a class=logo__link href=/LingoIQ/userpage.html>
@@ -7,13 +7,13 @@
             <nav class=home-navigation>
                 <ul class=home-navigation__list>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=#calendar>Calendar</a>
+                        <a class=home-navigation__link href=#calendar data-i18n=header.calendar>Calendar</a>
                     </li>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=#languages>Languages</a>
+                        <a class=home-navigation__link href=#languages data-i18n=header.languages>Languages</a>
                     </li>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=#websites>Websites</a>
+                        <a class=home-navigation__link href=#websites data-i18n=header.websites>Websites</a>
                     </li>
                 </ul>
             </nav>
@@ -56,10 +56,10 @@
                     <img class=user-info__img src=/LingoIQ/author-img.f4236d63.jpg alt=User>
                     <div class=user-info__group>
                         <div class=user-info__user-section>
-                            <h2 class=user-info__username>Loading...</h2>
-                            <h2 class=user-info__language>Native language: <span id=nativlang></span></h2>
-                            <h2 class=user-info__days-learning>Days: <span id=daysLearning></span></h2>
-                            <button type=button id=logout-btn class=user-info__button-logout>Log Out</button>
+                            <h2 class=user-info__username data-i18n=user-info.loading>Loading...</h2>
+                            <h2 class=user-info__language><span data-i18n=user-info.native-language>Native language:</span> <span id=nativlang></span></h2>
+                            <h2 class=user-info__days-learning><span data-i18n=user-info.days>Days:</span> <span id=daysLearning></span></h2>
+                            <button type=button id=logout-btn class=user-info__button-logout data-i18n=user-info.log-out>Log Out</button>
                             <button type=button class=user-info__button-edit id=edit-profile-toggle-btn>
                                 <img class=user-info__button-edit-icon src=/LingoIQ/edit-icon.fdc68859.svg alt=edit>
                             </button>
@@ -71,12 +71,12 @@
                             </label>
 
                             <label class=user-info__label for=native-lang-input>
-                                <input class=user-info__input list=languages-list id=native-lang-input placeholder="Search native language..." autocomplete=off>
+                                <input class=user-info__input list=languages-list id=native-lang-input placeholder="Search native language..." data-i18n-placeholder=user-info.search-native-lang autocomplete=off>
                                 <datalist id=languages-list></datalist>
                             </label>
                             
                             <div class=user-info__avatars-section>
-                                <h2 class=user-info__avatars-title>Choose your avatar</h2>
+                                <h2 class=user-info__avatars-title data-i18n=user-info.choose-your-avatar>Choose your avatar</h2>
                                 <div class=user-info__avatars-grid>
                                     <img class="active user-info__avatar-option" src=/LingoIQ/raccoon-1.5dce9519.jpeg alt="Raccoon 1">
                                     <img class=user-info__avatar-option src=/LingoIQ/raccoon-2.128b8f44.jpeg alt="Raccoon 2">
@@ -93,8 +93,8 @@
                                 </div>
                             </div>
                             <div class=user-info__buttons-group>
-                                <button class=user-info__submit id=edit-user-info-btn>Save</button>
-                                <button class=user-info__button-cancel type=button id=cancel-edit-btn>Cancel</button>
+                                <button class=user-info__submit id=edit-user-info-btn data-i18n=user-info.save>Save</button>
+                                <button class=user-info__button-cancel type=button id=cancel-edit-btn data-i18n=user-info.cancel>Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -106,11 +106,11 @@
     <main class=main>
         <div class="container main__content">
             <div class=calendar id=calendar>
-                <h2 class=clendar__title>Calendar</h2>
+                <h2 class=clendar__title data-i18n=calendar.celendar>Calendar</h2>
                 <div class=calendar__date-group></div>
             </div>
             <div class=your-languages id=languages>
-                <h2 class=your-languages__title>Your languages</h2>
+                <h2 class=your-languages__title data-i18n=your-language.your-language>Your languages</h2>
                 <div class=your-languages__language-group>
                     <ul class=your-languages__language-list>
                         
@@ -119,26 +119,26 @@
                         <img class=your-languages__language-button-icon src=/LingoIQ/plus.11e1ee4d.svg alt=plus>
                     </button>
                     <form class="disable your-languages__add-language-form" id=add-language-form>
-                        <label class=your-languages__label for=add-language-input>Choose a new language to learn
+                        <label class=your-languages__label for=add-language-input data-i18n=your-language.choose-a-new-lang-to-learn>Choose a new language to learn
                             
-                            <input id=add-language-input list=add-languages-list placeholder=Language class=your-language-popup__input autocomplete=off>
+                            <input id=add-language-input list=add-languages-list placeholder=Language data-i18n-placeholder=your-language.language class=your-language-popup__input autocomplete=off>
                         </label>
                         
                         <datalist id=add-languages-list></datalist>
                         <div class=your-languages__buttons-group>
-                            <button class=your-languages__submit id=add-language-btn>Add</button>
-                            <button class=your-languages__button-cancel type=button id=add-language-cencel-btn>Cancel</button>
+                            <button class=your-languages__submit id=add-language-btn data-i18n=your-language.add>Add</button>
+                            <button class=your-languages__button-cancel type=button id=add-language-cencel-btn data-i18n=your-language.cancel>Cancel</button>
                         </div>
                     </form>
                 </div>
             </div>
-            <h1 class=quote>
+            <h1 class=quote data-i18n=quote.quote-make-it>
                 Make it make sense,
                 don't just make it
                 stick.
             </h1>
             <div class=websites id=websites>
-                <h2 class=websites__title>Websites</h2>
+                <h2 class=websites__title data-i18n=website.websites>Websites</h2>
                 <ul class=websites__list>
                     <li class=websites__item>
                         <img src=/LingoIQ/randomlogo.db5ce8da.png alt=Logo class=websites__logo-img>
@@ -180,6 +180,6 @@
         </div>
     </footer>
 
-    <script type=module src=/LingoIQ/userpage.9f240ed8.js></script>
+    <script type=module src=/LingoIQ/userpage.71129c59.js></script>
 
 

@@ -727,7 +727,6 @@ let editForm;
 let userSection;
 let editToggleBtn;
 let cancelEditBtn;
-let selectedAvatarURL = '';
 let isRedirecting = false;
 let currentUserLanguages = [];
 // ============================================================================
@@ -740,8 +739,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     cancelEditBtn = document.getElementById('cancel-edit-btn');
     (0, _headerJs.initHeader)();
     (0, _i18NJs.initLanguagePicker)();
-    populateLanguageList();
-    populateAddLanguageList();
     initEventListeners();
     initAvatarSelection();
     initYourLanguagesLogic();
@@ -760,7 +757,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
 });
 // ============================================================================
-// 3. ДОПОМІЖНІ ФУНКЦІЇ ТА ЛОГІКА ФОРМ
+// 3. ДОПОМІЖНІ ФУНКЦІЇ ТА ЛОГІКА ФОРМ (ТІЛЬКИ ДЛЯ USERPAGE)
 // ============================================================================
 function showUserSection() {
     if (editForm) {
@@ -779,7 +776,6 @@ function initEventListeners() {
         e.stopPropagation();
         showUserSection();
     });
-    if (editForm) editForm.addEventListener('submit', handleFormSubmit);
 }
 function initAvatarSelection() {
     const avatarOptions = document.querySelectorAll('.user-info__avatar-option');
@@ -787,112 +783,12 @@ function initAvatarSelection() {
         avatarImg.addEventListener('click', (e)=>{
             avatarOptions.forEach((img)=>img.classList.remove('active'));
             e.target.classList.add('active');
-            selectedAvatarURL = e.target.src;
         });
     });
 }
-async function handleFormSubmit(e) {
-    e.preventDefault();
-    const user = (0, _firebaseJs.auth).currentUser;
-    if (!user) return;
-    const submitBtn = document.getElementById('edit-user-info-btn');
-    const newUsername = document.getElementById('username-edit')?.value.trim();
-    const newNativeLang = document.getElementById('native-lang-input')?.value.trim();
-    try {
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Saving...';
-        }
-        const firestoreUpdates = {};
-        if (newUsername) firestoreUpdates.displayName = newUsername;
-        if (newNativeLang) firestoreUpdates.nativeLang = newNativeLang;
-        if (selectedAvatarURL) firestoreUpdates.photoURL = selectedAvatarURL;
-        if (Object.keys(firestoreUpdates).length > 0) await (0, _firestore.setDoc)((0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid), firestoreUpdates, {
-            merge: true
-        });
-        await (0, _headerJs.loadHeaderUserData)(user);
-        showUserSection();
-    } catch (error) {
-        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F:", error);
-        alert("\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u0437\u043C\u0456\u043D\u0438.");
-    } finally{
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Save';
-        }
-    }
-}
 // ============================================================================
-// 4. РОБОТА З БАЗОЮ ДАНИХ (FIRESTORE) ТА СПИСКАМИ
+// 4. РОБОТА З БАЗОЮ ДАНИХ (FIRESTORE) ТА СПИСКАМИ ВИВЧЕННЯ МОВ
 // ============================================================================
-function populateLanguageList() {
-    const datalist = document.getElementById('languages-list');
-    if (!datalist) return;
-    const langCodes = [
-        'uk',
-        'de',
-        'en',
-        'es',
-        'fr',
-        'it',
-        'pl',
-        'pt',
-        'ro',
-        'tr',
-        'zh',
-        'ja',
-        'ko',
-        'ar',
-        'hi',
-        'cs',
-        'nl',
-        'sv'
-    ];
-    const displayNames = new Intl.DisplayNames([
-        'uk',
-        'en'
-    ], {
-        type: 'language'
-    });
-    datalist.innerHTML = langCodes.map((code)=>{
-        const langName = displayNames.of(code);
-        return `<option value="${langName} (${code.toUpperCase()})">${langName}</option>`;
-    }).join('');
-}
-function populateAddLanguageList() {
-    const datalist = document.getElementById('add-languages-list');
-    if (!datalist) return;
-    const langCodes = [
-        'uk',
-        'de',
-        'en',
-        'es',
-        'fr',
-        'it',
-        'pl',
-        'pt',
-        'ro',
-        'tr',
-        'zh',
-        'ja',
-        'ko',
-        'ar',
-        'hi',
-        'cs',
-        'nl',
-        'sv'
-    ];
-    const displayNames = new Intl.DisplayNames([
-        'uk',
-        'en'
-    ], {
-        type: 'language'
-    });
-    datalist.innerHTML = langCodes.map((code)=>{
-        const langName = displayNames.of(code);
-        return `<option value="${langName} (${code.toUpperCase()})" data-code="${code}"></option>`;
-    }).join('');
-}
 function getSelectedLanguageCode() {
     const input = document.getElementById('add-language-input');
     const datalist = document.getElementById('add-languages-list');
@@ -929,7 +825,6 @@ async function saveLanguageToFirestore(userId, langCode) {
 // ============================================================================
 function getFlagUrl(langCode) {
     const lower = langCode.toLowerCase();
-    // Словник виключень для мов, коди яких відрізняються від кодів країн на FlagCDN
     const flagMap = {
         en: 'gb',
         uk: 'ua',
@@ -938,7 +833,7 @@ function getFlagUrl(langCode) {
         sv: 'se',
         el: 'gr',
         cs: 'cz',
-        et: 'ee' // Естонська -> Естонія
+        et: 'ee'
     };
     const countryCode = flagMap[lower] || lower;
     return `https://flagcdn.com/${countryCode.toLowerCase()}.svg`;
@@ -1044,6 +939,9 @@ function initHeader() {
     const userSection = document.querySelector('.user-info__user-section');
     const editForm = document.getElementById('edit-user-info-form');
     const avatarOptions = document.querySelectorAll('.user-info__avatar-option');
+    // Автоматично заповнюємо списки мов при ініціалізації шапки на будь-якій сторінці
+    populateLanguageList();
+    populateAddLanguageList();
     if (logoutBtn) logoutBtn.addEventListener('click', async (e)=>{
         e.preventDefault();
         await (0, _authJs.logoutUser)();
@@ -1116,7 +1014,78 @@ function initHeader() {
     });
 }
 // ============================================================================
-// 3. ДОПОМІЖНІ ФУНКЦІЇ ЗБЕРЕЖЕННЯ
+// 3. ДОПОМІЖНІ ФУНКЦІЇ ГЕНЕРАЦІЇ СПИСКІВ МОВ
+// ============================================================================
+function populateLanguageList() {
+    const datalist = document.getElementById('languages-list');
+    if (!datalist) return;
+    const langCodes = [
+        'uk',
+        'de',
+        'en',
+        'es',
+        'fr',
+        'it',
+        'pl',
+        'pt',
+        'ro',
+        'tr',
+        'zh',
+        'ja',
+        'ko',
+        'ar',
+        'hi',
+        'cs',
+        'nl',
+        'sv'
+    ];
+    const displayNames = new Intl.DisplayNames([
+        'uk',
+        'en'
+    ], {
+        type: 'language'
+    });
+    datalist.innerHTML = langCodes.map((code)=>{
+        const langName = displayNames.of(code);
+        return `<option value="${langName} (${code.toUpperCase()})">${langName}</option>`;
+    }).join('');
+}
+function populateAddLanguageList() {
+    const datalist = document.getElementById('add-languages-list');
+    if (!datalist) return;
+    const langCodes = [
+        'uk',
+        'de',
+        'en',
+        'es',
+        'fr',
+        'it',
+        'pl',
+        'pt',
+        'ro',
+        'tr',
+        'zh',
+        'ja',
+        'ko',
+        'ar',
+        'hi',
+        'cs',
+        'nl',
+        'sv'
+    ];
+    const displayNames = new Intl.DisplayNames([
+        'uk',
+        'en'
+    ], {
+        type: 'language'
+    });
+    datalist.innerHTML = langCodes.map((code)=>{
+        const langName = displayNames.of(code);
+        return `<option value="${langName} (${code.toUpperCase()})" data-code="${code}"></option>`;
+    }).join('');
+}
+// ============================================================================
+// 4. ДОПОМІЖНІ ФУНКЦІЇ ЗБЕРЕЖЕННЯ
 // ============================================================================
 async function handleHeaderFormSubmit(e) {
     e.preventDefault();

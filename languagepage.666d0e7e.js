@@ -878,6 +878,9 @@ function initHeader() {
     const userSection = document.querySelector('.user-info__user-section');
     const editForm = document.getElementById('edit-user-info-form');
     const avatarOptions = document.querySelectorAll('.user-info__avatar-option');
+    // Автоматично заповнюємо списки мов при ініціалізації шапки на будь-якій сторінці
+    populateLanguageList();
+    populateAddLanguageList();
     if (logoutBtn) logoutBtn.addEventListener('click', async (e)=>{
         e.preventDefault();
         await (0, _authJs.logoutUser)();
@@ -950,7 +953,78 @@ function initHeader() {
     });
 }
 // ============================================================================
-// 3. ДОПОМІЖНІ ФУНКЦІЇ ЗБЕРЕЖЕННЯ
+// 3. ДОПОМІЖНІ ФУНКЦІЇ ГЕНЕРАЦІЇ СПИСКІВ МОВ
+// ============================================================================
+function populateLanguageList() {
+    const datalist = document.getElementById('languages-list');
+    if (!datalist) return;
+    const langCodes = [
+        'uk',
+        'de',
+        'en',
+        'es',
+        'fr',
+        'it',
+        'pl',
+        'pt',
+        'ro',
+        'tr',
+        'zh',
+        'ja',
+        'ko',
+        'ar',
+        'hi',
+        'cs',
+        'nl',
+        'sv'
+    ];
+    const displayNames = new Intl.DisplayNames([
+        'uk',
+        'en'
+    ], {
+        type: 'language'
+    });
+    datalist.innerHTML = langCodes.map((code)=>{
+        const langName = displayNames.of(code);
+        return `<option value="${langName} (${code.toUpperCase()})">${langName}</option>`;
+    }).join('');
+}
+function populateAddLanguageList() {
+    const datalist = document.getElementById('add-languages-list');
+    if (!datalist) return;
+    const langCodes = [
+        'uk',
+        'de',
+        'en',
+        'es',
+        'fr',
+        'it',
+        'pl',
+        'pt',
+        'ro',
+        'tr',
+        'zh',
+        'ja',
+        'ko',
+        'ar',
+        'hi',
+        'cs',
+        'nl',
+        'sv'
+    ];
+    const displayNames = new Intl.DisplayNames([
+        'uk',
+        'en'
+    ], {
+        type: 'language'
+    });
+    datalist.innerHTML = langCodes.map((code)=>{
+        const langName = displayNames.of(code);
+        return `<option value="${langName} (${code.toUpperCase()})" data-code="${code}"></option>`;
+    }).join('');
+}
+// ============================================================================
+// 4. ДОПОМІЖНІ ФУНКЦІЇ ЗБЕРЕЖЕННЯ
 // ============================================================================
 async function handleHeaderFormSubmit(e) {
     e.preventDefault();

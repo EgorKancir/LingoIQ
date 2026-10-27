@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang=en><script type=importmap>{"imports":{"4OWXH":"/LingoIQ/raccoon-1.5dce9519.jpeg"}}</script><script type=module src=/LingoIQ/LingoIQ.e1ebc38b.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.9a95f2df.css><link rel=stylesheet href=/LingoIQ/LingoIQ.1af9db9d.css><link rel=stylesheet href=/LingoIQ/userpage.2283d73b.css><link rel=stylesheet href=/LingoIQ/rules.34d47306.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
+<!DOCTYPE html><html lang=en><script type=importmap>{"imports":{"4OWXH":"/LingoIQ/raccoon-1.5dce9519.jpeg"}}</script><script type=module src=/LingoIQ/LingoIQ.f0d3e34f.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.9a95f2df.css><link rel=stylesheet href=/LingoIQ/LingoIQ.1af9db9d.css><link rel=stylesheet href=/LingoIQ/userpage.2283d73b.css><link rel=stylesheet href=/LingoIQ/rules.34d47306.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
     <header class="container header">
         <div class=header__content>
             <a class=logo__link href=/LingoIQ/userpage.html>
@@ -8,19 +8,19 @@
             <nav class=home-navigation>
                 <ul class=home-navigation__list>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/languagepage.html>Console</a>
+                        <a class=home-navigation__link href=/LingoIQ/languagepage.html data-i18n=header.console>Console</a>
                     </li>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/glossary.html>Glossary</a>
+                        <a class=home-navigation__link href=/LingoIQ/glossary.html data-i18n=header.glossary>Glossary</a>
                     </li>
                     <li class="active-site home-navigation__item">
-                        <a class=home-navigation__link href=/LingoIQ/rules.html>Rules</a>
+                        <a class=home-navigation__link href=/LingoIQ/rules.html data-i18n=header.rules>Rules</a>
                     </li>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/training-center.html>Training Center</a>
+                        <a class=home-navigation__link href=/LingoIQ/training-center.html data-i18n=header.training-center>Training Center</a>
                     </li>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/statistic.html>Statistic</a>
+                        <a class=home-navigation__link href=/LingoIQ/statistic.html data-i18n=header.statistic>Statistic</a>
                     </li>
                 </ul>
             </nav>
@@ -64,9 +64,9 @@
                     <div class=user-info__group>
                         <div class=user-info__user-section>
                             <h2 class=user-info__username>Loading...</h2>
-                            <h2 class=user-info__language>Native language: <span id=nativlang></span></h2>
-                            <h2 class=user-info__days-learning>Days: <span id=daysLearning></span></h2>
-                            <button type=button id=logout-btn class=user-info__button-logout>Log Out</button>
+                            <h2 class=user-info__language><span data-i18n=header.nativlang>Native language:</span> <span id=nativlang></span></h2>
+                            <h2 class=user-info__days-learning><span data-i18n=header.days>Days:</span> <span id=daysLearning></span></h2>
+                            <button type=button id=logout-btn class=user-info__button-logout data-i18n=header.log-out>Log Out</button>
                             <button type=button class=user-info__button-edit id=edit-profile-toggle-btn>
                                 <img class=user-info__button-edit-icon src=/LingoIQ/edit-icon.fdc68859.svg alt=edit>
                             </button>
@@ -74,16 +74,16 @@
                         
                         <form class="disable user-info__edit-section" id=edit-user-info-form>
                             <label class=user-info__label for=username-edit>
-                                <input class=user-info__input id=username-edit placeholder="New Username">
+                                <input class=user-info__input id=username-edit placeholder="New Username" data-i18n-placeholder=header.new-username>
                             </label>
 
                             <label class=user-info__label for=native-lang-input>
-                                <input class=user-info__input list=languages-list id=native-lang-input placeholder="Search native language..." autocomplete=off>
+                                <input class=user-info__input list=languages-list id=native-lang-input placeholder="Search native language..." data-i18n-placeholder=header.search-native-lang autocomplete=off>
                                 <datalist id=languages-list></datalist>
                             </label>
 
                             <div class=user-info__avatars-section>
-                                <h2 class=user-info__avatars-title>Choose your avatar</h2>
+                                <h2 class=user-info__avatars-title data-i18n=header.choose-your-avatar>Choose your avatar</h2>
                                 <div class=user-info__avatars-grid>
                                     <img class="active user-info__avatar-option" src=/LingoIQ/raccoon-1.5dce9519.jpeg alt="Raccoon 1">
                                     <img class=user-info__avatar-option src=/LingoIQ/raccoon-2.128b8f44.jpeg alt="Raccoon 2">
@@ -100,8 +100,8 @@
                                 </div>
                             </div>
                             <div class=user-info__buttons-group>
-                                <button class=user-info__submit id=edit-user-info-btn>Save</button>
-                                <button class=user-info__button-cancel type=button id=cancel-edit-btn>Cancel</button>
+                                <button class=user-info__submit id=edit-user-info-btn data-i18n=header.save>Save</button>
+                                <button class=user-info__button-cancel type=button id=cancel-edit-btn data-i18n=header.cancel>Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -114,55 +114,55 @@
         <div class="container main__content">
             <div class=rules__info-group>
                 <img src=/LingoIQ/rules-icon.0e9aca2a.svg alt=icon class=rules__icon>
-                <h1 class=rules__title>Rules</h1>
+                <h1 class=rules__title data-i18n=rules.rules>Rules</h1>
             </div>
             <div class=rules-group>
                 <div class=rules-group__rules-box>
                     <button type=button id=rules-group-btn-grammar class=rules-group__rules-element>
                         <img src=/LingoIQ/grammar-icon.a4ccef0a.png alt=Grammar class=rules-group__rules-icon>
-                        <h2 class=rules-group__rules-title>Grammar</h2>
+                        <h2 class=rules-group__rules-title data-i18n=rules.grammar>Grammar</h2>
                     </button>
                     <button type=button id=rules-group-btn-tenses class=rules-group__rules-element>
                         <img src=/LingoIQ/tenses-icon.615b62c9.png alt=Tenses class=rules-group__rules-icon>
-                        <h2 class=rules-group__rules-title>Tenses</h2>
+                        <h2 class=rules-group__rules-title data-i18n=rules.tenses>Tenses</h2>
                     </button>
                     <button type=button id=rules-group-btn-articles class=rules-group__rules-element>
                         <img src=/LingoIQ/articles-icon.0349c9fc.png alt=Articles class=rules-group__rules-icon>
-                        <h2 class=rules-group__rules-title>Articles</h2>
+                        <h2 class=rules-group__rules-title data-i18n=rules.articles>Articles</h2>
                     </button>
                     <button type=button id=rules-group-btn-prepositions class=rules-group__rules-element>
                         <img src=/LingoIQ/prepositions-icon.492403df.png alt=Prepositions class=rules-group__rules-icon>
-                        <h2 class=rules-group__rules-title>Prepositions</h2>
+                        <h2 class=rules-group__rules-title data-i18n=rules.prepositions>Prepositions</h2>
                     </button>
                     <button type=button id=rules-group-btn-verbs class=rules-group__rules-element>
                         <img src=/LingoIQ/verbs-icon.f4a5afa4.png alt=Verbs class=rules-group__rules-icon>
-                        <h2 class=rules-group__rules-title>Verbs</h2>
+                        <h2 class=rules-group__rules-title data-i18n=rules.verbs>Verbs</h2>
                     </button>
                     <button type=button id=rules-group-btn-nouns class=rules-group__rules-element>
                         <img src=/LingoIQ/nouns-icon.8a51a066.png alt=Nouns class=rules-group__rules-icon>
-                        <h2 class=rules-group__rules-title>Nouns</h2>
+                        <h2 class=rules-group__rules-title data-i18n=rules.nouns>Nouns</h2>
                     </button>
                     <button type=button id=rules-group-btn-adjectives class=rules-group__rules-element>
                         <img src=/LingoIQ/adjectives-icon.0951f674.png alt=Adjectives class=rules-group__rules-icon>
-                        <h2 class=rules-group__rules-title>Adjectives</h2>
+                        <h2 class=rules-group__rules-title data-i18n=rules.adjectives>Adjectives</h2>
                     </button>
                     <button type=button id=rules-group-btn-pronunciation class=rules-group__rules-element>
                         <img src=/LingoIQ/pronunciation-icon.c1087415.png alt=Pronunciation class=rules-group__rules-icon>
-                        <h2 class=rules-group__rules-title>Pronunciation</h2>
+                        <h2 class=rules-group__rules-title data-i18n=rules.pronunciation>Pronunciation</h2>
                     </button>
                     <button type=button id=rules-group-btn-useful-phrases class=rules-group__rules-element>
                         <img src=/LingoIQ/useful-phrases-icon.2eb1dd62.png alt="Useful Phrases" class=rules-group__rules-icon>
-                        <h2 class=rules-group__rules-title>Useful Phrases</h2>
+                        <h2 class=rules-group__rules-title data-i18n=rules.useful-phrases>Useful Phrases</h2>
                     </button>
                     <button type=button id=rules-group-btn-favorites class=rules-group__rules-element>
                         <img src=/LingoIQ/favorites-icon.3ea68ba0.png alt=Favorites class=rules-group__rules-icon>
-                        <h2 class=rules-group__rules-title>Favorites</h2>
+                        <h2 class=rules-group__rules-title data-i18n=rules.favorites>Favorites</h2>
                     </button>
                 </div>
             </div>
 
             <div class="disable rule-section">
-                <button class=rule-section__btn-back>Back</button>
+                <button class=rule-section__btn-back data-i18n=rules.back>Back</button>
                 <div class=rule-section__title-group>
                     <img class="disable rule-section__icon" src=/LingoIQ/grammar-icon.a4ccef0a.png alt=Grammar>
                     <img class="disable rule-section__icon" src=/LingoIQ/tenses-icon.615b62c9.png alt=Tenses>
@@ -179,7 +179,7 @@
 
                 <div class=rule-search-box>
                     <label for=search-rules class=rule-search-box__label>
-                        <input id=search-rules class=rule-search-box__input placeholder="Search rules...">
+                        <input id=search-rules class=rule-search-box__input placeholder="Search rules..." data-i18n-placeholder=rules.search-rules>
                     </label>
                     <button class=rule-search-box__button aria-label="Submit search">
                         <img src=/LingoIQ/search-icon.9b20e721.svg alt=Search class=rule-search-box__icon>
@@ -197,7 +197,7 @@
                         <img class=rule-section__form-close-img src=/LingoIQ/close-icon.a5889053.svg alt=Close>
                     </button>
                     <label for=add-new-rule-title class=rule-section__form-label>
-                        <input name=rule-title id=add-new-rule-title class=rule-section__form-input placeholder=Title required>
+                        <input name=rule-title id=add-new-rule-title class=rule-section__form-input placeholder=Title data-i18n-placeholder=rules.Title required>
                     </label>
                     <label for=add-new-rule-url class=rule-section__form-label>
                         <img class=rule-section__form-label-img src=/LingoIQ/url-icon.5121187e.svg alt="Url icon">
@@ -260,6 +260,6 @@
             </div>
         </div>
     </template>
-    <script type=module src=/LingoIQ/rules.1f4d5a8a.js></script>
+    <script type=module src=/LingoIQ/rules.656c08bb.js></script>
 
 

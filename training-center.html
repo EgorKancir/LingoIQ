@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang=en><script type=importmap>{"imports":{"4OWXH":"/LingoIQ/raccoon-1.5dce9519.jpeg"}}</script><script type=module src=/LingoIQ/LingoIQ.e1ebc38b.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.9a95f2df.css><link rel=stylesheet href=/LingoIQ/LingoIQ.1af9db9d.css><link rel=stylesheet href=/LingoIQ/userpage.2283d73b.css><link rel=stylesheet href=/LingoIQ/training-center.8abea540.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
+<!DOCTYPE html><html lang=en><script type=importmap>{"imports":{"4OWXH":"/LingoIQ/raccoon-1.5dce9519.jpeg"}}</script><script type=module src=/LingoIQ/LingoIQ.f0d3e34f.js></script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>LingoIQ</title><link rel="icon shortcut" href=/LingoIQ/favicon.5f8fa445.svg type=image/x-icon><link rel=stylesheet href=/LingoIQ/LingoIQ.9a95f2df.css><link rel=stylesheet href=/LingoIQ/LingoIQ.1af9db9d.css><link rel=stylesheet href=/LingoIQ/userpage.2283d73b.css><link rel=stylesheet href=/LingoIQ/training-center.8abea540.css><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Karantina:wght@300;400;700&amp;family=Squada+One&amp;display=swap" rel=stylesheet><body>
     <header class="container header">
         <div class=header__content>
             <a class=logo__link href=/LingoIQ/userpage.html>
@@ -8,19 +8,19 @@
             <nav class=home-navigation>
                 <ul class=home-navigation__list>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/languagepage.html>Console</a>
+                        <a class=home-navigation__link href=/LingoIQ/languagepage.html data-i18n=header.console>Console</a>
                     </li>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/glossary.html>Glossary</a>
+                        <a class=home-navigation__link href=/LingoIQ/glossary.html data-i18n=header.glossary>Glossary</a>
                     </li>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/rules.html>Rules</a>
-                    </li>
-                    <li class="active-site home-navigation__item">
-                        <a class=home-navigation__link href=/LingoIQ/training-center.html>Training Center</a>
+                        <a class=home-navigation__link href=/LingoIQ/rules.html data-i18n=header.rules>Rules</a>
                     </li>
                     <li class=home-navigation__item>
-                        <a class=home-navigation__link href=/LingoIQ/statistic.html>Statistic</a>
+                        <a class="active-site home-navigation__link" href=/LingoIQ/training-center.html data-i18n=header.training-center>Training Center</a>
+                    </li>
+                    <li class=home-navigation__item>
+                        <a class=home-navigation__link href=/LingoIQ/statistic.html data-i18n=header.statistic>Statistic</a>
                     </li>
                 </ul>
             </nav>
@@ -64,9 +64,9 @@
                     <div class=user-info__group>
                         <div class=user-info__user-section>
                             <h2 class=user-info__username>Loading...</h2>
-                            <h2 class=user-info__language>Native language: <span id=nativlang></span></h2>
-                            <h2 class=user-info__days-learning>Days: <span id=daysLearning></span></h2>
-                            <button type=button id=logout-btn class=user-info__button-logout>Log Out</button>
+                            <h2 class=user-info__language><span data-i18n=header.nativlang>Native language:</span> <span id=nativlang></span></h2>
+                            <h2 class=user-info__days-learning><span data-i18n=header.days>Days:</span> <span id=daysLearning></span></h2>
+                            <button type=button id=logout-btn class=user-info__button-logout data-i18n=header.log-out>Log Out</button>
                             <button type=button class=user-info__button-edit id=edit-profile-toggle-btn>
                                 <img class=user-info__button-edit-icon src=/LingoIQ/edit-icon.fdc68859.svg alt=edit>
                             </button>
@@ -74,16 +74,16 @@
                         
                         <form class="disable user-info__edit-section" id=edit-user-info-form>
                             <label class=user-info__label for=username-edit>
-                                <input class=user-info__input id=username-edit placeholder="New Username">
+                                <input class=user-info__input id=username-edit placeholder="New Username" data-i18n-placeholder=header.new-username>
                             </label>
 
                             <label class=user-info__label for=native-lang-input>
-                                <input class=user-info__input list=languages-list id=native-lang-input placeholder="Search native language..." autocomplete=off>
+                                <input class=user-info__input list=languages-list id=native-lang-input placeholder="Search native language..." data-i18n-placeholder=header.search-native-lang autocomplete=off>
                                 <datalist id=languages-list></datalist>
                             </label>
 
                             <div class=user-info__avatars-section>
-                                <h2 class=user-info__avatars-title>Choose your avatar</h2>
+                                <h2 class=user-info__avatars-title data-i18n=header.choose-your-avatar>Choose your avatar</h2>
                                 <div class=user-info__avatars-grid>
                                     <img class="active user-info__avatar-option" src=/LingoIQ/raccoon-1.5dce9519.jpeg alt="Raccoon 1">
                                     <img class=user-info__avatar-option src=/LingoIQ/raccoon-2.128b8f44.jpeg alt="Raccoon 2">
@@ -100,8 +100,8 @@
                                 </div>
                             </div>
                             <div class=user-info__buttons-group>
-                                <button class=user-info__submit id=edit-user-info-btn>Save</button>
-                                <button class=user-info__button-cancel type=button id=cancel-edit-btn>Cancel</button>
+                                <button class=user-info__submit id=edit-user-info-btn data-i18n=header.save>Save</button>
+                                <button class=user-info__button-cancel type=button id=cancel-edit-btn data-i18n=header.cancel>Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -113,13 +113,13 @@
     <main class=main>
         <div class="container main__content">
             <img src=/LingoIQ/training-center-icon.97ad9d10.svg alt=icon class=training-center__icon>
-            <h1 class=training-center__title>Training Center</h1>
+            <h1 class=training-center__title data-i18n=training-center.training-center>Training Center</h1>
             <div class=training-group></div>
 
         
             <div class="disable training-console">
                 <div class=training-console__info>
-                    <button class=training-console__back-btn>← Back</button>
+                    <button class=training-console__back-btn data-i18n=training-center.back>← Back</button>
                     <h1 class=training-console__counter><span id=training-console-number></span>/<span id=training-console-total-number></span></h1>
                     <h2 class=training-console__main-word></h2>
                     <img class=training-console__repeating-icon src=/LingoIQ/cycle-icon.1bc9e43d.svg alt="Cycle icon">
@@ -132,15 +132,15 @@
                 <div class=training-console__buttons-group>
                     <button type=button class="training-console__btn training-console__btn--known">
                         <img class=training-console__input-icon src=/LingoIQ/tick-icon-btn.f121e9d9.svg alt=tick>
-                        <span>I know it</span>
+                        <span data-i18n=training-center.i-know-it>I know it</span>
                     </button>
                     <button type=button class="training-console__btn training-console__btn--practice">
                         <img class=training-console__input-icon src=/LingoIQ/repeating-icon-btn.b295f10f.svg alt=repeating>
-                        <span>I need more practice</span>
+                        <span data-i18n=training-center.i-need-more-practice>I need more practice</span>
                     </button>
                     <button type=button class="training-console__btn training-console__btn--unknown">
                         <img class=training-console__input-icon src=/LingoIQ/cencel-icon-btn.808a31b4.svg alt=cencel>
-                        <span>I don't know it</span>
+                        <span data-i18n=training-center.i-do-not-know-it>I don't know it</span>
                     </button>
                 </div>
             </div>
@@ -166,5 +166,5 @@
             <p class=footer__copyrighting>© 2026 LingoIQ</p>
         </div>
     </footer>
-    <script type=module src=/LingoIQ/training-center.7071b938.js></script>
+    <script type=module src=/LingoIQ/training-center.4bcee1ad.js></script>
 
