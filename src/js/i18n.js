@@ -48,15 +48,8 @@ export function setLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('lingoiq_lang', lang);
 
-    document.querySelectorAll('.header-language-popup__button').forEach(btn => {
-        if (btn.getAttribute('data-lang') === lang) {
-            btn.classList.add('header-language-popup__button--active');
-        } else {
-            btn.classList.remove('header-language-popup__button--active');
-        }
-    });
-
-    applyTranslations(lang);
+    // Перезавантажуємо сторінку одразу після зміни мови в localStorage
+    window.location.reload();
 }
 
 export function initLanguagePicker() {
@@ -80,9 +73,17 @@ export function initLanguagePicker() {
         btn.addEventListener('click', () => {
             const selectedLang = btn.getAttribute('data-lang');
             setLanguage(selectedLang);
-            if (popup) popup.classList.add('disable');
         });
     });
 
-    setLanguage(currentLang);
+    applyTranslations(currentLang);
+
+    // Встановлюємо активний клас для кнопки поточної мови при завантаженні
+    document.querySelectorAll('.header-language-popup__button').forEach(btn => {
+        if (btn.getAttribute('data-lang') === currentLang) {
+            btn.classList.add('header-language-popup__button--active');
+        } else {
+            btn.classList.remove('header-language-popup__button--active');
+        }
+    });
 }

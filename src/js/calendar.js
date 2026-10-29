@@ -66,7 +66,7 @@ function cleanDateStr(dateStr) {
 function formatDate(dateStr, todayStr) {
     if (!dateStr) return '';
     if (dateStr === todayStr) {
-        return 'Today';
+        return '<span data-i18n="calendar.today">Today</span>';
     }
     const [year, month, day] = dateStr.split('-');
     return `${day}.${month}.${year}`;
@@ -87,7 +87,7 @@ export async function initCalendar(user) {
     const calendarContainer = document.querySelector('.calendar__date-group');
     if (!calendarContainer) return;
 
-    calendarContainer.innerHTML = '<p class="loading-text" style="color: white; text-align: center; width: 100%;">Loading calendar schedule...</p>';
+    calendarContainer.innerHTML = '<p class="loading-text" style="color: white; text-align: center; width: 100%;" data-i18n="calendar.loading-calendar-schedule">Loading calendar schedule...</p>';
 
     try {
         if (!user) return;
@@ -96,7 +96,7 @@ export async function initCalendar(user) {
         const docSnap = await getDoc(userDocRef);
 
         if (!docSnap.exists()) {
-            calendarContainer.innerHTML = '<p class="empty-text" style="color: white; text-align: center; width: 100%;">No data found.</p>';
+            calendarContainer.innerHTML = '<p class="empty-text" style="color: white; text-align: center; width: 100%;" data-i18n="calendar.no-data-found">No data found.</p>';
             return;
         }
 
@@ -151,7 +151,7 @@ export async function initCalendar(user) {
 
     } catch (error) {
         console.error('Error loading calendar data:', error);
-        calendarContainer.innerHTML = `<p class="error-text" style="color: red; text-align: center; width: 100%;">Failed to load calendar: ${error.message}</p>`;
+        calendarContainer.innerHTML = `<p class="error-text" style="color: red; text-align: center; width: 100%;"><span data-i18n="calendar.failed-to-load-calendar">Failed to load calendar</span>: ${error.message}</p>`;
     }
 }
 
@@ -162,7 +162,7 @@ function renderCalendarCards(items) {
     calendarContainer.innerHTML = '';
 
     if (items.length === 0) {
-        calendarContainer.innerHTML = '<p class="empty-text" style="color: white; text-align: center; width: 100%;">No active repetition tasks found!</p>';
+        calendarContainer.innerHTML = '<p class="empty-text" style="color: white; text-align: center; width: 100%;" data-i18n="calendar.no-oactive-repetition-tasks-found">No active repetition tasks found!</p>';
         return;
     }
 
@@ -171,13 +171,13 @@ function renderCalendarCards(items) {
         elementDiv.className = 'calendar__element';
 
         elementDiv.innerHTML = `
-            <p class="calendar__element-date">Date: <span class="calendar__element-date-number ${item.dateClass}">${item.formattedDate}</span></p>
+            <p class="calendar__element-date"><span data-i18n="calendar.date">Date</span>: <span class="calendar__element-date-number ${item.dateClass}">${item.formattedDate}</span></p>
             <div class="calendar__element-language-block">
                 <img src="${item.flagSrc}" alt="${item.langName} Flag" class="calendar__element-language-icon">
                 <p class="calendar__element-language-name">${item.langName}</p>
             </div>
-            <p class="calendar__element-words">Number of words: <span class="calendar__element-number">${item.wordsCount}</span></p>
-            <a href="./training-center.html?lang=${item.langCode}" class="calendar__element-repeat">Repeat</a>
+            <p class="calendar__element-words"><span data-i18n="calendar.number-of-words">Number of words</span>: <span class="calendar__element-number">${item.wordsCount}</span></p>
+            <a href="./training-center.html?lang=${item.langCode}" class="calendar__element-repeat" data-i18n="calendar.repeat">Repeat</a>
         `;
 
         calendarContainer.appendChild(elementDiv);

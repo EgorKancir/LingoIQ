@@ -31,7 +31,63 @@ let currentSessionWords = [];   // Масив слів для поточної �
 let currentWordIndex = 0;       // Індекс поточного слова в тренажері
 
 // ============================================================================
-// 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
+// 2. СИСТЕМА ЛОКАЛІЗАЦІЇ ДИНАМІЧНИХ ТЕКСТІВ ТА ПОВІДОМЛЕНЬ
+// ============================================================================
+
+function getTrainingTranslation(key) {
+    const rawLang = localStorage.getItem('lingoiq_lang') || 'en';
+    const currentLang = rawLang.substring(0, 2).toLowerCase();
+
+    const translations = {
+        en: {
+            loadingSchedule: 'Loading training schedule...',
+            noWords: 'No words found.',
+            noLanguage: 'No language found.',
+            noWordsAdded: 'No words added for this language yet.',
+            allLearned: 'Congratulations! All words are learned.',
+            noSessions: 'No active training sessions.',
+            today: 'Today',
+            start: 'Start',
+            sessionCompleted: 'Training session completed successfully!',
+            loginAgain: 'Please log in again.',
+            failedLoad: 'Failed to load data',
+            failedUpdate: 'Error updating word progress in Firestore:'
+        },
+        de: {
+            loadingSchedule: 'Trainingsplan wird geladen...',
+            noWords: 'Keine Wörter gefunden.',
+            noLanguage: 'Keine Sprache gefunden.',
+            noWordsAdded: 'Noch keine Wörter für diese Sprache hinzugefügt.',
+            allLearned: 'Herzlichen Glückwunsch! Alle Wörter wurden gelernt.',
+            noSessions: 'Keine aktiven Trainingseinheiten.',
+            today: 'Heute',
+            start: 'Starten',
+            sessionCompleted: 'Trainingseinheit erfolgreich abgeschlossen!',
+            loginAgain: 'Bitte melden Sie sich erneut an.',
+            failedLoad: 'Fehler beim Laden der Daten',
+            failedUpdate: 'Fehler beim Aktualisieren des Wortfortschritts in Firestore:'
+        },
+        uk: {
+            loadingSchedule: 'Завантаження розкладу тренувань...',
+            noWords: 'Слів не знайдено.',
+            noLanguage: 'Мову не знайдено.',
+            noWordsAdded: 'Для цієї мови ще не додано слів.',
+            allLearned: 'Вітаємо! Усі слова вивчено.',
+            noSessions: 'Немає активних сесій тренування.',
+            today: 'Сьогодні',
+            start: 'Почати',
+            sessionCompleted: 'Тренування успішно завершено!',
+            loginAgain: 'Будь ласка, увійдіть знову.',
+            failedLoad: 'Не вдалося завантажити дані',
+            failedUpdate: 'Помилка оновлення прогресу слова у Firestore:'
+        }
+    };
+
+    return translations[currentLang]?.[key] || translations.en[key] || key;
+}
+
+// ============================================================================
+// 3. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
 // ============================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -52,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================================
-// 3. ДОПОМІЖНІ ФУНКЦІЇ ДАТ ТА ФОРМАТУВАННЯ
+// 4. ДОПОМІЖНІ ФУНКЦІЇ ДАТ ТА ФОРМАТУВАННЯ
 // ============================================================================
 
 // Отримати сьогоднішню дату у форматі 'YYYY-MM-DD'
@@ -77,24 +133,30 @@ function calculateNextReviewDate(daysToAdd) {
 }
 
 // ============================================================================
-// 4. ЗАВАНТАЖЕННЯ ТА ОБРОБКА ДАНИХ ІЗ FIRESTORE
+// 5. ЗАВАНТАЖЕННЯ ТА ОБРОБКА ДАНИХ ІЗ FIRESTORE
 // ============================================================================
 
 async function loadAndProcessTrainingData() {
     const trainingGroup = document.querySelector('.training-group');
     if (!trainingGroup) return;
 
-    trainingGroup.innerHTML = '<p class="loading-text" style="color: white; text-align: center;">Loading training schedule...</p>';
+    trainingGroup.innerHTML = `<p class="loading-text" style="color: white; text-align: center;">${getTrainingTranslation('loadingSchedule')}</p>`;
 
     try {
         const user = auth.currentUser;
-        if (!user) return;
+        const rawLang = localStorage.getItem('lingoiq_lang') || 'en';
+        const currentLang = rawLang.substring(0, 2).toLowerCase();
+
+        if (!user) {
+            alert(getTrainingTranslation('loginAgain'));
+            return;
+        }
 
         const userDocRef = doc(db, 'users', user.uid);
         const docSnap = await getDoc(userDocRef);
 
         if (!docSnap.exists()) {
-            trainingGroup.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No words found.</p>';
+            trainingGroup.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getTrainingTranslation('noWords')}</p>`;
             return;
         }
 
@@ -103,7 +165,7 @@ async function loadAndProcessTrainingData() {
         
         const langObj = languagesArray.find(l => l.code.toLowerCase() === currentLangCode.toLowerCase());
         if (!langObj) {
-            trainingGroup.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No language found.</p>';
+            trainingGroup.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getTrainingTranslation('noLanguage')}</p>`;
             return;
         }
 
@@ -111,7 +173,7 @@ async function loadAndProcessTrainingData() {
         allLanguageWords = langObj.words || langObj.glossary || [];
 
         if (allLanguageWords.length === 0) {
-            trainingGroup.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No words added for this language yet.</p>';
+            trainingGroup.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getTrainingTranslation('noWordsAdded')}</p>`;
             return;
         }
 
@@ -122,7 +184,7 @@ async function loadAndProcessTrainingData() {
         });
 
         if (activeTrainingWords.length === 0) {
-            trainingGroup.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">Congratulations! All words are learned.</p>';
+            trainingGroup.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getTrainingTranslation('allLearned')}</p>`;
             return;
         }
 
@@ -140,12 +202,12 @@ async function loadAndProcessTrainingData() {
 
     } catch (error) {
         console.error('Error loading training data:', error);
-        trainingGroup.innerHTML = `<p class="error-text" style="color: red; text-align: center;">Failed to load data: ${error.message}</p>`;
+        trainingGroup.innerHTML = `<p class="error-text" style="color: red; text-align: center;">${getTrainingTranslation('failedLoad')}: ${error.message}</p>`;
     }
 }
 
 // ============================================================================
-// 5. РЕНДЕРИНГ КАРТОК ДАТ НА ГОЛОВНІЙ СТОРІНЦІ
+// 6. РЕНДЕРИНГ КАРТОК ДАТ НА ГОЛОВНІЙ СТОРІНЦІ
 // ============================================================================
 
 function renderTrainingBlocks() {
@@ -160,7 +222,7 @@ function renderTrainingBlocks() {
     const sortedDateKeys = Object.keys(groupedWordsByDate).sort((a, b) => new Date(a) - new Date(b));
 
     if (sortedDateKeys.length === 0) {
-        trainingGroup.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No active training sessions.</p>';
+        trainingGroup.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getTrainingTranslation('noSessions')}</p>`;
         return;
     }
 
@@ -181,21 +243,21 @@ function renderTrainingBlocks() {
 
         // Логіка станів (Today, Overdue, Майбутні дати)
         if (dateKey === todayStr) {
-            dateTitleEl.textContent = 'Today';
-            startBtn.textContent = 'Start';
+            dateTitleEl.textContent = getTrainingTranslation('today');
+            startBtn.textContent = getTrainingTranslation('start');
             startBtn.disabled = false;
             startBtn.addEventListener('click', () => startTrainingSession(dateKey));
         } else if (dateKey < todayStr) {
-            dateTitleEl.textContent = `Overdue (${dateKey})`;
+            dateTitleEl.textContent = `(${dateKey})`;
             startBtn.style.background = 'linear-gradient(90deg, #FF4D4D 0%, #C90000 100%)';
-            startBtn.textContent = 'Start';
+            startBtn.textContent = getTrainingTranslation('start');
             startBtn.addEventListener('click', () => startTrainingSession(dateKey));
         } else {
             dateTitleEl.textContent = dateKey;
             startBtn.style.background = 'linear-gradient(135deg, #7E8AF4 22%, #6C6C6C 85%)';
-            startBtn.style.cursor = 'not-allowed'
+            startBtn.style.cursor = 'not-allowed';
             startBtn.disabled = true;
-            startBtn.textContent = 'Start';
+            startBtn.textContent = getTrainingTranslation('start');
         }
 
         blockEl.appendChild(iconEl);
@@ -206,7 +268,7 @@ function renderTrainingBlocks() {
 }
 
 // ============================================================================
-// 6. ЛОГІКА ІНТЕРАКТИВНОГО ТРЕНАЖЕРА (ПОПАПУ)
+// 7. ЛОГІКА ІНТЕРАКТИВНОГО ТРЕНАЖЕРА (ПОПАПУ)
 // ============================================================================
 
 function initTrainingConsole() {
@@ -280,7 +342,7 @@ function renderCurrentWord() {
     const totalEl = document.getElementById('training-console-total-number');
 
     if (currentWordIndex >= currentSessionWords.length) {
-        alert('Training session completed successfully!');
+        alert(getTrainingTranslation('sessionCompleted'));
         closeTrainingConsole();
         return;
     }
@@ -302,7 +364,7 @@ function renderCurrentWord() {
 }
 
 // ============================================================================
-// 7. ОБРОБКА КНОПОК ТРЕНАЖЕРА ТА ЗБЕРЕЖЕННЯ В FIRESTORE
+// 8. ОБРОБКА КНОПОК ТРЕНАЖЕРА ТА ЗБЕРЕЖЕННЯ В FIRESTORE
 // ============================================================================
 
 async function handleAnswerAction(actionType) {
@@ -374,6 +436,6 @@ async function saveWordsToFirestore() {
             await setDoc(userDocRef, userData, { merge: true });
         }
     } catch (error) {
-        console.error('Error updating word progress in Firestore:', error);
+        console.error(getTrainingTranslation('failedUpdate'), error);
     }
 }

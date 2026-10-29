@@ -81,10 +81,19 @@
         "search-native-lang": "Пошук рідної мови...",
         "choose-your-avatar": "Оберіть свій аватар",
         "save": "Зберегти",
-        "cencel": "Скасувати"
+        "cancel": "Скасувати"
     },
     "calendar": {
-        "celendar": "Календар"
+        "celendar": "Календар",
+        "today": "Сьогодні",
+        "loading-calendar-schedule": "Завантаження розкладу календаря...",
+        "no-data-found": "Даних не знайдено.",
+        "failed-to-load-calendar": "Не вдалося завантажити календар",
+        "no-oactive-repetition-tasks-found": "Активних завдань на повторення не знайдено!",
+        "date": "Дата",
+        "number-of-words": "Кількість слів",
+        "repeat": "Повторити",
+        "no-languages-added-yet": "Мови ще не додано"
     },
     "your-language": {
         "your-language": "Ваші мови",
@@ -135,7 +144,12 @@
         "back": "Назад",
         "search-rules": "Пошук правил...",
         "Title": "Назва",
-        "personal-notes": "Особисті нотатки"
+        "personal-notes": "Особисті нотатки",
+        "loading": "Завантаження...",
+        "no-rules-added-yet": "Правил ще не додано.",
+        "no-rules-for-this-language-yet": "Для цієї мови ще немає правил.",
+        "failed-to-load-rules": "Не вдалося завантажити правила.",
+        "no-rules-found": "Правил не знайдено."
     },
     "training-center": {
         "training-center": "Тренувальний центр",

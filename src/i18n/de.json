@@ -84,7 +84,16 @@
         "cencel": "Abbrechen"
     },
     "calendar": {
-        "celendar": "Kalender"
+        "celendar": "Kalender",
+        "today": "Heute",
+        "loading-calendar-schedule": "Kalenderplan wird geladen...",
+        "no-data-found": "Keine Daten gefunden.",
+        "failed-to-load-calendar": "Fehler beim Laden des Kalenders",
+        "no-oactive-repetition-tasks-found": "Keine aktiven Wiederholungsaufgaben gefunden!",
+        "date": "Datum",
+        "number-of-words": "Anzahl der Wörter",
+        "repeat": "Wiederholen",
+        "no-languages-added-yet": "Noch keine Sprachen hinzugefügt"
     },
     "your-language": {
         "your-language": "Deine Sprachen",
@@ -135,7 +144,12 @@
         "back": "Zurück",
         "search-rules": "Regeln suchen...",
         "Title": "Titel",
-        "personal-notes": "Persönliche Notizen"
+        "personal-notes": "Persönliche Notizen",
+        "loading": "Laden...",
+        "no-rules-added-yet": "Noch keine Regeln hinzugefügt.",
+        "no-rules-for-this-language-yet": "Noch keine Regeln für diese Sprache vorhanden.",
+        "failed-to-load-rules": "Fehler beim Laden der Regeln.",
+        "no-rules-found": "Keine Regeln gefunden."
     },
     "training-center": {
         "training-center": "Training Center",

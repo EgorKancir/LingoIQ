@@ -74,8 +74,20 @@
         "save": "Save",
         "cencel": "Cancel"
     },
+    "userpage": {
+        "no-languages": "No languages added yet"
+    },
     "calendar": {
-        "celendar": "Calendar"
+        "celendar": "Calendar",
+        "today": "Today",
+        "loading-calendar-schedule": "Loading calendar schedule...",
+        "no-data-found": "No data found.",
+        "failed-to-load-calendar": "Failed to load calendar",
+        "no-oactive-repetition-tasks-found": "No active repetition tasks found!",
+        "date": "Date",
+        "number-of-words": "Number of words",
+        "repeat": "Repeat",
+        "no-languages-added-yet": "No languages added yet"
     },
     "your-language": {
         "your-language": "Your languages",
@@ -126,7 +138,12 @@
         "back": "Back",
         "search-rules": "Search rules...",
         "Title": "Title",
-        "personal-notes": "Personal Notes"
+        "personal-notes": "Personal Notes",
+        "loading": "Loading...",
+        "no-rules-added-yet": "No rules added yet.",
+        "no-rules-for-this-language-yet": "No rules for this language yet.",
+        "failed-to-load-rules": "Failed to load rules.",
+        "no-rules-found": "No rules found."
     },
     "training-center": {
         "training-center": "Training Center",

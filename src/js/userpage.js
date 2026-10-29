@@ -4,7 +4,7 @@
 
 import { auth, db } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { initHeader, loadHeaderUserData } from './header.js';
 import { initCalendar } from './calendar.js';
 import { initLanguagePicker } from './i18n.js';
@@ -13,6 +13,7 @@ let editForm;
 let userSection;
 let editToggleBtn;
 let cancelEditBtn;
+let selectedAvatarURL = '';
 let isRedirecting = false;
 let currentUserLanguages = [];
 
@@ -28,6 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initHeader();
     initLanguagePicker();
+
+    populateLanguageList();
+    populateAddLanguageList();
 
     initEventListeners();
     initAvatarSelection();
@@ -51,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================================
-// 3. ДОПОМІЖНІ ФУНКЦІЇ ТА ЛОГІКА ФОРМ (ТІЛЬКИ ДЛЯ USERPAGE)
+// 3. ДОПОМІЖНІ ФУНКЦІЇ ТА ЛОГІКА ФОРМ
 // ============================================================================
 
 function showUserSection() {
@@ -79,6 +83,10 @@ function initEventListeners() {
             showUserSection();
         });
     }
+
+    if (editForm) {
+        editForm.addEventListener('submit', handleFormSubmit);
+    }
 }
 
 function initAvatarSelection() {
@@ -87,13 +95,99 @@ function initAvatarSelection() {
         avatarImg.addEventListener('click', (e) => {
             avatarOptions.forEach(img => img.classList.remove('active'));
             e.target.classList.add('active');
+            selectedAvatarURL = e.target.src;
         });
     });
 }
 
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const submitBtn = document.getElementById('edit-user-info-btn');
+    const newUsername = document.getElementById('username-edit')?.value.trim();
+    const newNativeLang = document.getElementById('native-lang-input')?.value.trim();
+
+    try {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            const currentLang = localStorage.getItem('lingoiq_lang') || 'en';
+            const savingTexts = {
+                en: 'Saving...',
+                de: 'Wird gespeichert...',
+                uk: 'Збереження...'
+            };
+
+            submitBtn.textContent = savingTexts[currentLang] || savingTexts['en'];
+        }
+
+        const firestoreUpdates = {};
+        if (newUsername) firestoreUpdates.displayName = newUsername;
+        if (newNativeLang) firestoreUpdates.nativeLang = newNativeLang;
+        if (selectedAvatarURL) firestoreUpdates.photoURL = selectedAvatarURL;
+
+        if (Object.keys(firestoreUpdates).length > 0) {
+            await setDoc(doc(db, 'users', user.uid), firestoreUpdates, { merge: true });
+        }
+
+        await loadHeaderUserData(user);
+        showUserSection();
+
+    } catch (error) {
+        console.error('Помилка збереження:', error);
+        const currentLang = localStorage.getItem('lingoiq_lang') || 'en';
+        const alerts = {
+            en: 'Failed to save changes.',
+            de: 'Änderungen konnten nicht gespeichert werden.',
+            uk: 'Не вдалося зберегти зміни.'
+        };
+
+        alert(alerts[currentLang] || alerts['en']);
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            const currentLang = localStorage.getItem('lingoiq_lang') || 'en';
+            const saveTexts = {
+                en: 'Save',
+                de: 'Gespeichert',
+                uk: 'Збережено'
+            };
+
+            submitBtn.textContent = saveTexts[currentLang] || saveTexts['en'];
+        }
+    }
+}
+
 // ============================================================================
-// 4. РОБОТА З БАЗОЮ ДАНИХ (FIRESTORE) ТА СПИСКАМИ ВИВЧЕННЯ МОВ
+// 4. РОБОТА З БАЗОЮ ДАНИХ (FIRESTORE) ТА СПИСКАМИ
 // ============================================================================
+
+export function populateLanguageList() {
+    const datalist = document.getElementById('languages-list');
+    if (!datalist) return;
+
+    const langCodes = ['uk', 'de', 'en', 'es', 'fr', 'it', 'pl', 'pt', 'ro', 'tr', 'zh', 'ja', 'ko', 'ar', 'hi', 'cs', 'nl', 'sv'];
+    const displayNames = new Intl.DisplayNames(['uk', 'en'], { type: 'language' });
+
+    datalist.innerHTML = langCodes.map(code => {
+        const langName = displayNames.of(code);
+        return `<option value="${langName} (${code.toUpperCase()})">${langName}</option>`;
+    }).join('');
+}
+
+export function populateAddLanguageList() {
+    const datalist = document.getElementById('add-languages-list');
+    if (!datalist) return;
+
+    const langCodes = ['uk', 'de', 'en', 'es', 'fr', 'it', 'pl', 'pt', 'ro', 'tr', 'zh', 'ja', 'ko', 'ar', 'hi', 'cs', 'nl', 'sv'];
+    const displayNames = new Intl.DisplayNames(['uk', 'en'], { type: 'language' });
+
+    datalist.innerHTML = langCodes.map(code => {
+        const langName = displayNames.of(code);
+        return `<option value="${langName} (${code.toUpperCase()})" data-code="${code}"></option>`;
+    }).join('');
+}
 
 function getSelectedLanguageCode() {
     const input = document.getElementById('add-language-input');
@@ -136,7 +230,7 @@ async function saveLanguageToFirestore(userId, langCode) {
 
 function getFlagUrl(langCode) {
     const lower = langCode.toLowerCase();
-    
+
     const flagMap = {
         en: 'gb',
         uk: 'ua',
@@ -145,7 +239,11 @@ function getFlagUrl(langCode) {
         sv: 'se',
         el: 'gr',
         cs: 'cz',
-        et: 'ee'
+        et: 'ee',
+        hi: 'in',
+        zh: 'cn',
+        ko: 'kr',
+        ar: 'sa'
     };
 
     const countryCode = flagMap[lower] || lower;
@@ -159,7 +257,7 @@ function renderUserLanguages(userLanguages = []) {
     languageListContainer.innerHTML = '';
 
     if (!userLanguages || userLanguages.length === 0) {
-        languageListContainer.innerHTML = '<p class="no-languages-text" style="color: white; padding: 10px;">No languages added yet</p>';
+        languageListContainer.innerHTML = '<p class="no-languages-text" style="color: white; padding: 10px;" data-i18n="calendar.no-languages-added-yet">No languages added yet</p>';
         return;
     }
 
@@ -167,7 +265,7 @@ function renderUserLanguages(userLanguages = []) {
         const langCode = langObj.code.toLowerCase();
         const langUpper = langCode.toUpperCase();
         const flagSrc = getFlagUrl(langCode);
-        
+
         const listItem = document.createElement('li');
         listItem.className = 'your-languages__item';
 
@@ -210,18 +308,44 @@ function initYourLanguagesLogic() {
             const langCode = getSelectedLanguageCode();
             const user = auth.currentUser;
 
+            // Поточна мова інтерфейсу для alert
+            const currentLang = localStorage.getItem('lingoiq_lang') || 'en';
+
+            const alerts = {
+                selectLanguage: {
+                    en: 'Please select a language from the list!',
+                    de: 'Bitte wählen Sie eine Sprache aus der Liste!',
+                    uk: 'Будь ласка, оберіть мову зі списку!'
+                },
+                loginRequired: {
+                    en: 'Please log in to the system!',
+                    de: 'Bitte melden Sie sich an!',
+                    uk: 'Будь ласка, увійдіть у систему!'
+                },
+                alreadyExists: {
+                    en: 'This language is already in your learning list!',
+                    de: 'Diese Sprache ist bereits in Ihrer Lernliste!',
+                    uk: 'Ця мова вже є у вашому списку вивчення!'
+                },
+                saveError: {
+                    en: 'Failed to save language. Please try again.',
+                    de: 'Sprache konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.',
+                    uk: 'Не вдалося зберегти мову. Спробуйте ще раз.'
+                }
+            };
+
             if (!langCode) {
-                alert('Будь ласка, оберіть мову зі списку!');
+                alert(alerts.selectLanguage[currentLang] || alerts.selectLanguage.en);
                 return;
             }
             if (!user) {
-                alert('Будь ласка, увійдіть у систему!');
+                alert(alerts.loginRequired[currentLang] || alerts.loginRequired.en);
                 return;
             }
 
             const languageExists = currentUserLanguages.some(lang => lang.code === langCode);
             if (languageExists) {
-                alert('Ця мова вже є у вашому списку вивчення!');
+                alert(alerts.alreadyExists[currentLang] || alerts.alreadyExists.en);
                 return;
             }
 
@@ -234,7 +358,8 @@ function initYourLanguagesLogic() {
                 if (addBtn) addBtn.classList.remove('disable');
                 input.value = '';
             } catch (error) {
-                alert('Не вдалося зберегти мову. Спробуйте ще раз.');
+                console.error('Save language error:', error);
+                alert(alerts.saveError[currentLang] || alerts.saveError.en);
             }
         });
     }

@@ -14,7 +14,74 @@ const urlParams = new URLSearchParams(window.location.search);
 const currentLangCode = urlParams.get('lang');
 
 let currentGlossary = [];
-let editingWordId = null; // Змінна для відстеження, яке слово ми зараз редагуємо
+let editingWordId = null;
+
+// ============================================================================
+// 2. СИСТЕМА ЛОКАЛІЗАЦІЇ (LINGOIQ_LANG)
+// ============================================================================
+
+function getCurrentLang() {
+    const rawLang = localStorage.getItem('lingoiq_lang') || 'en';
+    return rawLang.substring(0, 2).toLowerCase();
+}
+
+const LOCALIZATION = {
+    alerts: {
+        fillAll: {
+            en: 'Please fill in all fields!',
+            de: 'Bitte füllen Sie alle Felder aus!',
+            uk: 'Будь ласка, заповніть усі поля!'
+        },
+        saveError: {
+            en: 'Failed to save changes. Please try again.',
+            de: 'Änderungen konnten nicht gespeichert werden. Bitte versuchen Sie es erneut.',
+            uk: 'Не вдалося зберегти зміни. Спробуйте ще раз.'
+        },
+        deleteConfirm: {
+            en: 'Are you sure you want to delete this word?',
+            de: 'Möchten Sie dieses Wort wirklich löschen?',
+            uk: 'Ви впевнені, що хочете видалити це слово?'
+        },
+        noWords: {
+            en: 'No words in the glossary yet. Add your first word!',
+            de: 'Noch keine Wörter im Glossar. Fügen Sie Ihr erstes Wort hinzu!',
+            uk: 'У словнику ще немає слів. Додайте своє перше слово!'
+        }
+    },
+    types: {
+        noun: { en: 'noun', de: 'Nomen', uk: 'іменник' },
+        verb: { en: 'verb', de: 'Verb', uk: 'дієслово' },
+        adjective: { en: 'adjective', de: 'Adjektiv', uk: 'прикметник' },
+        adverb: { en: 'adverb', de: 'Adverb', uk: 'прислівник' },
+        pronoun: { en: 'pronoun', de: 'Pronomen', uk: 'займенник' },
+        preposition: { en: 'preposition', de: 'Präposition', uk: 'прийменник' },
+        conjunction: { en: 'conjunction', de: 'Konjunktion', uk: 'сполучник' }
+    },
+    statuses: {
+        'studied': { en: 'Studied', de: 'Gelernt', uk: 'Вивчено' },
+        'study': { en: 'Study', de: 'Am Lernen', uk: 'Вчиться' },
+        'not studied': { en: 'Not Studied', de: 'Nicht gelernt', uk: 'Не вивчено' }
+    }
+};
+
+function getAlertText(key) {
+    const lang = getCurrentLang();
+    return LOCALIZATION.alerts[key]?.[lang] || LOCALIZATION.alerts[key]?.en || '';
+}
+
+function getLocalizedType(rawType) {
+    if (!rawType) return '';
+    const key = rawType.toLowerCase();
+    const lang = getCurrentLang();
+    return LOCALIZATION.types[key]?.[lang] || LOCALIZATION.types[key]?.en || rawType;
+}
+
+function getLocalizedStatus(rawStatus) {
+    if (!rawStatus) return '';
+    const key = rawStatus.toLowerCase();
+    const lang = getCurrentLang();
+    return LOCALIZATION.statuses[key]?.[lang] || LOCALIZATION.statuses[key]?.en || rawStatus;
+}
 
 // Допоміжна функція для отримання сьогоднішньої дати YYYY-MM-DD
 function getTodayString() {
@@ -26,7 +93,7 @@ function getTodayString() {
 }
 
 // ============================================================================
-// 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
+// 3. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
 // ============================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -51,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================================
-// 3. ЗАВАНТАЖЕННЯ ТА ЗБЕРЕЖЕННЯ СЛОВНИКА У FIRESTORE
+// 4. ЗАВАНТАЖЕННЯ ТА ЗБЕРЕЖЕННЯ СЛОВНИКА У FIRESTORE
 // ============================================================================
 
 async function loadGlossaryData(userId, langCode) {
@@ -68,7 +135,6 @@ async function loadGlossaryData(userId, langCode) {
             lang => lang.code.toLowerCase() === langCode.toLowerCase()
         );
 
-        // Читаємо слова з масиву `words` (або `glossary` для зворотної сумісності)
         currentGlossary = currentLangObj?.words || currentLangObj?.glossary || [];
         renderGlossaryTable(currentGlossary);
 
@@ -88,11 +154,10 @@ async function saveGlossaryToFirestore(userId, langCode, newGlossary) {
 
         const updatedLanguages = languages.map(lang => {
             if (lang.code.toLowerCase() === langCode.toLowerCase()) {
-                // Зберігаємо та оновлюємо масив `words` для Training Center
                 return { 
                     ...lang, 
                     words: newGlossary,
-                    glossary: newGlossary // також дублюємо для глосарія
+                    glossary: newGlossary 
                 };
             }
             return lang;
@@ -101,12 +166,12 @@ async function saveGlossaryToFirestore(userId, langCode, newGlossary) {
         await updateDoc(userDocRef, { languages: updatedLanguages });
     } catch (error) {
         console.error('Помилка збереження словника в Firestore:', error);
-        alert('Не вдалося зберегти зміни.');
+        alert(getAlertText('saveError'));
     }
 }
 
 // ============================================================================
-// 4. РЕНДЕРИНГ ТАБЛИЦІ СЛОВНИКА
+// 5. РЕНДЕРИНГ ТАБЛИЦІ СЛОВНИКА
 // ============================================================================
 
 function renderGlossaryTable(glossaryArray) {
@@ -121,7 +186,7 @@ function renderGlossaryTable(glossaryArray) {
         tableBody.innerHTML = `
             <tr>
                 <td colspan="6" style="text-align: center; color: white; padding: 20px;">
-                    No words in the glossary yet. Add your first word!
+                    ${getAlertText('noWords')}
                 </td>
             </tr>
         `;
@@ -134,14 +199,18 @@ function renderGlossaryTable(glossaryArray) {
         clone.querySelector('.glossary-table__body-td--number').textContent = index + 1;
         clone.querySelectorAll('.glossary-table__body-td')[1].textContent = item.word || '';
         clone.querySelectorAll('.glossary-table__body-td')[2].textContent = item.translation || '';
-        clone.querySelectorAll('.glossary-table__body-td')[3].textContent = item.typ || '';
+        
+        // Локалізований тип слова
+        clone.querySelectorAll('.glossary-table__body-td')[3].textContent = getLocalizedType(item.typ);
 
         const statusSpan = clone.querySelector('.glossary-table__status');
-        statusSpan.textContent = item.status || 'notlearned';
+        const st = (item.status || 'Not Studied').toLowerCase();
+        
+        // Локалізований статус слова
+        statusSpan.textContent = getLocalizedStatus(st);
         
         let statusClass = 'not-studied';
-        const st = (item.status || '').toLowerCase();
-        if (st === 'studied' || st === 'learned') statusClass = 'studied';
+        if (st === 'studied') statusClass = 'studied';
         else if (st === 'study') statusClass = 'study';
         
         statusSpan.className = `glossary-table__status glossary-table__status--${statusClass}`;
@@ -152,7 +221,6 @@ function renderGlossaryTable(glossaryArray) {
         if (editBtn) editBtn.setAttribute('data-id', item.id);
         if (deleteBtn) deleteBtn.setAttribute('data-id', item.id);
 
-        // Підключаємо обробники подій
         if (deleteBtn) deleteBtn.addEventListener('click', () => handleDeleteWord(item.id));
         if (editBtn) editBtn.addEventListener('click', () => handleEditClick(item));
 
@@ -161,7 +229,7 @@ function renderGlossaryTable(glossaryArray) {
 }
 
 // ============================================================================
-// 5. ІТЕРАЦІЇ З ФОРМОЮ ТА КНОПКАМИ (Додавання, Редагування, Видалення)
+// 6. ІТЕРАЦІЇ З ФОРМОЮ ТА КНОПКАМИ
 // ============================================================================
 
 function initGlossaryUI() {
@@ -212,12 +280,11 @@ function initGlossaryUI() {
             const status = statusSelect.value;
 
             if (!word || !translation || !typ || !status) {
-                alert('Будь ласка, заповніть усі поля!');
+                alert(getAlertText('fillAll'));
                 return;
             }
 
             if (editingWordId) {
-                // РЕЖИМ РЕДАГУВАННЯ: оновлюємо значення, зберігаючи параметри тренажера (stage, nextReviewDate, createdAt)
                 currentGlossary = currentGlossary.map(item => {
                     if (item.id === editingWordId) {
                         return { 
@@ -233,24 +300,21 @@ function initGlossaryUI() {
                     return item;
                 });
             } else {
-                // РЕЖИМ ДОДАВАННЯ: додаємо обов'язкові поля для Training Center
                 const newItem = {
                     id: Date.now().toString(),
                     word,
                     translation,
                     typ,
                     status,
-                    stage: 1,                       // Початковий етап повторення
-                    nextReviewDate: getTodayString(),// З'являється в тренажері на "Today"
+                    stage: 1,
+                    nextReviewDate: getTodayString(),
                     createdAt: new Date().toISOString()
                 };
                 currentGlossary.push(newItem);
             }
 
-            // Зберігаємо в базу Firestore
             await saveGlossaryToFirestore(user.uid, currentLangCode, currentGlossary);
 
-            // Оновлюємо таблицю та скидаємо форму
             renderGlossaryTable(currentGlossary);
             submitForm.reset();
             formRow.classList.add('disable');
@@ -263,7 +327,6 @@ function initGlossaryUI() {
     }
 }
 
-// Функція редагування слова
 function handleEditClick(item) {
     const formRow = document.querySelector('.glossary-form__tr');
     const addBtn = document.getElementById('glossary-table__add-btn');
@@ -287,11 +350,11 @@ function handleEditClick(item) {
 }
 
 // ============================================================================
-// 6. ВИДАЛЕННЯ СЛОВА
+// 7. ВИДАЛЕННЯ СЛОВА
 // ============================================================================
 
 async function handleDeleteWord(wordId) {
-    const isConfirmed = confirm('Are you sure you want to delete this word?');
+    const isConfirmed = confirm(getAlertText('deleteConfirm'));
     if (!isConfirmed) return;
 
     const user = auth.currentUser;

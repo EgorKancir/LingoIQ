@@ -125,7 +125,7 @@
                             </div>
                             <div class="user-info__buttons-group">
                                 <button class="user-info__submit" type="submit" id="edit-user-info-btn" data-i18n="user-info.save">Save</button>
-                                <button class="user-info__button-cancel" type="button" id="cancel-edit-btn" data-i18n="user-info.cancel">Cancel</button>
+                                <button class="user-info__button-cancel" type="button" id="cancel-edit-btn" data-i18n="user-info.cencel">Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -150,10 +150,10 @@
                         <img class="your-languages__language-button-icon" src="./src/img/plus.svg" alt="plus">
                     </button>
                     <form class="your-languages__add-language-form disable" id="add-language-form">
-                        <label class="your-languages__label" for="add-language-input" data-i18n="your-language.choose-a-new-lang-to-learn">Choose a new language to learn
+                        <label class="your-languages__label" for="add-language-input">
+                            <span data-i18n="your-language.choose-a-new-lang-to-learn">Choose a new language to learn</span>
                             <!-- Інпут із прив'язаним datalist -->
-                            <input type="text" id="add-language-input" list="add-languages-list" placeholder="Language" data-i18n-placeholder="your-language.language"
-                                class="your-language-popup__input" autocomplete="off">
+                            <input type="text" id="add-language-input" list="add-languages-list" placeholder="Language" data-i18n-placeholder="your-language.language" class="your-language-popup__input" autocomplete="off">
                         </label>
                         <!-- Сам datalist, який заповнюватиме функція -->
                         <datalist id="add-languages-list"></datalist>
