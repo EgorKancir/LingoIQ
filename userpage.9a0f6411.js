@@ -717,6 +717,13 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 // ============================================================================
 // 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ ТА БАЗОВИХ МОДУЛІВ
 // ============================================================================
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// ============================================================================
+// 4. РОБОТА З БАЗОЮ ДАНИХ (FIRESTORE) ТА СПИСКАМИ
+// ============================================================================
+parcelHelpers.export(exports, "populateLanguageList", ()=>populateLanguageList);
+parcelHelpers.export(exports, "populateAddLanguageList", ()=>populateAddLanguageList);
 var _firebaseJs = require("./firebase.js");
 var _auth = require("firebase/auth");
 var _firestore = require("firebase/firestore");
@@ -727,6 +734,7 @@ let editForm;
 let userSection;
 let editToggleBtn;
 let cancelEditBtn;
+let selectedAvatarURL = '';
 let isRedirecting = false;
 let currentUserLanguages = [];
 // ============================================================================
@@ -739,6 +747,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     cancelEditBtn = document.getElementById('cancel-edit-btn');
     (0, _headerJs.initHeader)();
     (0, _i18NJs.initLanguagePicker)();
+    populateLanguageList();
+    populateAddLanguageList();
     initEventListeners();
     initAvatarSelection();
     initYourLanguagesLogic();
@@ -757,7 +767,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
 });
 // ============================================================================
-// 3. ДОПОМІЖНІ ФУНКЦІЇ ТА ЛОГІКА ФОРМ (ТІЛЬКИ ДЛЯ USERPAGE)
+// 3. ДОПОМІЖНІ ФУНКЦІЇ ТА ЛОГІКА ФОРМ
 // ============================================================================
 function showUserSection() {
     if (editForm) {
@@ -776,6 +786,7 @@ function initEventListeners() {
         e.stopPropagation();
         showUserSection();
     });
+    if (editForm) editForm.addEventListener('submit', handleFormSubmit);
 }
 function initAvatarSelection() {
     const avatarOptions = document.querySelectorAll('.user-info__avatar-option');
@@ -783,12 +794,127 @@ function initAvatarSelection() {
         avatarImg.addEventListener('click', (e)=>{
             avatarOptions.forEach((img)=>img.classList.remove('active'));
             e.target.classList.add('active');
+            selectedAvatarURL = e.target.src;
         });
     });
 }
-// ============================================================================
-// 4. РОБОТА З БАЗОЮ ДАНИХ (FIRESTORE) ТА СПИСКАМИ ВИВЧЕННЯ МОВ
-// ============================================================================
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    const user = (0, _firebaseJs.auth).currentUser;
+    if (!user) return;
+    const submitBtn = document.getElementById('edit-user-info-btn');
+    const newUsername = document.getElementById('username-edit')?.value.trim();
+    const newNativeLang = document.getElementById('native-lang-input')?.value.trim();
+    try {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            const currentLang = localStorage.getItem('lingoiq_lang') || 'en';
+            const savingTexts = {
+                en: 'Saving...',
+                de: 'Wird gespeichert...',
+                uk: "\u0417\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F..."
+            };
+            submitBtn.textContent = savingTexts[currentLang] || savingTexts['en'];
+        }
+        const firestoreUpdates = {};
+        if (newUsername) firestoreUpdates.displayName = newUsername;
+        if (newNativeLang) firestoreUpdates.nativeLang = newNativeLang;
+        if (selectedAvatarURL) firestoreUpdates.photoURL = selectedAvatarURL;
+        if (Object.keys(firestoreUpdates).length > 0) await (0, _firestore.setDoc)((0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid), firestoreUpdates, {
+            merge: true
+        });
+        await (0, _headerJs.loadHeaderUserData)(user);
+        showUserSection();
+    } catch (error) {
+        console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F:", error);
+        const currentLang = localStorage.getItem('lingoiq_lang') || 'en';
+        const alerts = {
+            en: 'Failed to save changes.',
+            de: "\xc4nderungen konnten nicht gespeichert werden.",
+            uk: "\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u0437\u043C\u0456\u043D\u0438."
+        };
+        alert(alerts[currentLang] || alerts['en']);
+    } finally{
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            const currentLang = localStorage.getItem('lingoiq_lang') || 'en';
+            const saveTexts = {
+                en: 'Save',
+                de: 'Gespeichert',
+                uk: "\u0417\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043E"
+            };
+            submitBtn.textContent = saveTexts[currentLang] || saveTexts['en'];
+        }
+    }
+}
+function populateLanguageList() {
+    const datalist = document.getElementById('languages-list');
+    if (!datalist) return;
+    const langCodes = [
+        'uk',
+        'de',
+        'en',
+        'es',
+        'fr',
+        'it',
+        'pl',
+        'pt',
+        'ro',
+        'tr',
+        'zh',
+        'ja',
+        'ko',
+        'ar',
+        'hi',
+        'cs',
+        'nl',
+        'sv'
+    ];
+    const displayNames = new Intl.DisplayNames([
+        'uk',
+        'en'
+    ], {
+        type: 'language'
+    });
+    datalist.innerHTML = langCodes.map((code)=>{
+        const langName = displayNames.of(code);
+        return `<option value="${langName} (${code.toUpperCase()})">${langName}</option>`;
+    }).join('');
+}
+function populateAddLanguageList() {
+    const datalist = document.getElementById('add-languages-list');
+    if (!datalist) return;
+    const langCodes = [
+        'uk',
+        'de',
+        'en',
+        'es',
+        'fr',
+        'it',
+        'pl',
+        'pt',
+        'ro',
+        'tr',
+        'zh',
+        'ja',
+        'ko',
+        'ar',
+        'hi',
+        'cs',
+        'nl',
+        'sv'
+    ];
+    const displayNames = new Intl.DisplayNames([
+        'uk',
+        'en'
+    ], {
+        type: 'language'
+    });
+    datalist.innerHTML = langCodes.map((code)=>{
+        const langName = displayNames.of(code);
+        return `<option value="${langName} (${code.toUpperCase()})" data-code="${code}"></option>`;
+    }).join('');
+}
 function getSelectedLanguageCode() {
     const input = document.getElementById('add-language-input');
     const datalist = document.getElementById('add-languages-list');
@@ -833,7 +959,11 @@ function getFlagUrl(langCode) {
         sv: 'se',
         el: 'gr',
         cs: 'cz',
-        et: 'ee'
+        et: 'ee',
+        hi: 'in',
+        zh: 'cn',
+        ko: 'kr',
+        ar: 'sa'
     };
     const countryCode = flagMap[lower] || lower;
     return `https://flagcdn.com/${countryCode.toLowerCase()}.svg`;
@@ -843,7 +973,7 @@ function renderUserLanguages(userLanguages = []) {
     if (!languageListContainer) return;
     languageListContainer.innerHTML = '';
     if (!userLanguages || userLanguages.length === 0) {
-        languageListContainer.innerHTML = '<p class="no-languages-text" style="color: white; padding: 10px;">No languages added yet</p>';
+        languageListContainer.innerHTML = '<p class="no-languages-text" style="color: white; padding: 10px;" data-i18n="calendar.no-languages-added-yet">No languages added yet</p>';
         return;
     }
     userLanguages.forEach((langObj)=>{
@@ -881,17 +1011,41 @@ function initYourLanguagesLogic() {
         e.preventDefault();
         const langCode = getSelectedLanguageCode();
         const user = (0, _firebaseJs.auth).currentUser;
+        // Поточна мова інтерфейсу для alert
+        const currentLang = localStorage.getItem('lingoiq_lang') || 'en';
+        const alerts = {
+            selectLanguage: {
+                en: 'Please select a language from the list!',
+                de: "Bitte w\xe4hlen Sie eine Sprache aus der Liste!",
+                uk: "\u0411\u0443\u0434\u044C \u043B\u0430\u0441\u043A\u0430, \u043E\u0431\u0435\u0440\u0456\u0442\u044C \u043C\u043E\u0432\u0443 \u0437\u0456 \u0441\u043F\u0438\u0441\u043A\u0443!"
+            },
+            loginRequired: {
+                en: 'Please log in to the system!',
+                de: 'Bitte melden Sie sich an!',
+                uk: "\u0411\u0443\u0434\u044C \u043B\u0430\u0441\u043A\u0430, \u0443\u0432\u0456\u0439\u0434\u0456\u0442\u044C \u0443 \u0441\u0438\u0441\u0442\u0435\u043C\u0443!"
+            },
+            alreadyExists: {
+                en: 'This language is already in your learning list!',
+                de: 'Diese Sprache ist bereits in Ihrer Lernliste!',
+                uk: "\u0426\u044F \u043C\u043E\u0432\u0430 \u0432\u0436\u0435 \u0454 \u0443 \u0432\u0430\u0448\u043E\u043C\u0443 \u0441\u043F\u0438\u0441\u043A\u0443 \u0432\u0438\u0432\u0447\u0435\u043D\u043D\u044F!"
+            },
+            saveError: {
+                en: 'Failed to save language. Please try again.',
+                de: 'Sprache konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.',
+                uk: "\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u043C\u043E\u0432\u0443. \u0421\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0449\u0435 \u0440\u0430\u0437."
+            }
+        };
         if (!langCode) {
-            alert("\u0411\u0443\u0434\u044C \u043B\u0430\u0441\u043A\u0430, \u043E\u0431\u0435\u0440\u0456\u0442\u044C \u043C\u043E\u0432\u0443 \u0437\u0456 \u0441\u043F\u0438\u0441\u043A\u0443!");
+            alert(alerts.selectLanguage[currentLang] || alerts.selectLanguage.en);
             return;
         }
         if (!user) {
-            alert("\u0411\u0443\u0434\u044C \u043B\u0430\u0441\u043A\u0430, \u0443\u0432\u0456\u0439\u0434\u0456\u0442\u044C \u0443 \u0441\u0438\u0441\u0442\u0435\u043C\u0443!");
+            alert(alerts.loginRequired[currentLang] || alerts.loginRequired.en);
             return;
         }
         const languageExists = currentUserLanguages.some((lang)=>lang.code === langCode);
         if (languageExists) {
-            alert("\u0426\u044F \u043C\u043E\u0432\u0430 \u0432\u0436\u0435 \u0454 \u0443 \u0432\u0430\u0448\u043E\u043C\u0443 \u0441\u043F\u0438\u0441\u043A\u0443 \u0432\u0438\u0432\u0447\u0435\u043D\u043D\u044F!");
+            alert(alerts.alreadyExists[currentLang] || alerts.alreadyExists.en);
             return;
         }
         try {
@@ -904,12 +1058,13 @@ function initYourLanguagesLogic() {
             if (addBtn) addBtn.classList.remove('disable');
             input.value = '';
         } catch (error) {
-            alert("\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u043C\u043E\u0432\u0443. \u0421\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0449\u0435 \u0440\u0430\u0437.");
+            console.error('Save language error:', error);
+            alert(alerts.saveError[currentLang] || alerts.saveError.en);
         }
     });
 }
 
-},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","./header.js":"7clXR","./calendar.js":"5Lz3E","./i18n.js":"lQCzu"}],"7clXR":[function(require,module,exports,__globalThis) {
+},{"./firebase.js":"8uCPj","firebase/auth":"4ZBbi","firebase/firestore":"3RBs1","./header.js":"7clXR","./calendar.js":"5Lz3E","./i18n.js":"lQCzu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"7clXR":[function(require,module,exports,__globalThis) {
 // ============================================================================
 // 1. ІМПОРТ ЗАЛЕЖНОСТЕЙ
 // ============================================================================
@@ -1229,7 +1384,7 @@ function cleanDateStr(dateStr) {
 // Форматування дати: якщо сьогодні — "Today", інакше 'DD.MM.YYYY'
 function formatDate(dateStr, todayStr) {
     if (!dateStr) return '';
-    if (dateStr === todayStr) return 'Today';
+    if (dateStr === todayStr) return '<span data-i18n="calendar.today">Today</span>';
     const [year, month, day] = dateStr.split('-');
     return `${day}.${month}.${year}`;
 }
@@ -1242,13 +1397,13 @@ function getDateClass(dateStr, todayStr) {
 async function initCalendar(user) {
     const calendarContainer = document.querySelector('.calendar__date-group');
     if (!calendarContainer) return;
-    calendarContainer.innerHTML = '<p class="loading-text" style="color: white; text-align: center; width: 100%;">Loading calendar schedule...</p>';
+    calendarContainer.innerHTML = '<p class="loading-text" style="color: white; text-align: center; width: 100%;" data-i18n="calendar.loading-calendar-schedule">Loading calendar schedule...</p>';
     try {
         if (!user) return;
         const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
         const docSnap = await (0, _firestore.getDoc)(userDocRef);
         if (!docSnap.exists()) {
-            calendarContainer.innerHTML = '<p class="empty-text" style="color: white; text-align: center; width: 100%;">No data found.</p>';
+            calendarContainer.innerHTML = '<p class="empty-text" style="color: white; text-align: center; width: 100%;" data-i18n="calendar.no-data-found">No data found.</p>';
             return;
         }
         const userData = docSnap.data();
@@ -1289,7 +1444,7 @@ async function initCalendar(user) {
         renderCalendarCards(calendarItems);
     } catch (error) {
         console.error('Error loading calendar data:', error);
-        calendarContainer.innerHTML = `<p class="error-text" style="color: red; text-align: center; width: 100%;">Failed to load calendar: ${error.message}</p>`;
+        calendarContainer.innerHTML = `<p class="error-text" style="color: red; text-align: center; width: 100%;"><span data-i18n="calendar.failed-to-load-calendar">Failed to load calendar</span>: ${error.message}</p>`;
     }
 }
 function renderCalendarCards(items) {
@@ -1297,20 +1452,20 @@ function renderCalendarCards(items) {
     if (!calendarContainer) return;
     calendarContainer.innerHTML = '';
     if (items.length === 0) {
-        calendarContainer.innerHTML = '<p class="empty-text" style="color: white; text-align: center; width: 100%;">No active repetition tasks found!</p>';
+        calendarContainer.innerHTML = '<p class="empty-text" style="color: white; text-align: center; width: 100%;" data-i18n="calendar.no-oactive-repetition-tasks-found">No active repetition tasks found!</p>';
         return;
     }
     items.forEach((item)=>{
         const elementDiv = document.createElement('div');
         elementDiv.className = 'calendar__element';
         elementDiv.innerHTML = `
-            <p class="calendar__element-date">Date: <span class="calendar__element-date-number ${item.dateClass}">${item.formattedDate}</span></p>
+            <p class="calendar__element-date"><span data-i18n="calendar.date">Date</span>: <span class="calendar__element-date-number ${item.dateClass}">${item.formattedDate}</span></p>
             <div class="calendar__element-language-block">
                 <img src="${item.flagSrc}" alt="${item.langName} Flag" class="calendar__element-language-icon">
                 <p class="calendar__element-language-name">${item.langName}</p>
             </div>
-            <p class="calendar__element-words">Number of words: <span class="calendar__element-number">${item.wordsCount}</span></p>
-            <a href="./training-center.html?lang=${item.langCode}" class="calendar__element-repeat">Repeat</a>
+            <p class="calendar__element-words"><span data-i18n="calendar.number-of-words">Number of words</span>: <span class="calendar__element-number">${item.wordsCount}</span></p>
+            <a href="./training-center.html?lang=${item.langCode}" class="calendar__element-repeat" data-i18n="calendar.repeat">Repeat</a>
         `;
         calendarContainer.appendChild(elementDiv);
     });

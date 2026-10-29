@@ -316,8 +316,8 @@
   border-radius: 13px;
   justify-content: center;
   align-items: center;
-  width: 70px;
   height: 30px;
+  padding: 0 5px;
   font-family: Inter, sans-serif;
   font-size: 14px;
   font-weight: 900;
@@ -442,8 +442,8 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  gap: 20px;
   width: 200px;
-  height: 150px;
   padding: 20px 10px;
   display: flex;
   bottom: -50px;
@@ -486,9 +486,11 @@
 }
 
 .your-languages__buttons-group {
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 20px;
+  width: 140px;
   display: flex;
 }
 

@@ -730,7 +730,38 @@ let currentCategory = '';
 let editingRuleIndex = null;
 let allCategoryRules = []; // Зберігаємо всі правила поточної категорії для пошуку
 // ============================================================================
-// 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
+// 2. СИСТЕМА ЛОКАЛІЗАЦІЇ ДИНАМІЧНИХ ТЕКСТІВ
+// ============================================================================
+function getRuleTranslation(key) {
+    const rawLang = localStorage.getItem('lingoiq_lang') || 'en';
+    const currentLang = rawLang.substring(0, 2).toLowerCase();
+    const translations = {
+        en: {
+            loading: 'Loading...',
+            'no-rules-added-yet': 'No rules added yet.',
+            'no-rules-for-this-language-yet': 'No rules for this language yet.',
+            'failed-to-load-rules': 'Failed to load rules',
+            'no-rules-found': 'No rules found.'
+        },
+        de: {
+            loading: 'Wird geladen...',
+            'no-rules-added-yet': "Noch keine Regeln hinzugef\xfcgt.",
+            'no-rules-for-this-language-yet': "Noch keine Regeln f\xfcr diese Sprache vorhanden.",
+            'failed-to-load-rules': 'Fehler beim Laden der Regeln',
+            'no-rules-found': 'Keine Regeln gefunden.'
+        },
+        uk: {
+            loading: "\u0417\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F...",
+            'no-rules-added-yet': "\u041F\u0440\u0430\u0432\u0438\u043B \u0449\u0435 \u043D\u0435 \u0434\u043E\u0434\u0430\u043D\u043E.",
+            'no-rules-for-this-language-yet': "\u0414\u043B\u044F \u0446\u0456\u0454\u0457 \u043C\u043E\u0432\u0438 \u0449\u0435 \u043D\u0435\u043C\u0430\u0454 \u043F\u0440\u0430\u0432\u0438\u043B.",
+            'failed-to-load-rules': "\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0438\u0442\u0438 \u043F\u0440\u0430\u0432\u0438\u043B\u0430",
+            'no-rules-found': "\u041F\u0440\u0430\u0432\u0438\u043B \u043D\u0435 \u0437\u043D\u0430\u0439\u0434\u0435\u043D\u043E."
+        }
+    };
+    return translations[currentLang]?.[key] || translations.en[key] || key;
+}
+// ============================================================================
+// 3. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
 // ============================================================================
 document.addEventListener('DOMContentLoaded', ()=>{
     (0, _headerJs.initHeader)();
@@ -746,7 +777,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
 });
 // ============================================================================
-// 3. НАВІГАЦІЯ ТА ПЕРЕМИКАННЯ МІЖ КАТЕГОРІЯМИ І РОЗДІЛАМИ
+// 4. НАВІГАЦІЯ ТА ПЕРЕМИКАННЯ МІЖ КАТЕГОРІЯМИ І РОЗДІЛАМИ
 // ============================================================================
 function initRulesNavigation() {
     const rulesInfoGroup = document.querySelector('.rules__info-group');
@@ -756,17 +787,22 @@ function initRulesNavigation() {
     const ruleTitle = document.querySelector('.rule-section__title');
     const icons = document.querySelectorAll('.rule-section__icon');
     const categoryButtons = document.querySelectorAll('.rules-group__rules-element');
+    categoryButtons.buttonList = categoryButtons; // для зручності
     categoryButtons.forEach((button)=>{
         button.addEventListener('click', async ()=>{
-            const categoryTitle = button.querySelector('.rules-group__rules-title').textContent;
-            currentCategory = categoryTitle.toLowerCase().trim().replace(/\s+/g, '-');
+            // Отримуємо системний ключ категорії з атрибута (наприклад, "grammar")
+            const categoryKey = button.getAttribute('data-category');
+            const categoryTitleText = button.querySelector('.rules-group__rules-title').textContent;
+            currentCategory = categoryKey; // Використовуємо його як ключ для бази даних
             if (rulesInfoGroup) rulesInfoGroup.classList.add('disable');
             rulesListBox.classList.add('disable');
             ruleSection.classList.remove('disable');
-            if (ruleTitle) ruleTitle.textContent = categoryTitle;
+            if (ruleTitle) // Заголовок залишається локалізованим текстом кнопки
+            ruleTitle.textContent = categoryTitleText;
+            // Порівнюємо іконки за унікальним атрибутом data-category замість alt
             icons.forEach((icon)=>{
                 icon.classList.add('disable');
-                if (icon.alt.toLowerCase() === categoryTitle.toLowerCase()) icon.classList.remove('disable');
+                if (icon.getAttribute('data-category') === categoryKey) icon.classList.remove('disable');
             });
             // Очищуємо поле пошуку при переході в іншу категорію
             const searchInput = document.getElementById('search-rules');
@@ -783,7 +819,7 @@ function initRulesNavigation() {
     });
 }
 // ============================================================================
-// 4. РОБОТА З МАСИВОМ LANGUAGES ТА ОБ'ЄКТОМ RULES У ДОКУМЕНТІ КОРИСТУВАЧА
+// 5. РОБОТА З МАСИВОМ LANGUAGES ТА ОБ'ЄКТОМ RULES У ДОКУМЕНТІ КОРИСТУВАЧА
 // ============================================================================
 function initAddRuleForm() {
     const addBtn = document.querySelector('.rule-section__add-btn');
@@ -801,8 +837,17 @@ function initAddRuleForm() {
     if (form) form.addEventListener('submit', async (e)=>{
         e.preventDefault();
         const user = (0, _firebaseJs.auth).currentUser;
+        const rawLang = localStorage.getItem('lingoiq_lang') || 'en';
+        const currentLang = rawLang.substring(0, 2).toLowerCase();
+        const alerts = {
+            loginAgain: {
+                en: 'Please log in again.',
+                de: 'Bitte melden Sie sich erneut an.',
+                uk: "\u0411\u0443\u0434\u044C \u043B\u0430\u0441\u043A\u0430, \u0443\u0432\u0456\u0439\u0434\u0456\u0442\u044C \u0437\u043D\u043E\u0432\u0443."
+            }
+        };
         if (!user) {
-            alert('Please log in again.');
+            alert(alerts.loginAgain[currentLang] || alerts.loginAgain.en);
             return;
         }
         const title = document.getElementById('add-new-rule-title').value.trim();
@@ -849,7 +894,12 @@ function initAddRuleForm() {
             resetFormState();
         } catch (error) {
             console.error('Error saving rule:', error);
-            alert(`Error saving rule: ${error.message}`);
+            const saveErrorAlerts = {
+                en: `Error saving rule: ${error.message}`,
+                de: `Fehler beim Speichern der Regel: ${error.message}`,
+                uk: `\u{41F}\u{43E}\u{43C}\u{438}\u{43B}\u{43A}\u{430} \u{437}\u{431}\u{435}\u{440}\u{435}\u{436}\u{435}\u{43D}\u{43D}\u{44F} \u{43F}\u{440}\u{430}\u{432}\u{438}\u{43B}\u{430}: ${error.message}`
+            };
+            alert(saveErrorAlerts[currentLang] || saveErrorAlerts.en);
         }
     });
 }
@@ -867,14 +917,14 @@ function resetFormState() {
 async function loadRulesFromArray(category) {
     const container = document.querySelector('.rule-section__rules-container');
     if (!container) return;
-    container.innerHTML = '<p class="loading-text" style="color: white; text-align: center;">Loading...</p>';
+    container.innerHTML = `<p class="loading-text" style="color: white; text-align: center;">${getRuleTranslation('loading')}</p>`;
     try {
         const user = (0, _firebaseJs.auth).currentUser;
         if (!user) return;
         const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
         const docSnap = await (0, _firestore.getDoc)(userDocRef);
         if (!docSnap.exists()) {
-            container.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No rules added yet.</p>';
+            container.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getRuleTranslation('no-rules-added-yet')}</p>`;
             allCategoryRules = [];
             return;
         }
@@ -882,7 +932,7 @@ async function loadRulesFromArray(category) {
         const languagesArray = data.languages || [];
         const langObj = languagesArray.find((l)=>l.code === currentLangCode);
         if (!langObj || !langObj.rules) {
-            container.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No rules for this language yet.</p>';
+            container.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getRuleTranslation('no-rules-for-this-language-yet')}</p>`;
             allCategoryRules = [];
             return;
         }
@@ -890,7 +940,7 @@ async function loadRulesFromArray(category) {
         renderRulesList(allCategoryRules);
     } catch (error) {
         console.error('Error loading rules:', error);
-        container.innerHTML = `<p class="error-text" style="color: red; text-align: center;">Failed to load rules: ${error.message}</p>`;
+        container.innerHTML = `<p class="error-text" style="color: red; text-align: center;"><span>${getRuleTranslation('failed-to-load-rules')}</span>: ${error.message}</p>`;
     }
 }
 // Рендеринг списку правил
@@ -899,27 +949,25 @@ function renderRulesList(rulesArray) {
     if (!container) return;
     container.innerHTML = '';
     if (rulesArray.length === 0) {
-        container.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No rules found.</p>';
+        container.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getRuleTranslation('no-rules-found')}</p>`;
         return;
     }
     rulesArray.forEach((ruleData)=>{
-        // Знаходимо реальний індекс правила в повному масиві категорії (потрібно для редагування та видалення)
+        // Знаходимо реальний індекс правила в повному масиві категорії
         const originalIndex = allCategoryRules.findIndex((r)=>r.id === ruleData.id);
         renderRuleItem(ruleData, originalIndex);
     });
 }
 // ============================================================================
-// 5. ПОШУК ТА ФІЛЬТРАЦІЯ ПРАВИЛ
+// 6. ПОШУК ТА ФІЛЬТРАЦІЯ ПРАВИЛ
 // ============================================================================
 function initSearchBox() {
     const searchInput = document.getElementById('search-rules');
     const searchButton = document.querySelector('.rule-search-box__button');
     if (!searchInput) return;
-    // Фільтрація в реальному часі при введенні тексту
     searchInput.addEventListener('input', (e)=>{
         filterRules(e.target.value);
     });
-    // Обробка кліку на кнопку пошуку
     if (searchButton) searchButton.addEventListener('click', (e)=>{
         e.preventDefault();
         filterRules(searchInput.value);
@@ -931,7 +979,6 @@ function filterRules(queryText) {
         renderRulesList(allCategoryRules);
         return;
     }
-    // Шукаємо збіги за назвою (title) або текстом параграфа (paragraf)
     const filteredRules = allCategoryRules.filter((rule)=>{
         const title = (rule.title || '').toLowerCase();
         const paragraf = (rule.paragraf || '').toLowerCase();
@@ -940,7 +987,7 @@ function filterRules(queryText) {
     renderRulesList(filteredRules);
 }
 // ============================================================================
-// 6. РЕНДЕРИНГ ОКРЕМОЇ КАРТКИ ПРАВИЛА ЧЕРЕЗ TEMPLATE
+// 7. РЕНДЕРИНГ ОКРЕМОЇ КАРТКИ ПРАВИЛА ЧЕРЕЗ TEMPLATE
 // ============================================================================
 function renderRuleItem(ruleData, index) {
     const container = document.querySelector('.rule-section__rules-container');
@@ -1000,7 +1047,6 @@ function renderRuleItem(ruleData, index) {
                         await (0, _firestore.setDoc)(userDocRef, userData, {
                             merge: true
                         });
-                        // Оновлюємо локальний масив та перерисовуємо список з урахуванням пошуку
                         const searchInput = document.getElementById('search-rules');
                         const currentQuery = searchInput ? searchInput.value : '';
                         allCategoryRules = rulesMap[currentCategory];
@@ -1015,7 +1061,7 @@ function renderRuleItem(ruleData, index) {
     container.appendChild(clone);
 }
 // ============================================================================
-// 7. ПОПАП ПЕРЕГЛЯДУ ЗОБРАЖЕННЯ НА ВЕСЬ ЕКРАН
+// 8. ПОПАП ПЕРЕГЛЯДУ ЗОБРАЖЕННЯ НА ВЕСЬ ЕКРАН
 // ============================================================================
 function initImagePopup() {
     const popup = document.querySelector('.rule-section__popup');

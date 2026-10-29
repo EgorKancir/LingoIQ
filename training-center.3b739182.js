@@ -742,7 +742,59 @@ let currentActiveDateKey = null; // Дата групи слів, яку зар�
 let currentSessionWords = []; // Масив слів для поточної сесії тренування
 let currentWordIndex = 0; // Індекс поточного слова в тренажері
 // ============================================================================
-// 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
+// 2. СИСТЕМА ЛОКАЛІЗАЦІЇ ДИНАМІЧНИХ ТЕКСТІВ ТА ПОВІДОМЛЕНЬ
+// ============================================================================
+function getTrainingTranslation(key) {
+    const rawLang = localStorage.getItem('lingoiq_lang') || 'en';
+    const currentLang = rawLang.substring(0, 2).toLowerCase();
+    const translations = {
+        en: {
+            loadingSchedule: 'Loading training schedule...',
+            noWords: 'No words found.',
+            noLanguage: 'No language found.',
+            noWordsAdded: 'No words added for this language yet.',
+            allLearned: 'Congratulations! All words are learned.',
+            noSessions: 'No active training sessions.',
+            today: 'Today',
+            start: 'Start',
+            sessionCompleted: 'Training session completed successfully!',
+            loginAgain: 'Please log in again.',
+            failedLoad: 'Failed to load data',
+            failedUpdate: 'Error updating word progress in Firestore:'
+        },
+        de: {
+            loadingSchedule: 'Trainingsplan wird geladen...',
+            noWords: "Keine W\xf6rter gefunden.",
+            noLanguage: 'Keine Sprache gefunden.',
+            noWordsAdded: "Noch keine W\xf6rter f\xfcr diese Sprache hinzugef\xfcgt.",
+            allLearned: "Herzlichen Gl\xfcckwunsch! Alle W\xf6rter wurden gelernt.",
+            noSessions: 'Keine aktiven Trainingseinheiten.',
+            today: 'Heute',
+            start: 'Starten',
+            sessionCompleted: 'Trainingseinheit erfolgreich abgeschlossen!',
+            loginAgain: 'Bitte melden Sie sich erneut an.',
+            failedLoad: 'Fehler beim Laden der Daten',
+            failedUpdate: 'Fehler beim Aktualisieren des Wortfortschritts in Firestore:'
+        },
+        uk: {
+            loadingSchedule: "\u0417\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0440\u043E\u0437\u043A\u043B\u0430\u0434\u0443 \u0442\u0440\u0435\u043D\u0443\u0432\u0430\u043D\u044C...",
+            noWords: "\u0421\u043B\u0456\u0432 \u043D\u0435 \u0437\u043D\u0430\u0439\u0434\u0435\u043D\u043E.",
+            noLanguage: "\u041C\u043E\u0432\u0443 \u043D\u0435 \u0437\u043D\u0430\u0439\u0434\u0435\u043D\u043E.",
+            noWordsAdded: "\u0414\u043B\u044F \u0446\u0456\u0454\u0457 \u043C\u043E\u0432\u0438 \u0449\u0435 \u043D\u0435 \u0434\u043E\u0434\u0430\u043D\u043E \u0441\u043B\u0456\u0432.",
+            allLearned: "\u0412\u0456\u0442\u0430\u0454\u043C\u043E! \u0423\u0441\u0456 \u0441\u043B\u043E\u0432\u0430 \u0432\u0438\u0432\u0447\u0435\u043D\u043E.",
+            noSessions: "\u041D\u0435\u043C\u0430\u0454 \u0430\u043A\u0442\u0438\u0432\u043D\u0438\u0445 \u0441\u0435\u0441\u0456\u0439 \u0442\u0440\u0435\u043D\u0443\u0432\u0430\u043D\u043D\u044F.",
+            today: "\u0421\u044C\u043E\u0433\u043E\u0434\u043D\u0456",
+            start: "\u041F\u043E\u0447\u0430\u0442\u0438",
+            sessionCompleted: "\u0422\u0440\u0435\u043D\u0443\u0432\u0430\u043D\u043D\u044F \u0443\u0441\u043F\u0456\u0448\u043D\u043E \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u043E!",
+            loginAgain: "\u0411\u0443\u0434\u044C \u043B\u0430\u0441\u043A\u0430, \u0443\u0432\u0456\u0439\u0434\u0456\u0442\u044C \u0437\u043D\u043E\u0432\u0443.",
+            failedLoad: "\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0438\u0442\u0438 \u0434\u0430\u043D\u0456",
+            failedUpdate: "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043E\u043D\u043E\u0432\u043B\u0435\u043D\u043D\u044F \u043F\u0440\u043E\u0433\u0440\u0435\u0441\u0443 \u0441\u043B\u043E\u0432\u0430 \u0443 Firestore:"
+        }
+    };
+    return translations[currentLang]?.[key] || translations.en[key] || key;
+}
+// ============================================================================
+// 3. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
 // ============================================================================
 document.addEventListener('DOMContentLoaded', ()=>{
     (0, _headerJs.initHeader)();
@@ -757,7 +809,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
 });
 // ============================================================================
-// 3. ДОПОМІЖНІ ФУНКЦІЇ ДАТ ТА ФОРМАТУВАННЯ
+// 4. ДОПОМІЖНІ ФУНКЦІЇ ДАТ ТА ФОРМАТУВАННЯ
 // ============================================================================
 // Отримати сьогоднішню дату у форматі 'YYYY-MM-DD'
 function getTodayString() {
@@ -777,32 +829,37 @@ function calculateNextReviewDate(daysToAdd) {
     return `${year}-${month}-${day}`;
 }
 // ============================================================================
-// 4. ЗАВАНТАЖЕННЯ ТА ОБРОБКА ДАНИХ ІЗ FIRESTORE
+// 5. ЗАВАНТАЖЕННЯ ТА ОБРОБКА ДАНИХ ІЗ FIRESTORE
 // ============================================================================
 async function loadAndProcessTrainingData() {
     const trainingGroup = document.querySelector('.training-group');
     if (!trainingGroup) return;
-    trainingGroup.innerHTML = '<p class="loading-text" style="color: white; text-align: center;">Loading training schedule...</p>';
+    trainingGroup.innerHTML = `<p class="loading-text" style="color: white; text-align: center;">${getTrainingTranslation('loadingSchedule')}</p>`;
     try {
         const user = (0, _firebaseJs.auth).currentUser;
-        if (!user) return;
+        const rawLang = localStorage.getItem('lingoiq_lang') || 'en';
+        const currentLang = rawLang.substring(0, 2).toLowerCase();
+        if (!user) {
+            alert(getTrainingTranslation('loginAgain'));
+            return;
+        }
         const userDocRef = (0, _firestore.doc)((0, _firebaseJs.db), 'users', user.uid);
         const docSnap = await (0, _firestore.getDoc)(userDocRef);
         if (!docSnap.exists()) {
-            trainingGroup.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No words found.</p>';
+            trainingGroup.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getTrainingTranslation('noWords')}</p>`;
             return;
         }
         const data = docSnap.data();
         const languagesArray = data.languages || [];
         const langObj = languagesArray.find((l)=>l.code.toLowerCase() === currentLangCode.toLowerCase());
         if (!langObj) {
-            trainingGroup.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No language found.</p>';
+            trainingGroup.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getTrainingTranslation('noLanguage')}</p>`;
             return;
         }
         // Читаємо слова з масиву `words` або резервного `glossary`
         allLanguageWords = langObj.words || langObj.glossary || [];
         if (allLanguageWords.length === 0) {
-            trainingGroup.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No words added for this language yet.</p>';
+            trainingGroup.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getTrainingTranslation('noWordsAdded')}</p>`;
             return;
         }
         // Фільтруємо: виключаємо слова зі статусом "Studied" або "learned" (вивчено)
@@ -811,7 +868,7 @@ async function loadAndProcessTrainingData() {
             return st !== 'studied' && st !== 'learned';
         });
         if (activeTrainingWords.length === 0) {
-            trainingGroup.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">Congratulations! All words are learned.</p>';
+            trainingGroup.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getTrainingTranslation('allLearned')}</p>`;
             return;
         }
         // Групуємо слова за датами (nextReviewDate), а якщо її нема — ставимо сьогодні
@@ -824,11 +881,11 @@ async function loadAndProcessTrainingData() {
         renderTrainingBlocks();
     } catch (error) {
         console.error('Error loading training data:', error);
-        trainingGroup.innerHTML = `<p class="error-text" style="color: red; text-align: center;">Failed to load data: ${error.message}</p>`;
+        trainingGroup.innerHTML = `<p class="error-text" style="color: red; text-align: center;">${getTrainingTranslation('failedLoad')}: ${error.message}</p>`;
     }
 }
 // ============================================================================
-// 5. РЕНДЕРИНГ КАРТОК ДАТ НА ГОЛОВНІЙ СТОРІНЦІ
+// 6. РЕНДЕРИНГ КАРТОК ДАТ НА ГОЛОВНІЙ СТОРІНЦІ
 // ============================================================================
 function renderTrainingBlocks() {
     const trainingGroup = document.querySelector('.training-group');
@@ -838,7 +895,7 @@ function renderTrainingBlocks() {
     // Сортуємо дати від найранішої до найпізнішої
     const sortedDateKeys = Object.keys(groupedWordsByDate).sort((a, b)=>new Date(a) - new Date(b));
     if (sortedDateKeys.length === 0) {
-        trainingGroup.innerHTML = '<p class="empty-text" style="color: white; text-align: center;">No active training sessions.</p>';
+        trainingGroup.innerHTML = `<p class="empty-text" style="color: white; text-align: center;">${getTrainingTranslation('noSessions')}</p>`;
         return;
     }
     sortedDateKeys.forEach((dateKey)=>{
@@ -854,21 +911,21 @@ function renderTrainingBlocks() {
         startBtn.className = 'training-block__button';
         // Логіка станів (Today, Overdue, Майбутні дати)
         if (dateKey === todayStr) {
-            dateTitleEl.textContent = 'Today';
-            startBtn.textContent = 'Start';
+            dateTitleEl.textContent = getTrainingTranslation('today');
+            startBtn.textContent = getTrainingTranslation('start');
             startBtn.disabled = false;
             startBtn.addEventListener('click', ()=>startTrainingSession(dateKey));
         } else if (dateKey < todayStr) {
-            dateTitleEl.textContent = `Overdue (${dateKey})`;
+            dateTitleEl.textContent = `(${dateKey})`;
             startBtn.style.background = 'linear-gradient(90deg, #FF4D4D 0%, #C90000 100%)';
-            startBtn.textContent = 'Start';
+            startBtn.textContent = getTrainingTranslation('start');
             startBtn.addEventListener('click', ()=>startTrainingSession(dateKey));
         } else {
             dateTitleEl.textContent = dateKey;
             startBtn.style.background = 'linear-gradient(135deg, #7E8AF4 22%, #6C6C6C 85%)';
             startBtn.style.cursor = 'not-allowed';
             startBtn.disabled = true;
-            startBtn.textContent = 'Start';
+            startBtn.textContent = getTrainingTranslation('start');
         }
         blockEl.appendChild(iconEl);
         blockEl.appendChild(dateTitleEl);
@@ -877,7 +934,7 @@ function renderTrainingBlocks() {
     });
 }
 // ============================================================================
-// 6. ЛОГІКА ІНТЕРАКТИВНОГО ТРЕНАЖЕРА (ПОПАПУ)
+// 7. ЛОГІКА ІНТЕРАКТИВНОГО ТРЕНАЖЕРА (ПОПАПУ)
 // ============================================================================
 function initTrainingConsole() {
     const consoleEl = document.querySelector('.training-console');
@@ -931,7 +988,7 @@ function renderCurrentWord() {
     const numberEl = document.getElementById('training-console-number');
     const totalEl = document.getElementById('training-console-total-number');
     if (currentWordIndex >= currentSessionWords.length) {
-        alert('Training session completed successfully!');
+        alert(getTrainingTranslation('sessionCompleted'));
         closeTrainingConsole();
         return;
     }
@@ -946,7 +1003,7 @@ function renderCurrentWord() {
     if (totalEl) totalEl.textContent = currentSessionWords.length;
 }
 // ============================================================================
-// 7. ОБРОБКА КНОПОК ТРЕНАЖЕРА ТА ЗБЕРЕЖЕННЯ В FIRESTORE
+// 8. ОБРОБКА КНОПОК ТРЕНАЖЕРА ТА ЗБЕРЕЖЕННЯ В FIRESTORE
 // ============================================================================
 async function handleAnswerAction(actionType) {
     if (currentWordIndex >= currentSessionWords.length) return;
@@ -1000,7 +1057,7 @@ async function saveWordsToFirestore() {
             });
         }
     } catch (error) {
-        console.error('Error updating word progress in Firestore:', error);
+        console.error(getTrainingTranslation('failedUpdate'), error);
     }
 }
 

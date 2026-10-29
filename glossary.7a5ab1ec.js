@@ -727,7 +727,108 @@ var _i18NJs = require("./i18n.js");
 const urlParams = new URLSearchParams(window.location.search);
 const currentLangCode = urlParams.get('lang');
 let currentGlossary = [];
-let editingWordId = null; // Змінна для відстеження, яке слово ми зараз редагуємо
+let editingWordId = null;
+// ============================================================================
+// 2. СИСТЕМА ЛОКАЛІЗАЦІЇ (LINGOIQ_LANG)
+// ============================================================================
+function getCurrentLang() {
+    const rawLang = localStorage.getItem('lingoiq_lang') || 'en';
+    return rawLang.substring(0, 2).toLowerCase();
+}
+const LOCALIZATION = {
+    alerts: {
+        fillAll: {
+            en: 'Please fill in all fields!',
+            de: "Bitte f\xfcllen Sie alle Felder aus!",
+            uk: "\u0411\u0443\u0434\u044C \u043B\u0430\u0441\u043A\u0430, \u0437\u0430\u043F\u043E\u0432\u043D\u0456\u0442\u044C \u0443\u0441\u0456 \u043F\u043E\u043B\u044F!"
+        },
+        saveError: {
+            en: 'Failed to save changes. Please try again.',
+            de: "\xc4nderungen konnten nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+            uk: "\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u0437\u043C\u0456\u043D\u0438. \u0421\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0449\u0435 \u0440\u0430\u0437."
+        },
+        deleteConfirm: {
+            en: 'Are you sure you want to delete this word?',
+            de: "M\xf6chten Sie dieses Wort wirklich l\xf6schen?",
+            uk: "\u0412\u0438 \u0432\u043F\u0435\u0432\u043D\u0435\u043D\u0456, \u0449\u043E \u0445\u043E\u0447\u0435\u0442\u0435 \u0432\u0438\u0434\u0430\u043B\u0438\u0442\u0438 \u0446\u0435 \u0441\u043B\u043E\u0432\u043E?"
+        },
+        noWords: {
+            en: 'No words in the glossary yet. Add your first word!',
+            de: "Noch keine W\xf6rter im Glossar. F\xfcgen Sie Ihr erstes Wort hinzu!",
+            uk: "\u0423 \u0441\u043B\u043E\u0432\u043D\u0438\u043A\u0443 \u0449\u0435 \u043D\u0435\u043C\u0430\u0454 \u0441\u043B\u0456\u0432. \u0414\u043E\u0434\u0430\u0439\u0442\u0435 \u0441\u0432\u043E\u0454 \u043F\u0435\u0440\u0448\u0435 \u0441\u043B\u043E\u0432\u043E!"
+        }
+    },
+    types: {
+        noun: {
+            en: 'noun',
+            de: 'Nomen',
+            uk: "\u0456\u043C\u0435\u043D\u043D\u0438\u043A"
+        },
+        verb: {
+            en: 'verb',
+            de: 'Verb',
+            uk: "\u0434\u0456\u0454\u0441\u043B\u043E\u0432\u043E"
+        },
+        adjective: {
+            en: 'adjective',
+            de: 'Adjektiv',
+            uk: "\u043F\u0440\u0438\u043A\u043C\u0435\u0442\u043D\u0438\u043A"
+        },
+        adverb: {
+            en: 'adverb',
+            de: 'Adverb',
+            uk: "\u043F\u0440\u0438\u0441\u043B\u0456\u0432\u043D\u0438\u043A"
+        },
+        pronoun: {
+            en: 'pronoun',
+            de: 'Pronomen',
+            uk: "\u0437\u0430\u0439\u043C\u0435\u043D\u043D\u0438\u043A"
+        },
+        preposition: {
+            en: 'preposition',
+            de: "Pr\xe4position",
+            uk: "\u043F\u0440\u0438\u0439\u043C\u0435\u043D\u043D\u0438\u043A"
+        },
+        conjunction: {
+            en: 'conjunction',
+            de: 'Konjunktion',
+            uk: "\u0441\u043F\u043E\u043B\u0443\u0447\u043D\u0438\u043A"
+        }
+    },
+    statuses: {
+        'studied': {
+            en: 'Studied',
+            de: 'Gelernt',
+            uk: "\u0412\u0438\u0432\u0447\u0435\u043D\u043E"
+        },
+        'study': {
+            en: 'Study',
+            de: 'Am Lernen',
+            uk: "\u0412\u0447\u0438\u0442\u044C\u0441\u044F"
+        },
+        'not studied': {
+            en: 'Not Studied',
+            de: 'Nicht gelernt',
+            uk: "\u041D\u0435 \u0432\u0438\u0432\u0447\u0435\u043D\u043E"
+        }
+    }
+};
+function getAlertText(key) {
+    const lang = getCurrentLang();
+    return LOCALIZATION.alerts[key]?.[lang] || LOCALIZATION.alerts[key]?.en || '';
+}
+function getLocalizedType(rawType) {
+    if (!rawType) return '';
+    const key = rawType.toLowerCase();
+    const lang = getCurrentLang();
+    return LOCALIZATION.types[key]?.[lang] || LOCALIZATION.types[key]?.en || rawType;
+}
+function getLocalizedStatus(rawStatus) {
+    if (!rawStatus) return '';
+    const key = rawStatus.toLowerCase();
+    const lang = getCurrentLang();
+    return LOCALIZATION.statuses[key]?.[lang] || LOCALIZATION.statuses[key]?.en || rawStatus;
+}
 // Допоміжна функція для отримання сьогоднішньої дати YYYY-MM-DD
 function getTodayString() {
     const today = new Date();
@@ -737,7 +838,7 @@ function getTodayString() {
     return `${year}-${month}-${day}`;
 }
 // ============================================================================
-// 2. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
+// 3. ІНІЦІАЛІЗАЦІЯ СТОРІНКИ
 // ============================================================================
 document.addEventListener('DOMContentLoaded', ()=>{
     if (!currentLangCode) {
@@ -756,7 +857,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
 });
 // ============================================================================
-// 3. ЗАВАНТАЖЕННЯ ТА ЗБЕРЕЖЕННЯ СЛОВНИКА У FIRESTORE
+// 4. ЗАВАНТАЖЕННЯ ТА ЗБЕРЕЖЕННЯ СЛОВНИКА У FIRESTORE
 // ============================================================================
 async function loadGlossaryData(userId, langCode) {
     try {
@@ -766,7 +867,6 @@ async function loadGlossaryData(userId, langCode) {
         const userData = userSnap.data();
         const languages = userData.languages || [];
         const currentLangObj = languages.find((lang)=>lang.code.toLowerCase() === langCode.toLowerCase());
-        // Читаємо слова з масиву `words` (або `glossary` для зворотної сумісності)
         currentGlossary = currentLangObj?.words || currentLangObj?.glossary || [];
         renderGlossaryTable(currentGlossary);
     } catch (error) {
@@ -781,11 +881,10 @@ async function saveGlossaryToFirestore(userId, langCode, newGlossary) {
         const userData = userSnap.data();
         const languages = userData.languages || [];
         const updatedLanguages = languages.map((lang)=>{
-            if (lang.code.toLowerCase() === langCode.toLowerCase()) // Зберігаємо та оновлюємо масив `words` для Training Center
-            return {
+            if (lang.code.toLowerCase() === langCode.toLowerCase()) return {
                 ...lang,
                 words: newGlossary,
-                glossary: newGlossary // також дублюємо для глосарія
+                glossary: newGlossary
             };
             return lang;
         });
@@ -794,11 +893,11 @@ async function saveGlossaryToFirestore(userId, langCode, newGlossary) {
         });
     } catch (error) {
         console.error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F \u0441\u043B\u043E\u0432\u043D\u0438\u043A\u0430 \u0432 Firestore:", error);
-        alert("\u041D\u0435 \u0432\u0434\u0430\u043B\u043E\u0441\u044F \u0437\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u0437\u043C\u0456\u043D\u0438.");
+        alert(getAlertText('saveError'));
     }
 }
 // ============================================================================
-// 4. РЕНДЕРИНГ ТАБЛИЦІ СЛОВНИКА
+// 5. РЕНДЕРИНГ ТАБЛИЦІ СЛОВНИКА
 // ============================================================================
 function renderGlossaryTable(glossaryArray) {
     const tableBody = document.getElementById('glossary-table__body');
@@ -809,7 +908,7 @@ function renderGlossaryTable(glossaryArray) {
         tableBody.innerHTML = `
             <tr>
                 <td colspan="6" style="text-align: center; color: white; padding: 20px;">
-                    No words in the glossary yet. Add your first word!
+                    ${getAlertText('noWords')}
                 </td>
             </tr>
         `;
@@ -820,26 +919,27 @@ function renderGlossaryTable(glossaryArray) {
         clone.querySelector('.glossary-table__body-td--number').textContent = index + 1;
         clone.querySelectorAll('.glossary-table__body-td')[1].textContent = item.word || '';
         clone.querySelectorAll('.glossary-table__body-td')[2].textContent = item.translation || '';
-        clone.querySelectorAll('.glossary-table__body-td')[3].textContent = item.typ || '';
+        // Локалізований тип слова
+        clone.querySelectorAll('.glossary-table__body-td')[3].textContent = getLocalizedType(item.typ);
         const statusSpan = clone.querySelector('.glossary-table__status');
-        statusSpan.textContent = item.status || 'notlearned';
+        const st = (item.status || 'Not Studied').toLowerCase();
+        // Локалізований статус слова
+        statusSpan.textContent = getLocalizedStatus(st);
         let statusClass = 'not-studied';
-        const st = (item.status || '').toLowerCase();
-        if (st === 'studied' || st === 'learned') statusClass = 'studied';
+        if (st === 'studied') statusClass = 'studied';
         else if (st === 'study') statusClass = 'study';
         statusSpan.className = `glossary-table__status glossary-table__status--${statusClass}`;
         const editBtn = clone.querySelector('.glossary-table__body-btn--edit');
         const deleteBtn = clone.querySelector('.glossary-table__body-btn--delete');
         if (editBtn) editBtn.setAttribute('data-id', item.id);
         if (deleteBtn) deleteBtn.setAttribute('data-id', item.id);
-        // Підключаємо обробники подій
         if (deleteBtn) deleteBtn.addEventListener('click', ()=>handleDeleteWord(item.id));
         if (editBtn) editBtn.addEventListener('click', ()=>handleEditClick(item));
         tableBody.appendChild(clone);
     });
 }
 // ============================================================================
-// 5. ІТЕРАЦІЇ З ФОРМОЮ ТА КНОПКАМИ (Додавання, Редагування, Видалення)
+// 6. ІТЕРАЦІЇ З ФОРМОЮ ТА КНОПКАМИ
 // ============================================================================
 function initGlossaryUI() {
     const addBtn = document.getElementById('glossary-table__add-btn');
@@ -874,11 +974,10 @@ function initGlossaryUI() {
         const typ = typSelect.value;
         const status = statusSelect.value;
         if (!word || !translation || !typ || !status) {
-            alert("\u0411\u0443\u0434\u044C \u043B\u0430\u0441\u043A\u0430, \u0437\u0430\u043F\u043E\u0432\u043D\u0456\u0442\u044C \u0443\u0441\u0456 \u043F\u043E\u043B\u044F!");
+            alert(getAlertText('fillAll'));
             return;
         }
-        if (editingWordId) // РЕЖИМ РЕДАГУВАННЯ: оновлюємо значення, зберігаючи параметри тренажера (stage, nextReviewDate, createdAt)
-        currentGlossary = currentGlossary.map((item)=>{
+        if (editingWordId) currentGlossary = currentGlossary.map((item)=>{
             if (item.id === editingWordId) return {
                 ...item,
                 word,
@@ -891,7 +990,6 @@ function initGlossaryUI() {
             return item;
         });
         else {
-            // РЕЖИМ ДОДАВАННЯ: додаємо обов'язкові поля для Training Center
             const newItem = {
                 id: Date.now().toString(),
                 word,
@@ -904,9 +1002,7 @@ function initGlossaryUI() {
             };
             currentGlossary.push(newItem);
         }
-        // Зберігаємо в базу Firestore
         await saveGlossaryToFirestore(user.uid, currentLangCode, currentGlossary);
-        // Оновлюємо таблицю та скидаємо форму
         renderGlossaryTable(currentGlossary);
         submitForm.reset();
         formRow.classList.add('disable');
@@ -915,7 +1011,6 @@ function initGlossaryUI() {
         if (addBtn) addBtn.parentElement.parentElement.style.display = '';
     });
 }
-// Функція редагування слова
 function handleEditClick(item) {
     const formRow = document.querySelector('.glossary-form__tr');
     const addBtn = document.getElementById('glossary-table__add-btn');
@@ -931,10 +1026,10 @@ function handleEditClick(item) {
     if (addBtn) addBtn.parentElement.parentElement.style.display = 'none';
 }
 // ============================================================================
-// 6. ВИДАЛЕННЯ СЛОВА
+// 7. ВИДАЛЕННЯ СЛОВА
 // ============================================================================
 async function handleDeleteWord(wordId) {
-    const isConfirmed = confirm('Are you sure you want to delete this word?');
+    const isConfirmed = confirm(getAlertText('deleteConfirm'));
     if (!isConfirmed) return;
     const user = (0, _firebaseJs.auth).currentUser;
     if (!user) return;
